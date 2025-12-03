@@ -25,7 +25,6 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
   });
 
   const [loadedData, setLoadedData] = useState([]);
-  const [hoveredVideo, setHoveredVideo] = useState(null);
   const { isEnd, isLastVideo, startPlay, videoId, isPlaying } = video;
 
   useEffect(() => {
@@ -236,8 +235,6 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
           <div key={list.id} id="slider" className="flex-shrink-0 w-full sm:pr-20 pr-4 sm:pl-0 pl-4">
             <div 
               className="video-carousel_container"
-              onMouseEnter={() => setHoveredVideo(i)}
-              onMouseLeave={() => setHoveredVideo(null)}
             >
               <div className="w-full h-full rounded-3xl overflow-hidden bg-black">
                 <video
@@ -280,22 +277,6 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
                   <source src={isMobile && list.videoMobile ? list.videoMobile : list.video} type="video/mp4" />
                 </video>
               </div>
-
-              {/* Caption at the bottom - shown on hover */}
-              <div 
-                className={`absolute bottom-0 left-0 right-0 z-10 transition-opacity duration-300 ${
-                  hoveredVideo === i ? 'opacity-100' : 'opacity-0'
-                }`}
-              >
-                <div className="bg-black bg-opacity-50 backdrop-blur-sm rounded-b-3xl px-4 md:px-6 lg:px-8 py-3 md:py-4 w-full">
-                  <h3 className="text-white text-sm sm:text-base md:text-lg font-semibold mb-1.5 md:mb-2 text-left">
-                    {list.captionTitle}
-                  </h3>
-                  <p className="text-gray-100 text-xs sm:text-sm md:text-base text-left leading-relaxed">
-                    {list.caption}
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         ))}
@@ -330,16 +311,6 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
         }}
       >
         <span>Join Launch List</span>
-        <div className="flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 rounded-full bg-blue flex-shrink-0">
-          <svg 
-            className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 text-white" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-          </svg>
-        </div>
       </button>
 
       <RegistrationModal 

@@ -56,8 +56,8 @@ const Hero = () => {
           playsInline={true} 
           key={videoSrc}
         >
-          <source src={videoSrc} type="video/mp4" />
-        </video>
+            <source src={videoSrc} type="video/mp4" />
+          </video>
       </div>
     </section>
   )

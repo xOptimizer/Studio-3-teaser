@@ -39,8 +39,8 @@ const RegistrationModal = ({ isOpen, onClose }) => {
     setSubmitStatus(null);
 
     try {
-      // Replace with your Google Apps Script Web App URL
-      const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+      // Google Apps Script Web App URL
+      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymzzAV-kE29HFAEMJMn6sLLfEqDJRHvaRgfskvP56MhlW3qi416XrGGpNjBxkNVGO7iQ/exec';
       
       const response = await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',

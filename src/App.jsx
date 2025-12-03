@@ -43,7 +43,7 @@ const App = () => {
           <Highlights onSlideChange={setCurrentSlide} />
           {/* <Model /> */}
           {/* <Features /> */}
-          {/* <HowItWorks /> */}
+          <HowItWorks />
           {/* <Footer /> */}
         </>
       )}
