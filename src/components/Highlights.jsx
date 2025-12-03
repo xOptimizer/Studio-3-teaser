@@ -7,12 +7,12 @@ gsap.registerPlugin(ScrollTrigger);
 
 import VideoCarousel from './VideoCarousel';
 
-const Highlights = () => {
+const Highlights = ({ onSlideChange }) => {
   const titleRef = useRef(null);
   const typeIntervalRef = useRef(null);
   const [displayedText, setDisplayedText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const fullText = "What We Offer.";
+  const fullText = "A Connected Ecosystem Built for Creatives";
   const typingSpeed = 120; // milliseconds per character
 
   useEffect(() => {
@@ -111,7 +111,7 @@ const Highlights = () => {
           </div>
 
           <div className="mb-8 md:mb-12">
-            <VideoCarousel />
+            <VideoCarousel onSlideChange={onSlideChange} />
           </div>
         </div>
       </section>

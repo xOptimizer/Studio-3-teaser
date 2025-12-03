@@ -8,7 +8,7 @@ import { hightlightsSlides } from "../constants";
 import { pauseImg, playImg } from "../utils";
 import RegistrationModal from "./RegistrationModal";
 
-const VideoCarousel = forwardRef(({ onPlayPauseChange }, ref) => {
+const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => {
   const videoRef = useRef([]);
   const videoSpanRef = useRef([]);
   const videoDivRef = useRef([]);
@@ -43,6 +43,9 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange }, ref) => {
       duration: 2,
       ease: "power2.inOut", // show visualizer https://gsap.com/docs/v3/Eases
     });
+    
+    // Notify parent of slide change
+    if (onSlideChange) onSlideChange(videoId);
 
     // video animation to play the video when it is in the view
     gsap.to("#video", {
@@ -142,6 +145,39 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange }, ref) => {
     }
   }, [startPlay, videoId, isPlaying]);
 
+  // Auto-advance to next slide after 3.5 seconds (mobile only)
+  useEffect(() => {
+    if (!startPlay || !isPlaying || !isMobile) return;
+
+    const timer = setTimeout(() => {
+      if (videoId < hightlightsSlides.length - 1) {
+        // Move to next video
+        if (videoRef.current[videoId]) {
+          videoRef.current[videoId].pause();
+        }
+        handleProcess("video-end", videoId);
+      } else {
+        // Loop back to first video
+        if (videoRef.current[videoId]) {
+          videoRef.current[videoId].pause();
+        }
+        if (videoRef.current[0]) {
+          videoRef.current[0].currentTime = 0;
+        }
+        setVideo((pre) => ({ 
+          ...pre, 
+          videoId: 0, 
+          isLastVideo: false,
+          startPlay: true,
+          isPlaying: true
+        }));
+        if (onSlideChange) onSlideChange(0);
+      }
+    }, 4200); // 4.2 seconds
+
+    return () => clearTimeout(timer);
+  }, [videoId, startPlay, isPlaying, isMobile]);
+
   // vd id is the id for every video until id becomes number 3
   const handleProcess = (type, i) => {
     switch (type) {
@@ -159,6 +195,7 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange }, ref) => {
           startPlay: true,
           isPlaying: true
         }));
+        if (onSlideChange) onSlideChange(nextVideoId);
         break;
 
 
@@ -202,12 +239,12 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange }, ref) => {
               onMouseEnter={() => setHoveredVideo(i)}
               onMouseLeave={() => setHoveredVideo(null)}
             >
-              <div className="w-full h-full flex-center rounded-3xl overflow-hidden bg-black">
+              <div className="w-full h-full rounded-3xl overflow-hidden bg-black">
                 <video
                   key={`video-${list.id}-${isMobile ? 'mobile' : 'desktop'}-${isMobile ? list.videoMobile : list.video}`}
                   id="video"
                   playsInline={true}
-                  className="pointer-events-none w-full h-full object-contain"
+                  className="pointer-events-none w-full h-full object-cover"
                   preload="auto"
                   muted
                   ref={(el) => (videoRef.current[i] = el)}
@@ -292,7 +329,7 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange }, ref) => {
           WebkitBackfaceVisibility: 'hidden'
         }}
       >
-        <span>Register Now</span>
+        <span>Join Launch List</span>
         <div className="flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 rounded-full bg-blue flex-shrink-0">
           <svg 
             className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 text-white" 

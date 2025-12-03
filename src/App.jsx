@@ -12,6 +12,7 @@ import * as Sentry from '@sentry/react';
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
     // Preload critical resources
@@ -37,9 +38,9 @@ const App = () => {
       {isLoading && <LoadingScreen onLoadingComplete={handleLoadingComplete} />}
       {!isLoading && (
         <>
-          <TopBar />
+          <TopBar currentSlide={currentSlide} totalSlides={3} />
           <Hero />
-          <Highlights />
+          <Highlights onSlideChange={setCurrentSlide} />
           {/* <Model /> */}
           {/* <Features /> */}
           {/* <HowItWorks /> */}
