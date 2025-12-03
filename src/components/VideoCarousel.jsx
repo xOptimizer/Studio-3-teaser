@@ -177,6 +177,14 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
     return () => clearTimeout(timer);
   }, [videoId, startPlay, isPlaying, isMobile]);
 
+  // Preload next video metadata when current video is playing
+  useEffect(() => {
+    if (videoId < hightlightsSlides.length - 1 && videoRef.current[videoId + 1]) {
+      const nextVideo = videoRef.current[videoId + 1];
+      nextVideo.preload = "metadata";
+    }
+  }, [videoId]);
+
   // vd id is the id for every video until id becomes number 3
   const handleProcess = (type, i) => {
     switch (type) {
@@ -242,7 +250,7 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
                   id="video"
                   playsInline={true}
                   className="pointer-events-none w-full h-full object-cover"
-                  preload="auto"
+                  preload={i === videoId ? "auto" : "none"}
                   muted
                   ref={(el) => (videoRef.current[i] = el)}
                   onEnded={() => {

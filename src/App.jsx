@@ -14,21 +14,6 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  useEffect(() => {
-    // Preload critical resources
-    const preloadResources = async () => {
-      // Wait for images and fonts to load
-      if (document.fonts) {
-        await document.fonts.ready;
-      }
-      
-      // Small delay to ensure smooth transition
-      await new Promise(resolve => setTimeout(resolve, 500));
-    };
-
-    preloadResources();
-  }, []);
-
   const handleLoadingComplete = () => {
     setIsLoading(false);
   };

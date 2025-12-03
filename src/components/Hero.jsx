@@ -53,7 +53,8 @@ const Hero = () => {
           className="pointer-events-none w-full h-full object-contain sm:object-cover" 
           autoPlay 
           muted 
-          playsInline={true} 
+          playsInline={true}
+          preload="auto"
           key={videoSrc}
         >
             <source src={videoSrc} type="video/mp4" />
