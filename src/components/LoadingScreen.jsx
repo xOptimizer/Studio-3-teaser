@@ -36,19 +36,30 @@ const LoadingScreen = ({ onLoadingComplete }) => {
       let loaded = 0;
       const total = resources.length;
 
-      const loadResource = (src) => {
+      const loadResource = (src, isPriority = false) => {
         return new Promise((resolve) => {
           // Check if it's a video by extension or path
           if (src.endsWith('.mp4') || src.includes('/videos/')) {
-            // Preload video
+            // Preload video - use 'auto' for hero videos to preload more data
             const video = document.createElement('video');
-            video.preload = 'metadata';
+            video.preload = isPriority ? 'auto' : 'metadata';
             video.muted = true;
-            video.onloadedmetadata = () => {
-              loaded++;
-              setProgress(Math.min(Math.floor((loaded / total) * 100), 95));
-              resolve();
-            };
+            
+            // For priority videos (hero), wait for more data to load
+            if (isPriority) {
+              video.oncanplaythrough = () => {
+                loaded++;
+                setProgress(Math.min(Math.floor((loaded / total) * 100), 95));
+                resolve();
+              };
+            } else {
+              video.onloadedmetadata = () => {
+                loaded++;
+                setProgress(Math.min(Math.floor((loaded / total) * 100), 95));
+                resolve();
+              };
+            }
+            
             video.onerror = () => {
               loaded++;
               setProgress(Math.min(Math.floor((loaded / total) * 100), 95));
@@ -73,8 +84,17 @@ const LoadingScreen = ({ onLoadingComplete }) => {
         });
       };
 
-      // Load all resources in parallel
-      await Promise.all(resources.map(loadResource));
+      // Load hero videos with priority (preload more data)
+      const heroVideos = [heroVideo, smallHeroVideo];
+      const otherResources = resources.filter(r => !heroVideos.includes(r));
+      
+      // Start loading hero videos first with priority
+      const heroPromises = heroVideos.map(src => loadResource(src, true));
+      // Load other resources in parallel
+      const otherPromises = otherResources.map(src => loadResource(src, false));
+      
+      // Wait for all resources to load
+      await Promise.all([...heroPromises, ...otherPromises]);
 
       // Wait for fonts
       if (document.fonts) {

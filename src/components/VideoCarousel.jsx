@@ -12,8 +12,14 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
   const videoRef = useRef([]);
   const videoSpanRef = useRef([]);
   const videoDivRef = useRef([]);
+  const carouselRef = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+  
+  // Swipe detection
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const touchEndX = useRef(0);
 
   // video and indicator
   const [video, setVideo] = useState({
@@ -144,38 +150,6 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
     }
   }, [startPlay, videoId, isPlaying]);
 
-  // Auto-advance to next slide after 3.5 seconds (mobile only)
-  useEffect(() => {
-    if (!startPlay || !isPlaying || !isMobile) return;
-
-    const timer = setTimeout(() => {
-      if (videoId < hightlightsSlides.length - 1) {
-        // Move to next video
-        if (videoRef.current[videoId]) {
-          videoRef.current[videoId].pause();
-        }
-        handleProcess("video-end", videoId);
-      } else {
-        // Loop back to first video
-        if (videoRef.current[videoId]) {
-          videoRef.current[videoId].pause();
-        }
-        if (videoRef.current[0]) {
-          videoRef.current[0].currentTime = 0;
-        }
-        setVideo((pre) => ({ 
-          ...pre, 
-          videoId: 0, 
-          isLastVideo: false,
-          startPlay: true,
-          isPlaying: true
-        }));
-        if (onSlideChange) onSlideChange(0);
-      }
-    }, 4200); // 4.2 seconds
-
-    return () => clearTimeout(timer);
-  }, [videoId, startPlay, isPlaying, isMobile]);
 
   // Preload next video metadata when current video is playing
   useEffect(() => {
@@ -184,6 +158,89 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
       nextVideo.preload = "metadata";
     }
   }, [videoId]);
+
+  // Swipe handlers
+  const handleSwipeStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleSwipeMove = (e) => {
+    // Prevent default scrolling while swiping horizontally
+    const touchX = e.touches[0].clientX;
+    const touchY = e.touches[0].clientY;
+    const deltaX = Math.abs(touchX - touchStartX.current);
+    const deltaY = Math.abs(touchY - touchStartY.current);
+    
+    // If horizontal swipe is more dominant, prevent vertical scroll
+    if (deltaX > deltaY && deltaX > 10) {
+      e.preventDefault();
+    }
+  };
+
+  const handleSwipeEnd = (e) => {
+    touchEndX.current = e.changedTouches[0].clientX;
+    handleSwipe();
+  };
+
+  const handleSwipe = () => {
+    const swipeDistance = touchStartX.current - touchEndX.current;
+    const minSwipeDistance = 50; // Minimum distance for a swipe
+
+    if (Math.abs(swipeDistance) > minSwipeDistance) {
+      if (swipeDistance > 0) {
+        // Swipe left - go to next slide
+        goToNextSlide();
+      } else {
+        // Swipe right - go to previous slide
+        goToPreviousSlide();
+      }
+    }
+  };
+
+  const goToNextSlide = () => {
+    if (videoId < hightlightsSlides.length - 1) {
+      // Pause current video
+      if (videoRef.current[videoId]) {
+        videoRef.current[videoId].pause();
+      }
+      handleProcess("video-end", videoId);
+    } else {
+      // Loop to first slide
+      if (videoRef.current[videoId]) {
+        videoRef.current[videoId].pause();
+      }
+      if (videoRef.current[0]) {
+        videoRef.current[0].currentTime = 0;
+      }
+      setVideo((pre) => ({ 
+        ...pre, 
+        videoId: 0, 
+        isLastVideo: false,
+        startPlay: true,
+        isPlaying: true
+      }));
+      if (onSlideChange) onSlideChange(0);
+    }
+  };
+
+  const goToPreviousSlide = () => {
+    if (videoId > 0) {
+      // Pause current video
+      if (videoRef.current[videoId]) {
+        videoRef.current[videoId].pause();
+      }
+      const prevVideoId = videoId - 1;
+      setVideo((pre) => ({ 
+        ...pre, 
+        isEnd: true, 
+        videoId: prevVideoId,
+        startPlay: true,
+        isPlaying: true
+      }));
+      if (onSlideChange) onSlideChange(prevVideoId);
+    }
+  };
 
   // vd id is the id for every video until id becomes number 3
   const handleProcess = (type, i) => {
@@ -237,7 +294,14 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
 
   return (
     <>
-      <div className="relative flex items-center w-full max-w-full px-2 sm:px-0">
+      <div 
+        ref={carouselRef}
+        className="relative flex items-center w-full max-w-full px-2 sm:px-0"
+        onTouchStart={handleSwipeStart}
+        onTouchMove={handleSwipeMove}
+        onTouchEnd={handleSwipeEnd}
+        style={{ touchAction: 'pan-y' }}
+      >
       <div className="flex items-center w-full overflow-hidden">
         {hightlightsSlides.map((list, i) => (
           <div key={list.id} id="slider" className="flex-shrink-0 w-full sm:pr-20 pr-4 sm:pl-0 pl-4">

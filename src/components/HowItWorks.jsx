@@ -30,7 +30,7 @@ const HowItWorks = () => {
     {
       id: 'studio',
       title: 'The Studio',
-      description: 'A creator focused social platform where your work isn\'t buried by algorithms. Share your process, tell your story, and connect with collectors; all in one home built for artists, not content.',
+      description: 'Our flagship Dallas studio blends creation, community, and wellness - a true third space for creatives. Membership gives you access to dedicated work areas, world class workshops, curated events, and a creative environment designed for connection.',
       comingSoon: 'Coming Summer 2026',
       images: ['studio-main', 'poolside', 'wellness'] // Image names to be added
     }
@@ -65,7 +65,7 @@ const HowItWorks = () => {
       <div className="screen-max-width">
         {/* Title */}
         <h2 className="explore-title text-white text-3xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-12">
-          Explore Studio 3
+          About Studio
         </h2>
 
         {/* Main Card */}
