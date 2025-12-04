@@ -38,22 +38,54 @@ const LoadingScreen = ({ onLoadingComplete }) => {
 
       const loadResource = (src, isPriority = false) => {
         return new Promise((resolve) => {
+          // Add timeout to prevent hanging
+          const timeout = setTimeout(() => {
+            loaded++;
+            setProgress(Math.min(Math.floor((loaded / total) * 100), 95));
+            resolve();
+          }, isPriority ? 10000 : 5000); // 10s for priority, 5s for others
+
           // Check if it's a video by extension or path
           if (src.endsWith('.mp4') || src.includes('/videos/')) {
             // Preload video - use 'auto' for hero videos to preload more data
             const video = document.createElement('video');
             video.preload = isPriority ? 'auto' : 'metadata';
             video.muted = true;
+            video.playsInline = true;
+            
+            const cleanup = () => {
+              clearTimeout(timeout);
+              if (video.parentNode) {
+                video.parentNode.removeChild(video);
+              }
+            };
             
             // For priority videos (hero), wait for more data to load
             if (isPriority) {
-              video.oncanplaythrough = () => {
+              // Use multiple events for better mobile compatibility
+              const handleCanPlay = () => {
+                cleanup();
                 loaded++;
                 setProgress(Math.min(Math.floor((loaded / total) * 100), 95));
                 resolve();
               };
+              
+              video.oncanplay = handleCanPlay;
+              video.oncanplaythrough = handleCanPlay;
+              video.onloadeddata = () => {
+                // Fallback: if canplay doesn't fire, use loadeddata after a delay
+                setTimeout(() => {
+                  if (loaded < total) {
+                    cleanup();
+                    loaded++;
+                    setProgress(Math.min(Math.floor((loaded / total) * 100), 95));
+                    resolve();
+                  }
+                }, 2000);
+              };
             } else {
               video.onloadedmetadata = () => {
+                cleanup();
                 loaded++;
                 setProgress(Math.min(Math.floor((loaded / total) * 100), 95));
                 resolve();
@@ -61,20 +93,27 @@ const LoadingScreen = ({ onLoadingComplete }) => {
             }
             
             video.onerror = () => {
+              cleanup();
               loaded++;
               setProgress(Math.min(Math.floor((loaded / total) * 100), 95));
               resolve();
             };
+            
             video.src = src;
+            // Add video to DOM (some mobile browsers need this)
+            video.style.display = 'none';
+            document.body.appendChild(video);
           } else {
             // Preload image
             const img = new Image();
             img.onload = () => {
+              clearTimeout(timeout);
               loaded++;
               setProgress(Math.min(Math.floor((loaded / total) * 100), 95));
               resolve();
             };
             img.onerror = () => {
+              clearTimeout(timeout);
               loaded++;
               setProgress(Math.min(Math.floor((loaded / total) * 100), 95));
               resolve();
@@ -93,15 +132,32 @@ const LoadingScreen = ({ onLoadingComplete }) => {
       // Load other resources in parallel
       const otherPromises = otherResources.map(src => loadResource(src, false));
       
-      // Wait for all resources to load
-      await Promise.all([...heroPromises, ...otherPromises]);
-
-      // Wait for fonts
-      if (document.fonts) {
-        await document.fonts.ready;
+      // Wait for all resources to load with a maximum timeout
+      try {
+        await Promise.race([
+          Promise.all([...heroPromises, ...otherPromises]),
+          new Promise(resolve => setTimeout(resolve, 30000)) // 30s max timeout
+        ]);
+      } catch (error) {
+        console.error('Error loading resources:', error);
       }
 
-      // Complete loading
+      // Wait for fonts with timeout
+      try {
+        if (document.fonts && document.fonts.ready) {
+          await Promise.race([
+            document.fonts.ready,
+            new Promise(resolve => setTimeout(resolve, 2000)) // 2s timeout for fonts
+          ]);
+        } else {
+          // Fallback: wait a short time if fonts API not available
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      } catch (error) {
+        console.error('Error loading fonts:', error);
+      }
+
+      // Complete loading - ensure we always reach 100%
       setProgress(100);
       setTimeout(() => {
         if (onLoadingComplete) onLoadingComplete();
