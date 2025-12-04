@@ -52,13 +52,28 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
     // Notify parent of slide change
     if (onSlideChange) onSlideChange(videoId);
 
-    // video animation to play the video when it is in the view
-    gsap.to("#video", {
-      scrollTrigger: {
-        trigger: "#video",
-        toggleActions: "restart none none none",
-      },
-      onComplete: () => {
+    // Get the current video element
+    const currentVideo = videoRef.current[videoId];
+    
+    if (currentVideo) {
+      // Check if video is in viewport or start playing immediately for carousel
+      const rect = currentVideo.getBoundingClientRect();
+      const isInView = rect.top < window.innerHeight && rect.bottom > 0;
+      
+      if (isInView || videoId === 0) {
+        // Video is in view or it's the first video - start playing
+        setVideo((pre) => {
+          const newState = { ...pre, startPlay: true, isPlaying: true };
+          if (onPlayPauseChange) onPlayPauseChange(true);
+          return newState;
+        });
+      } else {
+        // Use ScrollTrigger as fallback for videos that scroll into view
+        const scrollTrigger = ScrollTrigger.create({
+          trigger: currentVideo,
+          start: "top 80%",
+          once: true,
+          onEnter: () => {
         setVideo((pre) => {
           const newState = { ...pre, startPlay: true, isPlaying: true };
           if (onPlayPauseChange) onPlayPauseChange(true);
@@ -66,6 +81,13 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
         });
       },
     });
+
+        // Cleanup ScrollTrigger on unmount or video change
+        return () => {
+          scrollTrigger.kill();
+        };
+      }
+    }
   }, [isEnd, videoId]);
 
   useEffect(() => {
@@ -137,18 +159,68 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
 
   useEffect(() => {
     if (videoRef.current[videoId]) {
+      const currentVideo = videoRef.current[videoId];
+      
       if (!isPlaying) {
-        videoRef.current[videoId].pause();
+        currentVideo.pause();
       } else {
         if (startPlay) {
-          videoRef.current[videoId].currentTime = 0; // Reset to start
-          videoRef.current[videoId].play().catch(err => {
-            console.log('Video play error:', err);
-          });
+          // Reset to start when switching to a new video
+          // Only reset if video hasn't started playing yet or if it's a different video
+          if (currentVideo.readyState >= 2) { // HAVE_CURRENT_DATA
+            if (currentVideo.currentTime > 0.1 && currentVideo.ended) {
+              currentVideo.currentTime = 0;
+            }
+          }
+          
+          // Ensure video is loaded before playing
+          if (currentVideo.readyState >= 2) {
+            // Play the video
+            const playPromise = currentVideo.play();
+            
+            if (playPromise !== undefined) {
+              playPromise
+                .then(() => {
+                  // Video is playing successfully
+                })
+                .catch(err => {
+                  console.log('Video play error:', err);
+                  // If autoplay fails, try again after user interaction
+                  if (err.name === 'NotAllowedError') {
+                    // Video autoplay was prevented, will need user interaction
+                    console.log('Autoplay prevented, waiting for user interaction');
+                  }
+                });
+            }
+          } else {
+            // Wait for video to be ready
+            currentVideo.addEventListener('canplay', () => {
+              currentVideo.play().catch(err => {
+                console.log('Video play after canplay error:', err);
+              });
+            }, { once: true });
+          }
         }
       }
     }
   }, [startPlay, videoId, isPlaying]);
+
+  // Auto-start first video when component mounts
+  useEffect(() => {
+    // Small delay to ensure video element is ready
+    const timer = setTimeout(() => {
+      if (videoRef.current[0] && !startPlay && videoId === 0) {
+        setVideo((pre) => ({
+          ...pre,
+          startPlay: true,
+          isPlaying: true
+        }));
+        if (onPlayPauseChange) onPlayPauseChange(true);
+      }
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []); // Only run once on mount
 
 
   // Preload next video metadata when current video is playing
@@ -159,10 +231,22 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
     }
   }, [videoId]);
 
+  // Handle user interaction to enable video playback on mobile
+  const handleUserInteraction = () => {
+    // After user interaction, try to play current video if it's not playing
+    if (videoRef.current[videoId] && !isPlaying && startPlay) {
+      videoRef.current[videoId].play().catch(err => {
+        console.log('Video play after interaction error:', err);
+      });
+    }
+  };
+
   // Swipe handlers
   const handleSwipeStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
+    // User interaction detected - enable video playback
+    handleUserInteraction();
   };
 
   const handleSwipeMove = (e) => {
@@ -204,7 +288,16 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
       if (videoRef.current[videoId]) {
         videoRef.current[videoId].pause();
       }
-      handleProcess("video-end", videoId);
+      // Move to next video
+      const nextVideoId = videoId + 1;
+      setVideo((pre) => ({ 
+        ...pre, 
+        isEnd: true, 
+        videoId: nextVideoId,
+        startPlay: true,
+        isPlaying: true
+      }));
+      if (onSlideChange) onSlideChange(nextVideoId);
     } else {
       // Loop to first slide
       if (videoRef.current[videoId]) {
@@ -300,6 +393,7 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
         onTouchStart={handleSwipeStart}
         onTouchMove={handleSwipeMove}
         onTouchEnd={handleSwipeEnd}
+        onClick={handleUserInteraction}
         style={{ touchAction: 'pan-y' }}
       >
       <div className="flex items-center w-full overflow-hidden">
@@ -311,40 +405,81 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
               <div className="w-full h-full rounded-3xl overflow-hidden bg-black">
                 <video
                   key={`video-${list.id}-${isMobile ? 'mobile' : 'desktop'}-${isMobile ? list.videoMobile : list.video}`}
-                  id="video"
+                  id={`video-${list.id}`}
                   playsInline={true}
                   className="pointer-events-none w-full h-full object-cover"
-                  preload={i === videoId ? "auto" : "none"}
+                  preload={i === videoId ? "metadata" : "none"}
                   muted
+                  autoPlay={i === videoId && startPlay}
                   ref={(el) => (videoRef.current[i] = el)}
                   onEnded={() => {
-                    // Pause current video
-                    if (videoRef.current[i]) {
-                      videoRef.current[i].pause();
-                    }
-                    
-                    if (i < hightlightsSlides.length - 1) {
-                      // Move to next video
-                      handleProcess("video-end", i);
-                    } else {
-                      // Auto-loop: reset to first video and start playing
-                      if (videoRef.current[0]) {
-                        videoRef.current[0].currentTime = 0;
+                    // Only auto-advance if this is the currently active video
+                    if (i === videoId) {
+                      // Pause current video
+                      if (videoRef.current[i]) {
+                        videoRef.current[i].pause();
                       }
-                      setVideo((pre) => ({ 
-                        ...pre, 
-                        videoId: 0, 
-                        isLastVideo: false,
-                        startPlay: true,
-                        isPlaying: true
-                      }));
+                      
+                      if (i < hightlightsSlides.length - 1) {
+                        // Auto-advance to next video
+                        const nextVideoId = i + 1;
+                        setVideo((pre) => ({ 
+                          ...pre, 
+                          isEnd: true, 
+                          videoId: nextVideoId,
+                          startPlay: true,
+                          isPlaying: true
+                        }));
+                        if (onSlideChange) onSlideChange(nextVideoId);
+                      } else {
+                        // Auto-loop: reset to first video and start playing
+                        if (videoRef.current[0]) {
+                          videoRef.current[0].currentTime = 0;
+                        }
+                        setVideo((pre) => ({ 
+                          ...pre, 
+                          videoId: 0, 
+                          isLastVideo: false,
+                          startPlay: true,
+                          isPlaying: true
+                        }));
+                        if (onSlideChange) onSlideChange(0);
+                      }
                     }
                   }}
                   onPlay={() => {
                     setVideo((pre) => ({ ...pre, isPlaying: true }));
                     if (onPlayPauseChange) onPlayPauseChange(true);
                   }}
-                  onLoadedMetadata={(e) => handleLoadedMetaData(i, e)}
+                  onLoadedMetadata={(e) => {
+                    handleLoadedMetaData(i, e);
+                    // If this is the current video and should be playing, start it
+                    if (i === videoId && startPlay && isPlaying) {
+                      e.target.play().catch(err => {
+                        console.log('Video play on load error:', err);
+                      });
+                    }
+                  }}
+                  onCanPlay={() => {
+                    // Video is ready to play - if it's the current video and should be playing
+                    if (videoRef.current[i] && i === videoId && startPlay && isPlaying) {
+                      // Small delay to ensure smooth transition
+                      setTimeout(() => {
+                        if (videoRef.current[i] && i === videoId) {
+                          videoRef.current[i].play().catch(err => {
+                            console.log('Video play on canplay error:', err);
+                          });
+                        }
+                      }, 100);
+                    }
+                  }}
+                  onPause={() => {
+                    // Update state if video is paused (but don't interfere with auto-advance)
+                    if (i === videoId && !videoRef.current[i]?.ended) {
+                      setVideo((pre) => ({ ...pre, isPlaying: false }));
+                      if (onPlayPauseChange) onPlayPauseChange(false);
+                    }
+                  }}
                 >
                   <source src={isMobile && list.videoMobile ? list.videoMobile : list.video} type="video/mp4" />
                 </video>
