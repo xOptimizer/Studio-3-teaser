@@ -161,44 +161,65 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
     if (videoRef.current[videoId]) {
       const currentVideo = videoRef.current[videoId];
       
+      // Force load video if it hasn't loaded yet
+      if (currentVideo.readyState === 0) {
+        currentVideo.load();
+      }
+      
       if (!isPlaying) {
         currentVideo.pause();
       } else {
         if (startPlay) {
           // Reset to start when switching to a new video
-          // Only reset if video hasn't started playing yet or if it's a different video
-          if (currentVideo.readyState >= 2) { // HAVE_CURRENT_DATA
-            if (currentVideo.currentTime > 0.1 && currentVideo.ended) {
-              currentVideo.currentTime = 0;
-            }
+          if (currentVideo.ended || (currentVideo.currentTime > 0.1 && currentVideo.currentTime < currentVideo.duration - 0.5)) {
+            currentVideo.currentTime = 0;
           }
           
-          // Ensure video is loaded before playing
-          if (currentVideo.readyState >= 2) {
-            // Play the video
+          // Function to attempt playing the video
+          const attemptPlay = () => {
             const playPromise = currentVideo.play();
             
             if (playPromise !== undefined) {
               playPromise
                 .then(() => {
-                  // Video is playing successfully
+                  console.log(`Video ${videoId} playing successfully`);
                 })
                 .catch(err => {
-                  console.log('Video play error:', err);
+                  console.log(`Video ${videoId} play error:`, err);
                   // If autoplay fails, try again after user interaction
                   if (err.name === 'NotAllowedError') {
-                    // Video autoplay was prevented, will need user interaction
                     console.log('Autoplay prevented, waiting for user interaction');
                   }
                 });
             }
+          };
+          
+          // Ensure video is loaded before playing
+          if (currentVideo.readyState >= 2) { // HAVE_CURRENT_DATA
+            attemptPlay();
+          } else if (currentVideo.readyState >= 1) { // HAVE_METADATA
+            // Video has metadata, try to play
+            attemptPlay();
           } else {
             // Wait for video to be ready
-            currentVideo.addEventListener('canplay', () => {
-              currentVideo.play().catch(err => {
-                console.log('Video play after canplay error:', err);
-              });
-            }, { once: true });
+            const handleCanPlay = () => {
+              attemptPlay();
+            };
+            currentVideo.addEventListener('canplay', handleCanPlay, { once: true });
+            currentVideo.addEventListener('loadeddata', handleCanPlay, { once: true });
+            
+            // Fallback: try after a delay
+            const timeout = setTimeout(() => {
+              if (currentVideo.readyState >= 1) {
+                attemptPlay();
+              }
+            }, 1000);
+            
+            return () => {
+              clearTimeout(timeout);
+              currentVideo.removeEventListener('canplay', handleCanPlay);
+              currentVideo.removeEventListener('loadeddata', handleCanPlay);
+            };
           }
         }
       }
@@ -228,6 +249,10 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
     if (videoId < hightlightsSlides.length - 1 && videoRef.current[videoId + 1]) {
       const nextVideo = videoRef.current[videoId + 1];
       nextVideo.preload = "metadata";
+      // Force load if it hasn't loaded yet
+      if (nextVideo.readyState === 0) {
+        nextVideo.load();
+      }
     }
   }, [videoId]);
 
@@ -408,10 +433,32 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
                   id={`video-${list.id}`}
                   playsInline={true}
                   className="pointer-events-none w-full h-full object-cover"
-                  preload={i === videoId ? "metadata" : "none"}
+                  preload={i === videoId ? "metadata" : i === videoId + 1 ? "metadata" : "none"}
                   muted
                   autoPlay={i === videoId && startPlay}
-                  ref={(el) => (videoRef.current[i] = el)}
+                  ref={(el) => {
+                    videoRef.current[i] = el;
+                    // When video element is mounted and it's the current video, ensure it loads
+                    if (el && i === videoId && startPlay) {
+                      // Force load the video source
+                      if (el.readyState === 0) {
+                        el.load();
+                      }
+                    }
+                  }}
+                  onError={(e) => {
+                    console.error(`Video ${i} error:`, e.target.error, {
+                      src: isMobile && list.videoMobile ? list.videoMobile : list.video,
+                      readyState: e.target.readyState,
+                      networkState: e.target.networkState
+                    });
+                  }}
+                  onLoadStart={() => {
+                    console.log(`Video ${i} load started`);
+                  }}
+                  onLoadedData={() => {
+                    console.log(`Video ${i} loaded data`);
+                  }}
                   onEnded={() => {
                     // Only auto-advance if this is the currently active video
                     if (i === videoId) {
@@ -463,6 +510,11 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
                   onCanPlay={() => {
                     // Video is ready to play - if it's the current video and should be playing
                     if (videoRef.current[i] && i === videoId && startPlay && isPlaying) {
+                      // Ensure video source is set
+                      const videoSrc = isMobile && list.videoMobile ? list.videoMobile : list.video;
+                      if (videoRef.current[i].src !== videoSrc && videoRef.current[i].currentSrc !== videoSrc) {
+                        console.warn(`Video ${i} source mismatch. Expected: ${videoSrc}, Got: ${videoRef.current[i].currentSrc}`);
+                      }
                       // Small delay to ensure smooth transition
                       setTimeout(() => {
                         if (videoRef.current[i] && i === videoId) {
@@ -471,6 +523,18 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
                           });
                         }
                       }, 100);
+                    }
+                  }}
+                  onWaiting={() => {
+                    // Video is buffering
+                    if (i === videoId) {
+                      console.log(`Video ${i} is buffering...`);
+                    }
+                  }}
+                  onStalled={() => {
+                    // Video loading stalled
+                    if (i === videoId) {
+                      console.warn(`Video ${i} loading stalled`);
                     }
                   }}
                   onPause={() => {
