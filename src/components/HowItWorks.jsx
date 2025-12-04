@@ -72,7 +72,7 @@ const HowItWorks = () => {
         <div className="section-card bg-zinc rounded-3xl p-6 md:p-10 lg:p-12">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
             {/* Left Section - Collapsible Items */}
-            <div className="flex-1 space-y-0">
+            <div className="flex-1 space-y-0 pb-4 lg:pb-0">
               {sections.map((section, index) => (
                 <div key={section.id} className="border-b border-gray-300 last:border-b-0">
                   <button
@@ -96,7 +96,7 @@ const HowItWorks = () => {
 
                   {/* Expanded Content */}
                   {expandedSection === section.id && (
-                    <div className="pb-4 md:pb-6 animate-fadeIn">
+                    <div className="pb-4 md:pb-6 mb-4 animate-fadeIn">
                       {section.comingSoon && (
                         <p className="text-gray text-sm md:text-base italic mb-3">
                           {section.comingSoon}
@@ -237,9 +237,9 @@ const HowItWorks = () => {
             )}
 
             {/* Mobile View - Images shown when sections are expanded */}
-            <div className="lg:hidden">
+            <div className="lg:hidden mt-8">
               {expandedSection === 'marketplace' && (
-                <div className="mt-6 relative">
+                <div className="relative">
                   {/* Desktop UI Mockup - Larger, positioned behind */}
                   <div className="w-full rounded-2xl overflow-hidden bg-white shadow-lg relative z-10">
                     <img
@@ -274,7 +274,7 @@ const HowItWorks = () => {
               )}
 
               {expandedSection === 'social' && (
-                <div className="mt-6">
+                <div>
                   <div className="grid grid-cols-2 gap-3">
                     {/* Left Card - Artwork Display */}
                     <div className="w-full rounded-2xl overflow-hidden bg-white shadow-lg">
@@ -313,7 +313,7 @@ const HowItWorks = () => {
               )}
 
               {expandedSection === 'studio' && (
-                <div className="mt-6 space-y-4">
+                <div className="space-y-4">
                   {/* Large Landscape Image - Art Studio */}
                   <div className="w-full rounded-2xl overflow-hidden bg-gray-300" style={{ aspectRatio: '16/9' }}>
                     <img
