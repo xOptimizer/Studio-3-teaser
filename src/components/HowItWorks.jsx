@@ -90,7 +90,7 @@ const HowItWorks = () => {
       <div className="screen-max-width">
         {/* Title */}
         <h2 className="explore-title text-black text-3xl md:text-4xl lg:text-5xl font-bold mb-8 md:mb-12">
-          About Studio
+          About Studio 3
         </h2>
 
         {/* Main Card */}
@@ -401,11 +401,10 @@ const HowItWorks = () => {
               {expandedSection === 'marketplace' && (
                 <div 
                   ref={(el) => (imageContainerRefs.current[2] = el)}
-                  className="mt-4 relative"
-                  style={{ minHeight: '400px' }}
+                  className="mt-4"
                 >
-                  {/* Desktop UI Mockup - Larger, positioned behind */}
-                  <div className="w-full device-frame-laptop relative z-10">
+                  {/* Desktop UI Mockup - Only show laptop in mobile view */}
+                  <div className="w-full device-frame-laptop">
                     <div className="device-screen">
                       <img
                         src="/assets/images/marketplace-desktop.jpg"
@@ -420,25 +419,6 @@ const HowItWorks = () => {
                       />
                       <div className="hidden w-full h-64 bg-white items-center justify-center text-gray text-sm border border-gray-300 rounded-2xl">
                         Marketplace Desktop Mockup
-                      </div>
-                    </div>
-                  </div>
-                  {/* Mobile UI Mockup - Smaller, positioned in front and slightly to the left, overlapping */}
-                  <div className="absolute bottom-0 left-0 w-36 device-frame-mobile -ml-3 -mb-3 z-20">
-                    <div className="device-screen">
-                      <img
-                        src="/assets/images/marketplace-mobile.jpg"
-                        alt="Marketplace Mobile"
-                        className="w-full h-auto object-contain"
-                        loading="lazy"
-                        decoding="async"
-                        onError={(e) => {
-                          e.target.style.display = 'none';
-                          e.target.nextElementSibling.style.display = 'flex';
-                        }}
-                      />
-                      <div className="hidden w-full h-56 bg-white items-center justify-center text-gray text-xs border border-gray-300 rounded-2xl">
-                        Mobile Mockup
                       </div>
                     </div>
                   </div>
