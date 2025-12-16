@@ -41,6 +41,15 @@ canvas {
   .flex-center {
     @apply flex items-center justify-center
   }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 
   .nav-height {
     @apply h-[calc(100vh-60px)]
@@ -133,7 +142,12 @@ canvas {
   }
 
   .video-carousel_container {
-    @apply relative max-w-full mx-auto
+    @apply relative max-w-full mx-auto;
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
   }
   
   @media (max-width: 640px) {
@@ -153,8 +167,8 @@ canvas {
   
   @media (min-width: 768px) {
     .video-carousel_container {
-      width: 70vw;
-      height: 70vh;
+      width: 90vw;
+      height: 80vh;
     }
   }
 
@@ -185,4 +199,71 @@ canvas {
 
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out;
+}
+
+/* Device Frames */
+.device-frame-mobile {
+  position: relative;
+  background: #1a1a1a;
+  border-radius: 24px;
+  padding: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.device-frame-mobile::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: #1a1a1a;
+  border-radius: 0 0 8px 8px;
+  z-index: 10;
+}
+
+.device-frame-mobile .device-screen {
+  border-radius: 16px;
+  overflow: hidden;
+  background: white;
+}
+
+.device-frame-laptop {
+  position: relative;
+  background: #2a2a2a;
+  border-radius: 12px;
+  padding: 12px 12px 40px 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.device-frame-laptop::before {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 4px;
+  background: #1a1a1a;
+  border-radius: 2px;
+  z-index: 10;
+}
+
+.device-frame-laptop::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(to bottom, #2a2a2a, #1a1a1a);
+  border-radius: 0 0 8px 8px;
+}
+
+.device-frame-laptop .device-screen {
+  border-radius: 8px;
+  overflow: hidden;
+  background: white;
 }

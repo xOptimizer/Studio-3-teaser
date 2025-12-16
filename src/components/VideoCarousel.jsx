@@ -42,11 +42,18 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
   }, []);
 
   useGSAP(() => {
+    // Optimize animation for mobile/iPad - faster and smoother
+    const isMobileDevice = window.innerWidth < 1024;
+    const animationDuration = isMobileDevice ? 0.6 : 1.2; // Faster on mobile
+    const easingFunction = isMobileDevice ? "power1.out" : "power2.inOut"; // Smoother easing for mobile
+    
     // slider animation to move the video out of the screen and bring the next video in
     gsap.to("#slider", {
-      transform: `translateX(${-100 * videoId}%)`,
-      duration: 2,
-      ease: "power2.inOut", // show visualizer https://gsap.com/docs/v3/Eases
+      x: `${-100 * videoId}%`, // Use 'x' instead of 'transform' for better performance
+      duration: animationDuration,
+      ease: easingFunction,
+      force3D: true, // Enable hardware acceleration
+      immediateRender: false,
     });
     
     // Notify parent of slide change
@@ -95,7 +102,7 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
             // set the background color of the progress bar
             gsap.to(span[videoId], {
               width: `${currentProgress}%`,
-              backgroundColor: "white",
+              backgroundColor: "black",
             });
           }
         },
@@ -107,7 +114,7 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
               width: "12px",
             });
             gsap.to(span[videoId], {
-              backgroundColor: "#afafaf",
+              backgroundColor: "black",
             });
           }
         },
@@ -173,7 +180,8 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
     const deltaY = Math.abs(touchY - touchStartY.current);
     
     // If horizontal swipe is more dominant, prevent vertical scroll
-    if (deltaX > deltaY && deltaX > 10) {
+    // Check if event is cancelable before preventing default
+    if (deltaX > deltaY && deltaX > 5 && e.cancelable) {
       e.preventDefault();
     }
   };
@@ -183,9 +191,37 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
     handleSwipe();
   };
 
+  // Add touch event listeners manually to control passive option
+  useEffect(() => {
+    const carousel = carouselRef.current;
+    if (!carousel) return;
+
+    const handleTouchMove = (e) => {
+      // Only prevent default if we have a valid touch start
+      if (touchStartX.current === 0 && touchStartY.current === 0) return;
+      
+      const touchX = e.touches[0].clientX;
+      const touchY = e.touches[0].clientY;
+      const deltaX = Math.abs(touchX - touchStartX.current);
+      const deltaY = Math.abs(touchY - touchStartY.current);
+      
+      // If horizontal swipe is more dominant, prevent vertical scroll
+      if (deltaX > deltaY && deltaX > 5) {
+        e.preventDefault();
+      }
+    };
+
+    // Add non-passive touchmove listener to allow preventDefault
+    carousel.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+    return () => {
+      carousel.removeEventListener('touchmove', handleTouchMove);
+    };
+  }, []);
+
   const handleSwipe = () => {
     const swipeDistance = touchStartX.current - touchEndX.current;
-    const minSwipeDistance = 50; // Minimum distance for a swipe
+    const minSwipeDistance = 30; // Reduced threshold for easier swiping on mobile
 
     if (Math.abs(swipeDistance) > minSwipeDistance) {
       if (swipeDistance > 0) {
@@ -298,17 +334,21 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
         ref={carouselRef}
         className="relative flex items-center w-full max-w-full px-2 sm:px-0"
         onTouchStart={handleSwipeStart}
-        onTouchMove={handleSwipeMove}
         onTouchEnd={handleSwipeEnd}
         style={{ touchAction: 'pan-y' }}
       >
-      <div className="flex items-center w-full overflow-hidden">
+      <div className="flex items-center w-full overflow-hidden" style={{ willChange: 'transform' }}>
         {hightlightsSlides.map((list, i) => (
-          <div key={list.id} id="slider" className="flex-shrink-0 w-full sm:pr-20 pr-4 sm:pl-0 pl-4">
+          <div 
+            key={list.id} 
+            id="slider" 
+            className="flex-shrink-0 w-full sm:pr-20 pr-4 sm:pl-0 pl-4"
+            style={{ willChange: 'transform', backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
+          >
             <div 
               className="video-carousel_container"
             >
-              <div className="w-full h-full rounded-3xl overflow-hidden bg-black">
+              <div className="w-full h-full rounded-lg overflow-hidden bg-black">
                 <video
                   key={`video-${list.id}-${isMobile ? 'mobile' : 'desktop'}-${isMobile ? list.videoMobile : list.video}`}
                   id="video"
@@ -355,12 +395,12 @@ const VideoCarousel = forwardRef(({ onPlayPauseChange, onSlideChange }, ref) => 
         </div>
       </div>
 
-      <div className="relative flex-center mt-8 md:mt-10 mb-4 md:mb-6">
+      <div className="relative flex-center mt-2 md:mt-4 mb-1 md:mb-2">
         <div className="flex-center gap-2 md:gap-3">
           {videoRef.current.map((_, i) => (
             <span
               key={i}
-              className="w-2.5 h-2.5 md:w-3 md:h-3 bg-gray-200 rounded-full relative cursor-pointer"
+              className="w-2.5 h-2.5 md:w-3 md:h-3 bg-gray-200 border border-gray-400 rounded-full relative cursor-pointer"
               ref={(el) => (videoDivRef.current[i] = el)}
             >
               <span

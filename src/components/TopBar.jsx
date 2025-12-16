@@ -19,12 +19,12 @@ const TopBar = ({ currentSlide = 0, totalSlides = 3 }) => {
           ))}
         </div>
 
-        {/* Logo right-aligned */}
-        <div className="ml-auto">
+        {/* Logo left-aligned */}
+        <div className="">
           <img 
             src={appleImg} 
-            alt="Apple"
-            className="w-10 h-auto sm:w-14 md:w-16 flex-shrink-0"
+            alt="Studio 3"
+            className="w-14 h-auto sm:w-16 md:w-20 lg:w-24 flex-shrink-0"
           />
         </div>
       </div>

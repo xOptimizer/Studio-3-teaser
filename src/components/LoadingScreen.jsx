@@ -168,26 +168,27 @@ const LoadingScreen = ({ onLoadingComplete }) => {
   }, [onLoadingComplete]);
 
   return (
-    <div className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center">
+    <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center">
       {/* Logo */}
       <div className="mb-8">
         <img 
           src={appleImg} 
-          alt="Apple" 
+          alt="Studio 3" 
           className="w-16 h-auto sm:w-20 md:w-24"
+          style={{ filter: 'brightness(0)' }}
         />
       </div>
 
       {/* Loading Bar Container */}
-      <div className="w-64 sm:w-80 md:w-96 h-1 bg-gray-300/20 rounded-full overflow-hidden">
+      <div className="w-64 sm:w-80 md:w-96 h-1 bg-gray-300/30 rounded-full overflow-hidden">
         <div 
-          className="h-full bg-gray-300 transition-all duration-300 ease-out rounded-full"
+          className="h-full bg-black transition-all duration-300 ease-out rounded-full"
           style={{ width: `${progress}%` }}
         />
       </div>
 
       {/* Progress Text */}
-      <p className="text-gray text-sm sm:text-base mt-4 font-light">
+      <p className="text-black text-sm sm:text-base mt-4 font-light">
         {progress}%
       </p>
     </div>
