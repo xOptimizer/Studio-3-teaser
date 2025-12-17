@@ -3,6 +3,7 @@ import TopBar from './components/TopBar';
 import Hero from './components/Hero';
 import HeroNew from './components/HeroNew';
 import VideoSection from './components/VideoSection';
+import QuoteSection from './components/QuoteSection';
 import Highlights from './components/Highlights';
 import Model from './components/Model';
 import Features from './components/Features';
@@ -29,6 +30,7 @@ const App = () => {
           {/* <Hero /> */}
           <HeroNew />
           <VideoSection />
+          <QuoteSection />
           {/* <Highlights onSlideChange={setCurrentSlide} /> */}
           {/* <Model /> */}
           {/* <Features /> */}

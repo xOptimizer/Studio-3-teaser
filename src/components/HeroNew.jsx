@@ -1,13 +1,16 @@
-import { useState } from 'react';
-
 const HeroNew = () => {
-  const [hoveredService, setHoveredService] = useState(null);
-
   const services = [
-    { name: 'The Social Discover', image: '/assets/images/social-left.jpg' },
-    { name: 'The Marketplace', image: '/assets/images/marketplace-desktop.jpg' },
-    { name: 'The Studio', image: '/assets/images/studio-main.jpg' },
+    { name: 'The Social Discover', sectionId: 'social-discover' },
+    { name: 'The Marketplace', sectionId: 'marketplace' },
+    { name: 'The Studio', sectionId: 'studio' },
   ];
+
+  const handleServiceClick = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   return (
     <section
@@ -29,7 +32,7 @@ const HeroNew = () => {
           </h1>
 
           <div className="flex gap-6 items-start">
-            {/* Services List Sub-column */}
+            {/* Services List */}
             <div className="flex-shrink-0">
               <ul className="space-y-3">
                 {services.map((service, index) => (
@@ -37,45 +40,20 @@ const HeroNew = () => {
                     key={index}
                     className="text-xl md:text-2xl text-black cursor-pointer"
                     style={{ fontWeight: 300 }}
-                    onMouseEnter={() => setHoveredService(index)}
-                    onMouseLeave={() => setHoveredService(null)}
+                    onClick={() => handleServiceClick(service.sectionId)}
                   >
-                    <span className="relative inline-flex items-center group">
+                    <span className="relative inline-flex items-center">
                       {/* Text */}
-                      <span className="transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-70">
+                      <span>
                         {service.name}
                       </span>
 
-                      {/* Underline */}
-                      <span className="absolute -bottom-1 left-0 w-0 h-px bg-black transition-all duration-300 group-hover:w-full" />
+                      {/* Underline - always visible */}
+                      <span className="absolute -bottom-1 left-0 w-full h-px bg-black" />
                     </span>
                   </li>
                 ))}
               </ul>
-            </div>
-
-            {/* Image Preview Sub-column */}
-            <div className="flex-1 min-w-0">
-              <div className="relative" style={{ minHeight: '200px' }}>
-                {services.map((service, index) => (
-                  <div
-                    key={index}
-                    className={`absolute top-0 left-0 transition-all duration-300 ease-out ${
-                      hoveredService === index
-                        ? 'opacity-100 translate-x-0 scale-100 z-10'
-                        : 'opacity-0 translate-x-4 scale-95 z-0 pointer-events-none'
-                    }`}
-                  >
-                    <div className="bg-white rounded-lg shadow-2xl border border-gray-200 p-2">
-                      <img
-                        src={service.image}
-                        alt={service.name}
-                        className="block max-w-[240px] max-h-[240px] object-contain"
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>

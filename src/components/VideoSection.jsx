@@ -1,19 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { studioVideo } from '../utils';
 
 const VideoSection = () => {
   const videoRef = useRef(null);
+  const retryCountRef = useRef(0);
+  const [videoSrc, setVideoSrc] = useState(studioVideo);
 
   useEffect(() => {
     if (videoRef.current) {
       const video = videoRef.current;
-      
-      const handleTimeUpdate = () => {
-        if (video.currentTime >= 15) {
-          video.pause();
-          video.currentTime = 15;
-        }
-      };
 
       const handleLoadedMetadata = () => {
         // Video metadata loaded - try to play (important for production)
@@ -36,17 +31,33 @@ const VideoSection = () => {
       };
 
       const handleError = (e) => {
-        console.error('Video error:', e.target.error);
+        const error = e.target.error;
+        console.error('Video error:', error);
         console.error('Video error details:', {
-          code: e.target.error?.code,
-          message: e.target.error?.message,
+          code: error?.code,
+          message: error?.message,
           readyState: e.target.readyState,
           networkState: e.target.networkState,
           src: e.target.currentSrc || e.target.src
         });
+
+        // If blocked by client (ad blocker) or network error, try direct path
+        if ((error?.code === 4 || error?.code === 2) && retryCountRef.current === 0) {
+          console.log('Attempting to load video with direct path...');
+          // Try using direct path as fallback
+          const directPath = '/assets/videos/Final (2).mp4';
+          retryCountRef.current = 1;
+          setVideoSrc(directPath);
+          // Force reload
+          setTimeout(() => {
+            if (videoRef.current) {
+              videoRef.current.load();
+            }
+          }, 100);
+        }
       };
 
-      video.addEventListener('timeupdate', handleTimeUpdate);
+
       video.addEventListener('loadedmetadata', handleLoadedMetadata);
       video.addEventListener('canplay', handleCanPlay);
       video.addEventListener('error', handleError);
@@ -59,13 +70,12 @@ const VideoSection = () => {
       }
 
       return () => {
-        video.removeEventListener('timeupdate', handleTimeUpdate);
         video.removeEventListener('loadedmetadata', handleLoadedMetadata);
         video.removeEventListener('canplay', handleCanPlay);
         video.removeEventListener('error', handleError);
       };
     }
-  }, []);
+  }, [videoSrc]);
 
   return (
     <section
@@ -110,14 +120,23 @@ const VideoSection = () => {
             }
           }}
           onError={(e) => {
-            console.error('Video error (inline):', e.target.error, {
+            const error = e.target.error;
+            console.error('Video error (inline):', error, {
               src: e.target.currentSrc || e.target.src,
               readyState: e.target.readyState,
               networkState: e.target.networkState
             });
+            
+            // If blocked by client (ad blocker) or network error, try direct path
+            if ((error?.code === 4 || error?.code === 2) && retryCountRef.current === 0) {
+              console.log('Attempting to load video with direct path (from inline handler)...');
+              const directPath = '/assets/videos/Final (2).mp4';
+              retryCountRef.current = 1;
+              setVideoSrc(directPath);
+            }
           }}
         >
-          <source src={studioVideo} type="video/mp4" />
+          <source src={videoSrc} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </div>
