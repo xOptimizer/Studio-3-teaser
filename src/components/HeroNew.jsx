@@ -11,7 +11,7 @@ const HeroNew = () => {
 
   return (
     <section
-      className="w-full bg-[#faf8f3] min-h-screen flex items-center justify-center pt-4 pb-24 px-8 md:px-12 lg:px-20 xl:px-32"
+      className="w-full bg-[#faf8f3] min-h-screen flex items-center justify-center pt-4 pb-12 px-8 md:px-12 lg:px-20 xl:px-32"
       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
     >
       <div className="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
@@ -21,8 +21,8 @@ const HeroNew = () => {
           <h1
             className="text-5xl md:text-6xl lg:text-7xl mb-16 md:mb-20 text-black tracking-tight transition-all duration-300 hover:opacity-80 hover:translate-x-1"
             style={{
-              fontFamily: "'Cormorant Garamond', serif",
               fontWeight: 400,
+              letterSpacing: '-0.02em',
             }}
           >
             About Studio 3
@@ -96,13 +96,10 @@ const HeroNew = () => {
             className="text-lg md:text-xl text-black leading-relaxed max-w-2xl transition-opacity duration-300 hover:opacity-75"
             style={{ fontWeight: 300 }}
           >
-            The outside is in all of us, but the outdoorsy world of hiking boots and
-            mountain peaks can be intimidating. As an app built and curated by the
-            community, AllTrails helps people plan, live, and share their next outdoor
-            adventure — whether that's a hike up a mountain or a stroll around the
-            neighborhood. Our brand system leverages a path framing outside stories big
-            and small along with inclusive imagery to awaken the outside people in all
-            of us.
+            Studio 3 is a creative platform built for emerging independent artists.
+            Mainstream platforms reward engagement, trends, and performance, burying meaningful work beneath viral noise. Galleries offer visibility, but often through conventional paths to visibility that limit access and reduce the share artists keep from their own work.
+            <br /><br />
+            <span style={{ fontWeight: 700 }}>Studio 3 changes that.</span>
           </p>
         </div>
       </div>
