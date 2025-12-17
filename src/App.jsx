@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import TopBar from './components/TopBar';
 import Hero from './components/Hero';
+import HeroNew from './components/HeroNew';
 import Highlights from './components/Highlights';
 import Model from './components/Model';
 import Features from './components/Features';
@@ -25,6 +26,7 @@ const App = () => {
         <>
           <TopBar currentSlide={currentSlide} totalSlides={3} />
           {/* <Hero /> */}
+          <HeroNew />
           <Highlights onSlideChange={setCurrentSlide} />
           {/* <Model /> */}
           {/* <Features /> */}
