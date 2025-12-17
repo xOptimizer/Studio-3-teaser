@@ -24,7 +24,7 @@ const App = () => {
       {!isLoading && (
         <>
           <TopBar currentSlide={currentSlide} totalSlides={3} />
-          <Hero />
+          {/* <Hero /> */}
           <Highlights onSlideChange={setCurrentSlide} />
           {/* <Model /> */}
           {/* <Features /> */}

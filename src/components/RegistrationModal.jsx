@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
 const RegistrationModal = ({ isOpen, onClose }) => {
+  const overlayRef = useRef(null);
+  const contentRef = useRef(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,12 +18,14 @@ const RegistrationModal = ({ isOpen, onClose }) => {
   const [submitStatus, setSubmitStatus] = useState(null);
 
   useGSAP(() => {
+    if (!overlayRef.current || !contentRef.current) return;
+    
     if (isOpen) {
-      gsap.to('.modal-overlay', { opacity: 1, duration: 0.3 });
-      gsap.to('.modal-content', { scale: 1, opacity: 1, duration: 0.4, ease: 'power2.out' });
+      gsap.to(overlayRef.current, { opacity: 1, duration: 0.3 });
+      gsap.to(contentRef.current, { scale: 1, opacity: 1, duration: 0.4, ease: 'power2.out' });
     } else {
-      gsap.to('.modal-overlay', { opacity: 0, duration: 0.2 });
-      gsap.to('.modal-content', { scale: 0.95, opacity: 0, duration: 0.2 });
+      gsap.to(overlayRef.current, { opacity: 0, duration: 0.2 });
+      gsap.to(contentRef.current, { scale: 0.95, opacity: 0, duration: 0.2 });
     }
   }, [isOpen]);
 
@@ -88,12 +92,18 @@ const RegistrationModal = ({ isOpen, onClose }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Overlay */}
       <div 
+        ref={overlayRef}
         className="modal-overlay fixed inset-0 bg-black bg-opacity-80 backdrop-blur-md"
         onClick={onClose}
+        style={{ opacity: 0 }}
       />
       
       {/* Modal Content */}
-      <div className="modal-content relative z-10 bg-zinc rounded-3xl p-8 md:p-10 lg:p-12 w-full max-w-4xl mx-4 transform scale-95 opacity-0 border border-gray-300 shadow-2xl overflow-y-auto md:overflow-visible md:max-h-none" style={{ maxHeight: '90vh' }}>
+      <div 
+        ref={contentRef}
+        className="modal-content relative z-10 bg-zinc rounded-3xl p-8 md:p-10 lg:p-12 w-full max-w-4xl mx-4 transform scale-95 opacity-0 border border-gray-300 shadow-2xl overflow-y-auto md:overflow-visible md:max-h-none" 
+        style={{ maxHeight: '90vh' }}
+      >
         <button
           onClick={onClose}
           className="absolute top-6 right-6 text-gray hover:text-white transition-colors text-3xl leading-none w-8 h-8 flex-center"
