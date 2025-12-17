@@ -13,6 +13,7 @@ import highlightThirdMobilemv from "/assets/videos/hightlight-third-mobile.mp4";
 import highlightFourthmv from "/assets/videos/hightlight-fourth.mp4";
 import exploremv from "/assets/videos/explore.mp4";
 import framemv from "/assets/videos/frame.mp4";
+import studiomv from "/assets/videos/Final (2).mp4";
 
 import apple from "/assets/images/apple.svg";
 import search from "/assets/images/search.svg";
@@ -43,6 +44,7 @@ export const highlightThirdVideoMobile = highlightThirdMobilemv;
 export const highlightFourthVideo = highlightFourthmv;
 export const exploreVideo = exploremv;
 export const frameVideo = framemv;
+export const studioVideo = studiomv;
 
 export const appleImg = apple;
 export const searchImg = search;

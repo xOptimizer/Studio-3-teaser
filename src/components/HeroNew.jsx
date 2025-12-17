@@ -28,49 +28,56 @@ const HeroNew = () => {
             About Studio 3
           </h1>
 
-          <ul className="space-y-3">
-            {services.map((service, index) => (
-              <li
-                key={index}
-                className="text-xl md:text-2xl text-black cursor-pointer"
-                style={{ fontWeight: 300 }}
-                onMouseEnter={() => setHoveredService(index)}
-                onMouseLeave={() => setHoveredService(null)}
-              >
-                <span className="relative inline-flex items-center group">
-                  {/* Text */}
-                  <span className="transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-70">
-                    {service.name}
-                  </span>
-
-                  {/* Underline */}
-                  <span className="absolute -bottom-1 left-0 w-0 h-px bg-black transition-all duration-300 group-hover:w-full" />
-
-                  {/* Tooltip */}
-                  <span
-                    className={`absolute top-1/2 left-full ml-6 z-40 pointer-events-none transition-all duration-300 ease-out
-                      ${
-                        hoveredService === index
-                          ? 'opacity-100 translate-x-0 scale-100'
-                          : 'opacity-0 translate-x-2 scale-95'
-                      }`}
-                    style={{ transform: 'translateY(-50%)' }}
+          <div className="flex gap-6 items-start">
+            {/* Services List Sub-column */}
+            <div className="flex-shrink-0">
+              <ul className="space-y-3">
+                {services.map((service, index) => (
+                  <li
+                    key={index}
+                    className="text-xl md:text-2xl text-black cursor-pointer"
+                    style={{ fontWeight: 300 }}
+                    onMouseEnter={() => setHoveredService(index)}
+                    onMouseLeave={() => setHoveredService(null)}
                   >
-                    <span className="relative block bg-white rounded-lg shadow-2xl border border-gray-200 p-2">
+                    <span className="relative inline-flex items-center group">
+                      {/* Text */}
+                      <span className="transition-all duration-300 group-hover:translate-x-1 group-hover:opacity-70">
+                        {service.name}
+                      </span>
+
+                      {/* Underline */}
+                      <span className="absolute -bottom-1 left-0 w-0 h-px bg-black transition-all duration-300 group-hover:w-full" />
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Image Preview Sub-column */}
+            <div className="flex-1 min-w-0">
+              <div className="relative" style={{ minHeight: '200px' }}>
+                {services.map((service, index) => (
+                  <div
+                    key={index}
+                    className={`absolute top-0 left-0 transition-all duration-300 ease-out ${
+                      hoveredService === index
+                        ? 'opacity-100 translate-x-0 scale-100 z-10'
+                        : 'opacity-0 translate-x-4 scale-95 z-0 pointer-events-none'
+                    }`}
+                  >
+                    <div className="bg-white rounded-lg shadow-2xl border border-gray-200 p-2">
                       <img
                         src={service.image}
                         alt={service.name}
-                        className="block max-w-[260px] max-h-[260px] object-contain"
+                        className="block max-w-[240px] max-h-[240px] object-contain"
                       />
-
-                      {/* Arrow */}
-                      <span className="absolute left-0 top-1/2 -translate-x-2 -translate-y-1/2 w-0 h-0 border-t-8 border-b-8 border-r-8 border-transparent border-r-white" />
-                    </span>
-                  </span>
-                </span>
-              </li>
-            ))}
-          </ul>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Right Column */}
