@@ -29,10 +29,10 @@ const App = () => {
           {/* <Hero /> */}
           <HeroNew />
           <VideoSection />
-          <Highlights onSlideChange={setCurrentSlide} />
+          {/* <Highlights onSlideChange={setCurrentSlide} /> */}
           {/* <Model /> */}
           {/* <Features /> */}
-          <HowItWorks />
+          {/* <HowItWorks /> */}
           {/* <Footer /> */}
         </>
       )}
