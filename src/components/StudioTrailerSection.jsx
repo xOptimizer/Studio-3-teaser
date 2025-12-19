@@ -1,10 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { studioVideo } from '../utils';
+import { highlightThirdVideo } from '../utils';
 
-const VideoSection = () => {
+const StudioTrailerSection = () => {
   const videoRef = useRef(null);
   const retryCountRef = useRef(0);
-  const [videoSrc, setVideoSrc] = useState(studioVideo);
+  const [videoSrc, setVideoSrc] = useState(highlightThirdVideo);
+  const [videoKey, setVideoKey] = useState(0);
+
+  // Force video reload when source changes
+  useEffect(() => {
+    setVideoKey(prev => prev + 1);
+  }, [videoSrc]);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -45,9 +51,10 @@ const VideoSection = () => {
         if ((error?.code === 4 || error?.code === 2) && retryCountRef.current === 0) {
           console.log('Attempting to load video with direct path...');
           // Try using direct path as fallback
-          const directPath = '/assets/videos/Final (2).mp4';
+          const directPath = '/assets/videos/hightlight-sec.mp4';
           retryCountRef.current = 1;
           setVideoSrc(directPath);
+          setVideoKey(prev => prev + 1); // Force video element to reload
           // Force reload
           setTimeout(() => {
             if (videoRef.current) {
@@ -94,6 +101,7 @@ const VideoSection = () => {
         }}
       >
         <video
+          key={videoKey}
           ref={videoRef}
           className="w-full h-full object-cover"
           autoPlay
@@ -130,13 +138,14 @@ const VideoSection = () => {
             // If blocked by client (ad blocker) or network error, try direct path
             if ((error?.code === 4 || error?.code === 2) && retryCountRef.current === 0) {
               console.log('Attempting to load video with direct path (from inline handler)...');
-              const directPath = '/assets/videos/Final (2).mp4';
+              const directPath = '/assets/videos/hightlight-sec.mp4';
               retryCountRef.current = 1;
               setVideoSrc(directPath);
+              setVideoKey(prev => prev + 1); // Force video element to reload
             }
           }}
         >
-          <source src={videoSrc} type="video/mp4" />
+          <source src={`${videoSrc}?v=${videoKey}`} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </div>
@@ -144,5 +153,5 @@ const VideoSection = () => {
   );
 };
 
-export default VideoSection;
+export default StudioTrailerSection;
 
