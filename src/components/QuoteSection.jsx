@@ -2,16 +2,40 @@ import { useState, useRef, useEffect } from 'react';
 
 const QuoteSection = () => {
   const [activeTab, setActiveTab] = useState('artists');
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0); // For mobile carousel - tracks which image in the active tab
   const carouselRef = useRef(null);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
 
-  const slides = [
+  const tabs = [
     { title: 'Artists', id: 'artists' },
     { title: 'Buyers & Collectors', id: 'buyers' },
     { title: 'Enthusiasts', id: 'enthusiasts' }
   ];
+
+  // 9 images total - 3 for each tab
+  const images = {
+    artists: [
+      { id: 1, placeholder: 'Artists Image 1' },
+      { id: 2, placeholder: 'Artists Image 2' },
+      { id: 3, placeholder: 'Artists Image 3' }
+    ],
+    buyers: [
+      { id: 4, placeholder: 'Buyers Image 1' },
+      { id: 5, placeholder: 'Buyers Image 2' },
+      { id: 6, placeholder: 'Buyers Image 3' }
+    ],
+    enthusiasts: [
+      { id: 7, placeholder: 'Enthusiasts Image 1' },
+      { id: 8, placeholder: 'Enthusiasts Image 2' },
+      { id: 9, placeholder: 'Enthusiasts Image 3' }
+    ]
+  };
+
+  // Reset image index when tab changes
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [activeTab]);
 
   // Handle touch events for swipe
   const handleTouchStart = (e) => {
@@ -27,13 +51,14 @@ const QuoteSection = () => {
     
     const distance = touchStartX.current - touchEndX.current;
     const minSwipeDistance = 50;
+    const currentImages = images[activeTab];
 
-    if (distance > minSwipeDistance && currentSlide < slides.length - 1) {
-      // Swipe left - next slide
-      setCurrentSlide(currentSlide + 1);
-    } else if (distance < -minSwipeDistance && currentSlide > 0) {
-      // Swipe right - previous slide
-      setCurrentSlide(currentSlide - 1);
+    if (distance > minSwipeDistance && currentImageIndex < currentImages.length - 1) {
+      // Swipe left - next image
+      setCurrentImageIndex(currentImageIndex + 1);
+    } else if (distance < -minSwipeDistance && currentImageIndex > 0) {
+      // Swipe right - previous image
+      setCurrentImageIndex(currentImageIndex - 1);
     }
 
     // Reset
@@ -85,27 +110,30 @@ const QuoteSection = () => {
           </p>
         </div>
 
-        {/* Desktop: Three Columns | Mobile: Carousel */}
-        {/* Desktop View */}
+        {/* Desktop: Three Columns with Headings */}
         <div className="hidden md:flex justify-center">
-          {slides.map((slide, index) => (
-            <div key={slide.id} className="flex flex-col items-center" style={{ marginRight: index < slides.length - 1 ? '48px' : '0' }}>
-              <h3 
-                className="text-black"
+          {tabs.map((tab, tabIndex) => (
+            <div key={tab.id} className="flex flex-col items-center" style={{ marginRight: tabIndex < tabs.length - 1 ? '48px' : '0' }}>
+              <button
+                onClick={() => setActiveTab(tab.id)}
+                className="transition-all duration-200 cursor-pointer"
                 style={{
                   fontFamily: "'Inter', sans-serif",
                   fontWeight: 600,
                   fontSize: '24pt',
-                  color: '#000',
-                  borderBottom: '2px solid #000',
+                  color: activeTab === tab.id ? '#000' : '#848597',
+                  borderBottom: activeTab === tab.id ? '2px solid #000' : '2px solid #848597',
                   paddingBottom: '8px',
                   marginBottom: '16px',
                   width: '380px',
-                  textAlign: 'center'
+                  textAlign: 'center',
+                  background: 'none',
+                  border: 'none',
+                  outline: 'none'
                 }}
               >
-                {slide.title}
-              </h3>
+                {tab.title}
+              </button>
               <div 
                 className="rounded-lg overflow-hidden flex-shrink-0"
                 style={{
@@ -116,14 +144,14 @@ const QuoteSection = () => {
                 }}
               >
                 <div className="w-full h-full flex items-center justify-center text-gray-400">
-                  <span>Image Placeholder</span>
+                  <span>{images[activeTab][tabIndex]?.placeholder || 'Image Placeholder'}</span>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Mobile Carousel */}
+        {/* Mobile Carousel - Shows tabs with headings and images */}
         <div 
           ref={carouselRef}
           className="md:hidden relative overflow-hidden"
@@ -134,11 +162,11 @@ const QuoteSection = () => {
           <div 
             className="flex transition-transform duration-300 ease-out"
             style={{
-              transform: `translateX(-${currentSlide * 100}%)`
+              transform: `translateX(-${currentImageIndex * 100}%)`
             }}
           >
-            {slides.map((slide) => (
-              <div key={slide.id} className="flex flex-col items-center flex-shrink-0 w-full px-4">
+            {images[activeTab].map((image) => (
+              <div key={image.id} className="flex flex-col items-center flex-shrink-0 w-full px-4">
                 <h3 
                   className="text-black w-full"
                   style={{
@@ -152,7 +180,7 @@ const QuoteSection = () => {
                     textAlign: 'center'
                   }}
                 >
-                  {slide.title}
+                  {tabs.find(t => t.id === activeTab)?.title}
                 </h3>
                 <div 
                   className="rounded-lg overflow-hidden flex-shrink-0 w-full max-w-[380px] mx-auto"
@@ -163,23 +191,48 @@ const QuoteSection = () => {
                   }}
                 >
                   <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    <span>Image Placeholder</span>
+                    <span>{image.placeholder}</span>
                   </div>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Carousel Indicators */}
-          <div className="flex justify-center gap-2 mt-6">
-            {slides.map((_, index) => (
+          {/* Tab Buttons for Mobile - Below carousel */}
+          <div className="flex justify-center gap-4 mt-6 mb-4">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className="text-black transition-all duration-200"
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontWeight: 600,
+                  fontSize: 'clamp(14pt, 3vw, 16pt)',
+                  color: activeTab === tab.id ? '#000' : '#848597',
+                  borderBottom: activeTab === tab.id ? '2px solid #000' : '2px solid transparent',
+                  paddingBottom: '8px',
+                  cursor: 'pointer',
+                  background: 'none',
+                  border: 'none',
+                  outline: 'none'
+                }}
+              >
+                {tab.title}
+              </button>
+            ))}
+          </div>
+
+          {/* Carousel Indicators - Shows dots for images in active tab */}
+          <div className="flex justify-center gap-2 mt-2">
+            {images[activeTab].map((_, index) => (
               <button
                 key={index}
-                onClick={() => setCurrentSlide(index)}
+                onClick={() => setCurrentImageIndex(index)}
                 className={`w-2 h-2 rounded-full transition-all ${
-                  index === currentSlide ? 'bg-black w-8' : 'bg-gray-400'
+                  index === currentImageIndex ? 'bg-black w-8' : 'bg-gray-400'
                 }`}
-                aria-label={`Go to slide ${index + 1}`}
+                aria-label={`Go to image ${index + 1}`}
               />
             ))}
           </div>

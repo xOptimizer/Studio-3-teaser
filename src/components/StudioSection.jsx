@@ -90,7 +90,7 @@ const StudioSection = () => {
       style={{ 
         fontFamily: "'Inter', sans-serif", 
         scrollSnapAlign: 'start',
-        backgroundColor: '#222222'
+        background: 'linear-gradient(to bottom, #F7F7F7, #EDEDED)'
       }}
     >
       <div className="w-full flex flex-col items-center">
@@ -103,7 +103,7 @@ const StudioSection = () => {
               fontWeight: 700,
               fontSize: '24pt',
               lineHeight: '1.2',
-              color: '#FFFFFF'
+              color: '#000'
             }}
           >
             The Studio
@@ -191,7 +191,7 @@ const StudioSection = () => {
               color: '#848597'
             }}
           >
-            Our flagship <strong style={{ color: '#FFFFFF' }}>Dallas</strong> studio blends creation, community, and wellness - a true <strong style={{ color: '#FFFFFF' }}>third space</strong> for creatives.
+            Our flagship <strong style={{ color: '#000' }}>Dallas</strong> studio blends creation, community, and wellness - a true <strong style={{ color: '#000' }}>third space</strong> for creatives.
           </p>
         </div>
       </div>

@@ -1,4 +1,121 @@
+import { useState, useEffect, useRef } from 'react';
+
 const MarketplaceSection = () => {
+  const [activeFeature, setActiveFeature] = useState(0);
+  const featureRefs = useRef([]);
+  const listContainerRef = useRef(null);
+
+  const features = [
+    {
+      id: 1,
+      title: 'Create with confidence',
+      placeholder: 'Create with confidence Image',
+      fontWeight: 600,
+      color: '#000'
+    },
+    {
+      id: 2,
+      title: 'Quality supplies, no markups',
+      placeholder: 'Quality supplies Image',
+      fontWeight: 400,
+      color: '#848597'
+    },
+    {
+      id: 3,
+      title: 'AI-Powered commerce',
+      placeholder: 'AI-Powered commerce Image',
+      fontWeight: 400,
+      color: '#848597'
+    }
+  ];
+
+  // Intersection Observer to detect which feature is in view
+  useEffect(() => {
+    const container = listContainerRef.current;
+    if (!container) return;
+
+    // Method 1: Intersection Observer (works when container is scrollable)
+    const observers = featureRefs.current.map((ref, index) => {
+      if (!ref) return null;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setActiveFeature(index);
+            }
+          });
+        },
+        {
+          root: container,
+          threshold: 0.6,
+          rootMargin: '-30% 0px -30% 0px'
+        }
+      );
+
+      observer.observe(ref);
+      return observer;
+    });
+
+    // Method 2: Scroll event listener (fallback for viewport scrolling)
+    const handleScroll = () => {
+      const containerRect = container.getBoundingClientRect();
+      const containerCenter = containerRect.top + containerRect.height / 2;
+
+      featureRefs.current.forEach((ref, index) => {
+        if (!ref) return;
+        const refRect = ref.getBoundingClientRect();
+        const refCenter = refRect.top + refRect.height / 2;
+
+        // Check if this feature's center is closest to container center
+        if (Math.abs(refCenter - containerCenter) < refRect.height / 2) {
+          setActiveFeature(index);
+        }
+      });
+    };
+
+    // Use viewport-based intersection observer as fallback
+    const viewportObservers = featureRefs.current.map((ref, index) => {
+      if (!ref) return null;
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              // Check if it's in the center area of viewport
+              const rect = entry.boundingClientRect;
+              const viewportCenter = window.innerHeight / 2;
+              const elementCenter = rect.top + rect.height / 2;
+              
+              if (Math.abs(elementCenter - viewportCenter) < rect.height) {
+                setActiveFeature(index);
+              }
+            }
+          });
+        },
+        {
+          threshold: 0.5,
+          rootMargin: '-30% 0px -30% 0px'
+        }
+      );
+
+      observer.observe(ref);
+      return observer;
+    });
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      observers.forEach((observer) => {
+        if (observer) observer.disconnect();
+      });
+      viewportObservers.forEach((observer) => {
+        if (observer) observer.disconnect();
+      });
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <section
       id="marketplace"
@@ -48,7 +165,16 @@ const MarketplaceSection = () => {
         {/* Feature List and Placeholder Row */}
         <div className="flex items-center" style={{ marginBottom: '48px' }}>
           {/* Left Column - Feature List */}
-          <div className="flex-1 flex items-center" style={{ marginRight: '24px', minHeight: '650px' }}>
+          <div 
+            ref={listContainerRef}
+            className="flex-1 flex items-center overflow-y-auto" 
+            style={{ 
+              marginRight: '24px', 
+              minHeight: '650px',
+              maxHeight: '650px',
+              scrollBehavior: 'smooth'
+            }}
+          >
             <div className="flex flex-col w-full">
               {/* Top Line */}
               <div 
@@ -60,60 +186,44 @@ const MarketplaceSection = () => {
                 }}
               />
               <ul className="flex flex-col w-full">
-                <li className="flex flex-col" style={{ marginBottom: '24px' }}>
-                  <span 
-                    style={{
-                      fontFamily: "'Inter', sans-serif",
-                      fontWeight: 600,
-                      fontSize: '28pt',
-                      color: '#000'
+                {features.map((feature, index) => (
+                  <li 
+                    key={feature.id}
+                    ref={(el) => (featureRefs.current[index] = el)}
+                    className="flex flex-col transition-all duration-300 cursor-pointer"
+                    style={{ 
+                      marginBottom: index < features.length - 1 ? '24px' : '0',
+                      opacity: activeFeature === index ? 1 : 0.6
+                    }}
+                    onMouseEnter={() => setActiveFeature(index)}
+                    onMouseLeave={() => {
+                      // Optional: You can keep the hover state or revert to scroll-based
+                      // For now, we'll keep it on hover for better UX
                     }}
                   >
-                    Create with confidence
-                  </span>
-                  <div 
-                    style={{
-                      width: '100%',
-                      height: '1px',
-                      backgroundColor: '#848597',
-                      marginTop: '24px'
-                    }}
-                  />
-                </li>
-                <li className="flex flex-col" style={{ marginBottom: '24px' }}>
-                  <span 
-                    style={{
-                      fontFamily: "'Inter', sans-serif",
-                      fontWeight: 400,
-                      fontSize: '28pt',
-                      color: '#666',
-                      marginLeft: '0px'
-                    }}
-                  >
-                    Quality supplies, no markups
-                  </span>
-                  <div 
-                    style={{
-                      width: '100%',
-                      height: '1px',
-                      backgroundColor: '#848597',
-                      marginTop: '24px'
-                    }}
-                  />
-                </li>
-                <li className="flex flex-col">
-                  <span 
-                    style={{
-                      fontFamily: "'Inter', sans-serif",
-                      fontWeight: 400,
-                      fontSize: '28pt',
-                      color: '#666',
-                      marginLeft: '0px'
-                    }}
-                  >
-                    AI-Powered commerce
-                  </span>
-                </li>
+                    <span 
+                      style={{
+                        fontFamily: "'Inter', sans-serif",
+                        fontWeight: activeFeature === index ? 600 : feature.fontWeight,
+                        fontSize: '28pt',
+                        color: activeFeature === index ? '#000' : feature.color,
+                        transition: 'all 0.3s ease'
+                      }}
+                    >
+                      {feature.title}
+                    </span>
+                    {index < features.length - 1 && (
+                      <div 
+                        style={{
+                          width: '100%',
+                          height: '1px',
+                          backgroundColor: '#848597',
+                          marginTop: '24px'
+                        }}
+                      />
+                    )}
+                  </li>
+                ))}
               </ul>
               {/* Bottom Line */}
               <div 
@@ -130,7 +240,7 @@ const MarketplaceSection = () => {
           {/* Right Column - Placeholder */}
           <div className="flex-shrink-0">
             <div 
-              className="rounded-lg"
+              className="rounded-lg transition-all duration-500"
               style={{
                 width: '712px',
                 height: '650px',
@@ -139,7 +249,7 @@ const MarketplaceSection = () => {
               }}
             >
               <div className="w-full h-full flex items-center justify-center text-gray-400">
-                <span>Placeholder</span>
+                <span>{features[activeFeature]?.placeholder || 'Placeholder'}</span>
               </div>
             </div>
           </div>
