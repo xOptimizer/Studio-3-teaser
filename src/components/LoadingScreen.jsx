@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { appleImg } from '../utils';
 import { heroVideo, smallHeroVideo } from '../utils';
 import { highlightFirstVideo, highlightFirstVideoMobile, highlightSecondVideo, highlightSecondVideoMobile, highlightThirdVideo, highlightThirdVideoMobile } from '../utils';
 
@@ -28,9 +27,7 @@ const LoadingScreen = ({ onLoadingComplete }) => {
         '/assets/images/poolside.jpg',
         '/assets/images/wellness.jpg',
         // Hero fallback image
-        '/assets/images/hero.jpeg',
-        // TopBar logo
-        appleImg
+        '/assets/images/hero.jpeg'
       ];
 
       let loaded = 0;
@@ -169,14 +166,32 @@ const LoadingScreen = ({ onLoadingComplete }) => {
 
   return (
     <div className="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center">
-      {/* Logo */}
-      <div className="mb-8">
-        <img 
-          src={appleImg} 
-          alt="Studio 3" 
-          className="w-16 h-auto sm:w-20 md:w-24"
-          style={{ filter: 'brightness(0)' }}
-        />
+      {/* Three Dots Menu Icon + Studio 3 */}
+      <div className="flex items-center gap-4 mb-8">
+        {/* Circular Menu Icon */}
+        <div 
+          className="w-12 h-12 rounded-full bg-white flex items-center justify-center flex-shrink-0"
+          style={{ border: '1px solid #000' }}
+        >
+          <div className="flex items-center gap-1.5">
+            <div className="w-1.5 h-1.5 rounded-full bg-black"></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-black"></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-black"></div>
+          </div>
+        </div>
+        
+        {/* Studio 3 Text */}
+        <h1 
+          className="text-black whitespace-nowrap"
+          style={{ 
+            fontFamily: "'Josefin Sans', sans-serif",
+            fontWeight: 700,
+            fontSize: '100pt',
+            lineHeight: '1.1'
+          }}
+        >
+          studio 3
+        </h1>
       </div>
 
       {/* Loading Bar Container */}

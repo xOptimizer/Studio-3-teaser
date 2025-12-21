@@ -1,31 +1,198 @@
+import { useEffect, useRef, useState } from 'react';
+import { highlightThirdVideo } from '../utils';
+
 const StudioSection = () => {
+  const videoRef = useRef(null);
+  const retryCountRef = useRef(0);
+  const [videoSrc, setVideoSrc] = useState(highlightThirdVideo);
+  const [videoKey, setVideoKey] = useState(0);
+
+  // Force video reload when source changes
+  useEffect(() => {
+    setVideoKey(prev => prev + 1);
+  }, [videoSrc]);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      const video = videoRef.current;
+      
+      const handleLoadedMetadata = () => {
+        // Video metadata loaded - try to play (important for production)
+        if (video.readyState >= 2) {
+          video.play().catch(err => {
+            console.log('Video play error on loadedmetadata:', err);
+          });
+        }
+      };
+
+      const handleCanPlay = () => {
+        // Video is ready to play - ensure it plays (critical for production)
+        if (video.paused) {
+          setTimeout(() => {
+            video.play().catch(err => {
+              console.log('Video play error on canplay:', err);
+            });
+          }, 100);
+        }
+      };
+
+      const handleError = (e) => {
+        const error = e.target.error;
+        console.error('Video error:', error);
+        console.error('Video error details:', {
+          code: error?.code,
+          message: error?.message,
+          readyState: e.target.readyState,
+          networkState: e.target.networkState,
+          src: e.target.currentSrc || e.target.src
+        });
+
+        // If blocked by client (ad blocker) or network error, try direct path
+        if ((error?.code === 4 || error?.code === 2) && retryCountRef.current === 0) {
+          console.log('Attempting to load video with direct path...');
+          // Try using direct path as fallback
+          const directPath = '/assets/videos/hightlight-sec.mp4';
+          retryCountRef.current = 1;
+          setVideoSrc(directPath);
+          setVideoKey(prev => prev + 1); // Force video element to reload
+          // Force reload
+          setTimeout(() => {
+            if (videoRef.current) {
+              videoRef.current.load();
+            }
+          }, 100);
+        }
+      };
+
+      video.addEventListener('loadedmetadata', handleLoadedMetadata);
+      video.addEventListener('canplay', handleCanPlay);
+      video.addEventListener('error', handleError);
+      
+      // Try to play immediately if video is already loaded
+      if (video.readyState >= 2) {
+      video.play().catch(err => {
+        console.log('Video play error:', err);
+      });
+      }
+
+      return () => {
+        video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+        video.removeEventListener('canplay', handleCanPlay);
+        video.removeEventListener('error', handleError);
+      };
+    }
+  }, [videoSrc]);
+
   return (
     <section
       id="studio"
-      className="w-full bg-gradient-to-b from-[#faf8f3] to-[#f5f0e8] min-h-screen flex items-center justify-center py-24 px-8 md:px-12 lg:px-20 xl:px-32"
-      style={{ fontFamily: "'Space Grotesk', sans-serif", scrollSnapAlign: 'start' }}
+      className="w-full min-h-screen flex flex-col items-center justify-center py-24 px-8 md:px-12 lg:px-20 xl:px-32"
+      style={{ 
+        fontFamily: "'Inter', sans-serif", 
+        scrollSnapAlign: 'start',
+        backgroundColor: '#222222'
+      }}
     >
-      <div className="max-w-4xl w-full text-center">
-        {/* Large Quotation Marks */}
-        <div className="-mb-4 md:-mb-6 lg:-mb-8 transition-all duration-500 hover:opacity-60">
-          <span className="text-7xl md:text-9xl lg:text-[12rem] text-black/20 leading-none transition-all duration-500 hover:text-black/30" style={{ fontWeight: 300 }}>
-            "
-          </span>
+      <div className="w-full flex flex-col items-center">
+        {/* Heading Section - Aligned to Placeholder */}
+        <div className="flex flex-col items-start mb-8" style={{ width: '1227px' }}>
+          <h2 
+            className="mb-4"
+            style={{ 
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 700,
+              fontSize: '24pt',
+              lineHeight: '1.2',
+              color: '#FFFFFF'
+            }}
+          >
+            The Studio
+          </h2>
+          <p 
+            style={{ 
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 700,
+              fontSize: '40pt',
+              lineHeight: '1.3',
+              color: '#848597'
+            }}
+          >
+            A creative home, not just a workspace.
+          </p>
         </div>
 
-        {/* Title inside quote */}
-        <h2 className="text-3xl md:text-4xl lg:text-5xl text-black mb-8 md:mb-10 transition-all duration-300 hover:opacity-80 hover:-translate-y-1" style={{ fontWeight: 400, letterSpacing: '-0.02em', lineHeight: '1.2' }}>
-          The Studio
-        </h2>
+        {/* Video Container */}
+        <div 
+          className="rounded-lg mb-8 overflow-hidden"
+          style={{
+            width: '1227px',
+            height: '621px'
+          }}
+        >
+          <video
+            key={videoKey}
+            ref={videoRef}
+            className="w-full h-full object-cover"
+            autoPlay
+            muted
+            playsInline={true}
+            preload="auto"
+            loop
+            onLoadedMetadata={(e) => {
+              // Additional handler for production compatibility
+              if (e.target.readyState >= 2) {
+                e.target.play().catch(err => {
+                  console.log('Video play error on loadedmetadata (inline):', err);
+                });
+              }
+            }}
+            onCanPlay={() => {
+              // Additional handler for production compatibility
+              if (videoRef.current && videoRef.current.paused) {
+                setTimeout(() => {
+                  videoRef.current?.play().catch(err => {
+                    console.log('Video play error on canplay (inline):', err);
+                  });
+                }, 100);
+              }
+            }}
+            onError={(e) => {
+              const error = e.target.error;
+              console.error('Video error (inline):', error, {
+                src: e.target.currentSrc || e.target.src,
+                readyState: e.target.readyState,
+                networkState: e.target.networkState
+              });
+              
+              // If blocked by client (ad blocker) or network error, try direct path
+              if ((error?.code === 4 || error?.code === 2) && retryCountRef.current === 0) {
+                console.log('Attempting to load video with direct path (from inline handler)...');
+                const directPath = '/assets/videos/hightlight-sec.mp4';
+                retryCountRef.current = 1;
+                setVideoSrc(directPath);
+                setVideoKey(prev => prev + 1); // Force video element to reload
+              }
+            }}
+          >
+            <source src={`${videoSrc}?v=${videoKey}`} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
 
-        {/* Quote Text */}
-        <blockquote className="text-2xl md:text-3xl lg:text-4xl text-black/70 leading-relaxed mb-8 md:mb-12 px-4 transition-all duration-300 hover:text-black/90" style={{ lineHeight: '1.6' }}>
-          Our flagship Dallas studio blends creation, community, and wellness - a true third space for creatives. Membership gives you access to dedicated work areas, world class workshops, curated events, and a creative environment designed for connection.
-        </blockquote>
-
-        {/* Attribution */}
-        <div className="text-lg md:text-xl text-black/60 transition-all duration-300 hover:text-black/80">
-          <cite className="not-italic font-light tracking-wide">Coming Summer, 2026</cite>
+        {/* Body Text - Aligned to Placeholder */}
+        <div className="flex items-start" style={{ width: '1227px' }}>
+          <p 
+            className="flex-1"
+            style={{ 
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 400,
+              fontSize: '18pt',
+              lineHeight: '1.6',
+              color: '#848597'
+            }}
+          >
+            Our flagship <strong style={{ color: '#FFFFFF' }}>Dallas</strong> studio blends creation, community, and wellness - a true <strong style={{ color: '#FFFFFF' }}>third space</strong> for creatives.
+          </p>
         </div>
       </div>
     </section>

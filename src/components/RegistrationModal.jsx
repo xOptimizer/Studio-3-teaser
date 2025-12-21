@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
@@ -16,6 +17,18 @@ const RegistrationModal = ({ isOpen, onClose }) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   useGSAP(() => {
     if (!overlayRef.current || !contentRef.current) return;
@@ -88,12 +101,14 @@ const RegistrationModal = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
       {/* Overlay */}
       <div 
         ref={overlayRef}
-        className="modal-overlay fixed inset-0 bg-black bg-opacity-80 backdrop-blur-md"
+        className="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-md"
         onClick={onClose}
         style={{ opacity: 0 }}
       />
@@ -101,8 +116,12 @@ const RegistrationModal = ({ isOpen, onClose }) => {
       {/* Modal Content */}
       <div 
         ref={contentRef}
-        className="modal-content relative z-10 bg-zinc rounded-3xl p-8 md:p-10 lg:p-12 w-full max-w-4xl mx-4 transform scale-95 opacity-0 border border-gray-300 shadow-2xl overflow-y-auto md:overflow-visible md:max-h-none" 
-        style={{ maxHeight: '90vh' }}
+        className="relative z-10 bg-zinc-900 rounded-3xl p-8 md:p-10 lg:p-12 w-full transform scale-95 opacity-0 border border-gray-700 shadow-2xl overflow-y-auto"
+        style={{ 
+          maxHeight: '90vh',
+          maxWidth: '600px',
+          width: '100%'
+        }}
       >
         <button
           onClick={onClose}
@@ -263,7 +282,8 @@ const RegistrationModal = ({ isOpen, onClose }) => {
           </button>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

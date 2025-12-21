@@ -1,77 +1,154 @@
+import { useState } from 'react';
+
 const QuoteSection = () => {
+  const [activeTab, setActiveTab] = useState('artists');
+
   return (
     <section
       id="social-discover"
-      className="w-full bg-gradient-to-b from-[#faf8f3] to-[#f5f0e8] min-h-screen flex items-center py-12 md:py-16"
-      style={{ fontFamily: "'Space Grotesk', sans-serif", scrollSnapAlign: 'start' }}
+      className="w-full min-h-screen flex flex-col"
+      style={{ 
+        fontFamily: "'Inter', sans-serif", 
+        background: 'linear-gradient(to bottom, #F7F7F7, #EDEDED)',
+        scrollSnapAlign: 'start',
+        paddingTop: '72px',
+        paddingBottom: '44px',
+        paddingLeft: '148px',
+        paddingRight: '148px'
+      }}
     >
-      <div className="w-full flex justify-center">
-        <div 
-          className="relative grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-10 items-start"
-          style={{ width: '95%' }}
-        >
-          {/* Left Column - Portrait Photo/Video */}
-          <div className="w-full">
-            <div className="w-full overflow-hidden group cursor-pointer rounded-sm shadow-lg transition-all duration-500 hover:shadow-2xl" style={{ aspectRatio: '3/4' }}>
-              <img
-                src="/assets/images/social-left.jpg"
-                alt="Social Discover Portrait"
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-              />
-              {/* You can replace img with video tag if needed:
-              <video
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                autoPlay
-                muted
-                loop
-                playsInline
-              >
-                <source src="/path/to/video.mp4" type="video/mp4" />
-              </video>
-              */}
+      <div className="w-full flex flex-col">
+        {/* Header Section */}
+        <div className="flex flex-col">
+          {/* Title */}
+          <h2 
+            className="text-black" 
+            style={{ 
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 600,
+              fontSize: '24pt',
+              lineHeight: '1.2',
+              marginBottom: '24px'
+            }}
+          >
+            The Social Discover
+          </h2>
+
+          {/* Description */}
+          <p 
+            className="text-gray" 
+            style={{ 
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 600,
+              fontSize: '40pt',
+              lineHeight: '1.3',
+              marginBottom: '48px'
+            }}
+          >
+            A creator focused social platform where your work isn't buried by algorithms.
+          </p>
+        </div>
+
+        {/* Three Columns with Images */}
+        <div className="flex justify-center">
+          {/* First Column - Artists */}
+          <div className="flex flex-col items-center" style={{ marginRight: '48px' }}>
+            <h3 
+              className="text-black"
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 600,
+                fontSize: '24pt',
+                color: '#000',
+                borderBottom: '2px solid #000',
+                paddingBottom: '8px',
+                marginBottom: '16px',
+                width: '380px',
+                textAlign: 'center'
+              }}
+            >
+              Artists
+            </h3>
+            <div 
+              className="rounded-lg overflow-hidden flex-shrink-0"
+              style={{
+                width: '380px',
+                height: '580px',
+                backgroundColor: '#D1D5DB',
+                background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)'
+              }}
+            >
+              {/* Placeholder - Replace with <img> when ready */}
+              <div className="w-full h-full flex items-center justify-center text-gray-400">
+                <span>Image Placeholder</span>
+              </div>
             </div>
           </div>
 
-          {/* Right Column - Landscape Photo/Video and Text */}
-          <div className="w-full flex flex-col gap-6 md:gap-8 lg:gap-10">
-            {/* Landscape Photo/Video */}
-            <div className="w-full aspect-video overflow-hidden group cursor-pointer rounded-sm shadow-lg transition-all duration-500 hover:shadow-2xl">
-              <img
-                src="/assets/images/social-right.jpg"
-                alt="Social Discover Landscape"
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-              />
-              {/* You can replace img with video tag if needed:
-              <video
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                autoPlay
-                muted
-                loop
-                playsInline
-              >
-                <source src="/path/to/video.mp4" type="video/mp4" />
-              </video>
-              */}
+          {/* Second Column - Buyers & Collectors */}
+          <div className="flex flex-col items-center" style={{ marginRight: '48px' }}>
+            <h3 
+              className="text-black"
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 600,
+                fontSize: '24pt',
+                color: '#000',
+                borderBottom: '2px solid #000',
+                paddingBottom: '8px',
+                marginBottom: '16px',
+                width: '380px',
+                textAlign: 'center'
+              }}
+            >
+              Buyers & Collectors
+            </h3>
+            <div 
+              className="rounded-lg overflow-hidden flex-shrink-0"
+              style={{
+                width: '380px',
+                height: '580px',
+                backgroundColor: '#D1D5DB',
+                background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)'
+              }}
+            >
+              {/* Placeholder - Replace with <img> when ready */}
+              <div className="w-full h-full flex items-center justify-center text-gray-400">
+                <span>Image Placeholder</span>
+              </div>
             </div>
+          </div>
 
-            {/* Text Content */}
-            <div className="w-full text-center mt-8 md:mt-12 lg:mt-16">
-              {/* Title */}
-              <h2 
-                className="text-3xl md:text-4xl lg:text-5xl text-black mb-6 md:mb-8 transition-all duration-300 hover:opacity-80 hover:-translate-y-1" 
-                style={{ fontWeight: 400, letterSpacing: '-0.02em', lineHeight: '1.2' }}
-              >
-                The Social Discover
-              </h2>
-
-              {/* Quote Text */}
-              <blockquote className="text-xl md:text-2xl lg:text-3xl text-black/70 leading-relaxed mb-6 md:mb-8 transition-all duration-300 hover:text-black/90" style={{ lineHeight: '1.6' }}>
-                A creator focused social platform where your work isn't buried by algorithms. Share your process, tell your story, and connect with collectors; all in one home built for artists, not content.
-              </blockquote>
-
-              {/* Attribution */}
-              <div className="text-base md:text-lg text-black/60 transition-all duration-300 hover:text-black/80">
-                <cite className="not-italic font-light tracking-wide">Coming Spring, 2026</cite>
+          {/* Third Column - Enthusiasts */}
+          <div className="flex flex-col items-center">
+            <h3 
+              className="text-black"
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 600,
+                fontSize: '24pt',
+                color: '#000',
+                borderBottom: '2px solid #000',
+                paddingBottom: '8px',
+                marginBottom: '16px',
+                width: '380px',
+                textAlign: 'center'
+              }}
+            >
+              Enthusiasts
+            </h3>
+            <div 
+              className="rounded-lg overflow-hidden flex-shrink-0"
+              style={{
+                width: '380px',
+                height: '580px',
+                backgroundColor: '#D1D5DB',
+                background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)'
+              }}
+            >
+              {/* Placeholder - Replace with <img> when ready */}
+              <div className="w-full h-full flex items-center justify-center text-gray-400">
+                <span>Image Placeholder</span>
               </div>
             </div>
           </div>
