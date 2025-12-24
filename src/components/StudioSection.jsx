@@ -94,105 +94,207 @@ const StudioSection = () => {
       }}
     >
       <div className="w-full flex flex-col items-center">
-        {/* Heading Section - Aligned to Placeholder */}
-        <div className="flex flex-col items-start mb-8" style={{ width: '1227px' }}>
-          <h2 
-            className="mb-4"
-            style={{ 
-              fontFamily: "'Inter', sans-serif",
-              fontWeight: 700,
-              fontSize: '24pt',
-              lineHeight: '1.2',
-              color: '#000'
-            }}
-          >
-            The Studio
-          </h2>
-          <p 
-            style={{ 
-              fontFamily: "'Inter', sans-serif",
-              fontWeight: 700,
-              fontSize: '40pt',
-              lineHeight: '1.3',
-              color: '#848597'
-            }}
-          >
-            A creative home, not just a workspace.
-          </p>
-        </div>
+        {/* Desktop: Fixed width layout */}
+        <div className="hidden md:flex flex-col items-center w-full">
+          {/* Heading Section - Aligned to Placeholder */}
+          <div className="flex flex-col items-start mb-8" style={{ width: '1227px' }}>
+            <h2 
+              className="mb-4"
+              style={{ 
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 700,
+                fontSize: '24pt',
+                lineHeight: '1.2',
+                color: '#000'
+              }}
+            >
+              The Studio
+            </h2>
+            <p 
+              style={{ 
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 700,
+                fontSize: '40pt',
+                lineHeight: '1.3',
+                color: '#848597'
+              }}
+            >
+              A creative home, not just a workspace.
+            </p>
+          </div>
 
-        {/* Video Container */}
-        <div 
-          className="rounded-lg mb-8 overflow-hidden"
-          style={{
-            width: '1227px',
-            height: '621px'
-          }}
-        >
-          <video
-            key={videoKey}
-            ref={videoRef}
-            className="w-full h-full object-cover"
-            autoPlay
-            muted
-            playsInline={true}
-            preload="auto"
-            loop
-            onLoadedMetadata={(e) => {
-              // Additional handler for production compatibility
-              if (e.target.readyState >= 2) {
-                e.target.play().catch(err => {
-                  console.log('Video play error on loadedmetadata (inline):', err);
-                });
-              }
+          {/* Video Container */}
+          <div 
+            className="rounded-lg mb-8 overflow-hidden"
+            style={{
+              width: '1227px',
+              height: '621px'
             }}
-            onCanPlay={() => {
-              // Additional handler for production compatibility
-              if (videoRef.current && videoRef.current.paused) {
-                setTimeout(() => {
-                  videoRef.current?.play().catch(err => {
-                    console.log('Video play error on canplay (inline):', err);
+          >
+            <video
+              key={videoKey}
+              ref={videoRef}
+              className="w-full h-full object-cover"
+              autoPlay
+              muted
+              playsInline={true}
+              preload="auto"
+              loop
+              onLoadedMetadata={(e) => {
+                if (e.target.readyState >= 2) {
+                  e.target.play().catch(err => {
+                    console.log('Video play error on loadedmetadata (inline):', err);
                   });
-                }, 100);
-              }
-            }}
-            onError={(e) => {
-              const error = e.target.error;
-              console.error('Video error (inline):', error, {
-                src: e.target.currentSrc || e.target.src,
-                readyState: e.target.readyState,
-                networkState: e.target.networkState
-              });
-              
-              // If blocked by client (ad blocker) or network error, try direct path
-              if ((error?.code === 4 || error?.code === 2) && retryCountRef.current === 0) {
-                console.log('Attempting to load video with direct path (from inline handler)...');
-                const directPath = '/assets/videos/hightlight-sec.mp4';
-                retryCountRef.current = 1;
-                setVideoSrc(directPath);
-                setVideoKey(prev => prev + 1); // Force video element to reload
-              }
-            }}
-          >
-            <source src={`${videoSrc}?v=${videoKey}`} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+                }
+              }}
+              onCanPlay={() => {
+                if (videoRef.current && videoRef.current.paused) {
+                  setTimeout(() => {
+                    videoRef.current?.play().catch(err => {
+                      console.log('Video play error on canplay (inline):', err);
+                    });
+                  }, 100);
+                }
+              }}
+              onError={(e) => {
+                const error = e.target.error;
+                console.error('Video error (inline):', error, {
+                  src: e.target.currentSrc || e.target.src,
+                  readyState: e.target.readyState,
+                  networkState: e.target.networkState
+                });
+                
+                if ((error?.code === 4 || error?.code === 2) && retryCountRef.current === 0) {
+                  console.log('Attempting to load video with direct path (from inline handler)...');
+                  const directPath = '/assets/videos/hightlight-sec.mp4';
+                  retryCountRef.current = 1;
+                  setVideoSrc(directPath);
+                  setVideoKey(prev => prev + 1);
+                }
+              }}
+            >
+              <source src={`${videoSrc}?v=${videoKey}`} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+
+          {/* Body Text - Aligned to Placeholder */}
+          <div className="flex items-start" style={{ width: '1227px' }}>
+            <p 
+              className="flex-1"
+              style={{ 
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 400,
+                fontSize: '18pt',
+                lineHeight: '1.6',
+                color: '#848597'
+              }}
+            >
+              Our flagship <strong style={{ color: '#000' }}>Dallas</strong> studio blends creation, community, and wellness - a true <strong style={{ color: '#000' }}>third space</strong> for creatives.
+            </p>
+          </div>
         </div>
 
-        {/* Body Text - Aligned to Placeholder */}
-        <div className="flex items-start" style={{ width: '1227px' }}>
-          <p 
-            className="flex-1"
-            style={{ 
-              fontFamily: "'Inter', sans-serif",
-              fontWeight: 400,
-              fontSize: '18pt',
-              lineHeight: '1.6',
-              color: '#848597'
+        {/* Mobile: Responsive layout */}
+        <div className="md:hidden flex flex-col items-center w-full px-4">
+          {/* Heading Section */}
+          <div className="flex flex-col items-start mb-6 w-full">
+            <h2 
+              className="mb-4"
+              style={{ 
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 700,
+                fontSize: 'clamp(18pt, 5vw, 24pt)',
+                lineHeight: '1.2',
+                color: '#000'
+              }}
+            >
+              The Studio
+            </h2>
+            <p 
+              style={{ 
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 700,
+                fontSize: 'clamp(24pt, 7vw, 40pt)',
+                lineHeight: '1.3',
+                color: '#848597'
+              }}
+            >
+              A creative home, not just a workspace.
+            </p>
+          </div>
+
+          {/* Video Container */}
+          <div 
+            className="rounded-lg mb-6 overflow-hidden"
+            style={{
+              width: '360px',
+              height: '400px',
+              maxWidth: '100%'
             }}
           >
-            Our flagship <strong style={{ color: '#000' }}>Dallas</strong> studio blends creation, community, and wellness - a true <strong style={{ color: '#000' }}>third space</strong> for creatives.
-          </p>
+            <video
+              key={videoKey}
+              ref={videoRef}
+              className="w-full h-full object-cover"
+              autoPlay
+              muted
+              playsInline={true}
+              preload="auto"
+              loop
+              onLoadedMetadata={(e) => {
+                if (e.target.readyState >= 2) {
+                  e.target.play().catch(err => {
+                    console.log('Video play error on loadedmetadata (inline):', err);
+                  });
+                }
+              }}
+              onCanPlay={() => {
+                if (videoRef.current && videoRef.current.paused) {
+                  setTimeout(() => {
+                    videoRef.current?.play().catch(err => {
+                      console.log('Video play error on canplay (inline):', err);
+                    });
+                  }, 100);
+                }
+              }}
+              onError={(e) => {
+                const error = e.target.error;
+                console.error('Video error (inline):', error, {
+                  src: e.target.currentSrc || e.target.src,
+                  readyState: e.target.readyState,
+                  networkState: e.target.networkState
+                });
+                
+                if ((error?.code === 4 || error?.code === 2) && retryCountRef.current === 0) {
+                  console.log('Attempting to load video with direct path (from inline handler)...');
+                  const directPath = '/assets/videos/hightlight-sec.mp4';
+                  retryCountRef.current = 1;
+                  setVideoSrc(directPath);
+                  setVideoKey(prev => prev + 1);
+                }
+              }}
+            >
+              <source src={`${videoSrc}?v=${videoKey}`} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+
+          {/* Body Text */}
+          <div className="flex items-start w-full">
+            <p 
+              className="flex-1"
+              style={{ 
+                fontFamily: "'Inter', sans-serif",
+                fontWeight: 400,
+                fontSize: 'clamp(14pt, 4vw, 18pt)',
+                lineHeight: '1.6',
+                color: '#848597'
+              }}
+            >
+              Our flagship <strong style={{ color: '#000' }}>Dallas</strong> studio blends creation, community, and wellness - a true <strong style={{ color: '#000' }}>third space</strong> for creatives.
+            </p>
+          </div>
         </div>
       </div>
     </section>

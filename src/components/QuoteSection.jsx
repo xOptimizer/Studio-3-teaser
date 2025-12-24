@@ -122,13 +122,15 @@ const QuoteSection = () => {
                   fontWeight: 600,
                   fontSize: '24pt',
                   color: activeTab === tab.id ? '#000' : '#848597',
+                  borderTop: 'none',
+                  borderLeft: 'none',
+                  borderRight: 'none',
                   borderBottom: activeTab === tab.id ? '2px solid #000' : '2px solid #848597',
                   paddingBottom: '8px',
                   marginBottom: '16px',
                   width: '380px',
                   textAlign: 'center',
                   background: 'none',
-                  border: 'none',
                   outline: 'none'
                 }}
               >
@@ -151,55 +153,10 @@ const QuoteSection = () => {
           ))}
         </div>
 
-        {/* Mobile Carousel - Shows tabs with headings and images */}
-        <div 
-          ref={carouselRef}
-          className="md:hidden relative overflow-hidden"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
-          <div 
-            className="flex transition-transform duration-300 ease-out"
-            style={{
-              transform: `translateX(-${currentImageIndex * 100}%)`
-            }}
-          >
-            {images[activeTab].map((image) => (
-              <div key={image.id} className="flex flex-col items-center flex-shrink-0 w-full px-4">
-                <h3 
-                  className="text-black w-full"
-                  style={{
-                    fontFamily: "'Inter', sans-serif",
-                    fontWeight: 600,
-                    fontSize: 'clamp(18pt, 5vw, 24pt)',
-                    color: '#000',
-                    borderBottom: '2px solid #000',
-                    paddingBottom: '8px',
-                    marginBottom: '16px',
-                    textAlign: 'center'
-                  }}
-                >
-                  {tabs.find(t => t.id === activeTab)?.title}
-                </h3>
-                <div 
-                  className="rounded-lg overflow-hidden flex-shrink-0 w-full max-w-[380px] mx-auto"
-                  style={{
-                    aspectRatio: '380/580',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)'
-                  }}
-                >
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    <span>{image.placeholder}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Tab Buttons for Mobile - Below carousel */}
-          <div className="flex justify-center gap-4 mt-6 mb-4">
+        {/* Mobile Layout - Tabs above, placeholder below, dots at bottom */}
+        <div className="md:hidden flex flex-col">
+          {/* Tab Buttons for Mobile - Above placeholder */}
+          <div className="flex justify-center gap-4 mb-6">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -208,30 +165,72 @@ const QuoteSection = () => {
                 style={{
                   fontFamily: "'Inter', sans-serif",
                   fontWeight: 600,
-                  fontSize: 'clamp(14pt, 3vw, 16pt)',
+                  fontSize: 'clamp(14pt, 3vw, 18pt)',
                   color: activeTab === tab.id ? '#000' : '#848597',
+                  borderTop: 'none',
+                  borderLeft: 'none',
+                  borderRight: 'none',
                   borderBottom: activeTab === tab.id ? '2px solid #000' : '2px solid transparent',
                   paddingBottom: '8px',
                   cursor: 'pointer',
                   background: 'none',
-                  border: 'none',
                   outline: 'none'
                 }}
               >
-                {tab.title}
+                {tab.id === 'buyers' ? 'Collectors' : tab.title}
               </button>
             ))}
           </div>
 
-          {/* Carousel Indicators - Shows dots for images in active tab */}
-          <div className="flex justify-center gap-2 mt-2">
+          {/* Placeholder - Below tabs */}
+          <div 
+            ref={carouselRef}
+            className="relative overflow-hidden mb-6"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            <div 
+              className="flex transition-transform duration-300 ease-out"
+              style={{
+                transform: `translateX(-${currentImageIndex * 100}%)`
+              }}
+            >
+              {images[activeTab].map((image) => (
+                <div key={image.id} className="flex-shrink-0 w-full">
+                  <div 
+                    className="rounded-lg overflow-hidden w-full mx-auto"
+                    style={{
+                      aspectRatio: '380/580',
+                      maxWidth: '380px',
+                      backgroundColor: '#D1D5DB',
+                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)'
+                    }}
+                  >
+                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      <span>{image.placeholder}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Pagination Dots - At the bottom */}
+          <div className="flex justify-center gap-2">
             {images[activeTab].map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  index === currentImageIndex ? 'bg-black w-8' : 'bg-gray-400'
+                className={`rounded-full transition-all ${
+                  index === currentImageIndex 
+                    ? 'bg-gray-400' 
+                    : 'bg-gray-300'
                 }`}
+                style={{
+                  width: '8px',
+                  height: '8px'
+                }}
                 aria-label={`Go to image ${index + 1}`}
               />
             ))}
