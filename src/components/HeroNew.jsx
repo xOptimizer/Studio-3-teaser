@@ -2,11 +2,12 @@ const HeroNew = () => {
   return (
     <section
       id="about"
-      className="w-full min-h-screen flex flex-col items-center justify-center px-8 md:px-12 lg:px-20 xl:px-32"
+      className="w-full min-h-screen flex flex-col items-center justify-center px-8 md:px-12 lg:px-20 xl:px-32 relative"
       style={{ 
         fontFamily: "'Inter', sans-serif",
         background: 'linear-gradient(to bottom, #F7F7F7, #EDEDED)',
         scrollSnapAlign: 'start',
+        paddingTop: '0',
         paddingBottom: '112px'
       }}
     >

@@ -6,8 +6,21 @@ const TopBar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full py-3 sm:py-4 md:py-5 px-3 sm:px-4 md:px-4 lg:px-4 bg-white/95 backdrop-blur-sm">
-      <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
+    <header 
+      className="fixed top-0 left-0 right-0 z-50 w-full py-3 sm:py-4 md:py-5 px-3 sm:px-4 md:px-4 lg:px-4" 
+      style={{ background: 'transparent', pointerEvents: 'none' }}
+    >
+      <div 
+        className="flex items-center justify-between w-full max-w-7xl mx-auto rounded-2xl px-4 sm:px-6 md:px-8 py-3 sm:py-4"
+        style={{
+          background: 'rgba(255, 255, 255, 0.7)',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+          border: '1px solid rgba(255, 255, 255, 0.3)',
+          boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
+          pointerEvents: 'auto'
+        }}
+      >
         {/* Left: Menu Icon + Studio 3 */}
         <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
           {/* Circular Menu Icon */}
@@ -48,8 +61,9 @@ const TopBar = () => {
             className="px-3 sm:px-4 md:px-5 lg:px-6 xl:px-8 py-1.5 sm:py-2 md:py-2.5 rounded-full text-black text-xs sm:text-sm md:text-base lg:text-lg font-medium transition-all duration-200 hover:opacity-80 whitespace-nowrap flex-shrink-0"
             style={{ 
               fontFamily: "'Space Grotesk', sans-serif",
-              backgroundColor: '#e8e8e8',
-              borderRadius: '9999px'
+              backgroundColor: '#B8C5D6',
+              borderRadius: '9999px',
+              boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.1)'
             }}
           >
             <span className="hidden sm:inline">Join Launch List</span>
