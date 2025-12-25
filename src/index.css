@@ -11,9 +11,13 @@
 html {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-  scroll-snap-type: y mandatory;
+  scroll-snap-type: y proximity;
   overflow-y: scroll;
   height: 100%;
+  /* Smooth scrolling optimizations */
+  scroll-padding-top: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -23,11 +27,15 @@ body {
   overflow-y: auto;
   min-height: 100vh;
   height: 100%;
-  background: #000;
+  background: #F7F7F7;
   border-color: #3b3b3b;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: pan-y;
+  /* Performance optimizations for smooth scrolling */
+  will-change: scroll-position;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
 }
 
 canvas {
@@ -179,6 +187,30 @@ canvas {
   .g_fadeIn {
     @apply opacity-0 translate-y-[100px]
   }
+}
+
+/* Smooth scrolling optimizations for sections */
+section {
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
+}
+
+/* Smooth scroll performance */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Optimize video elements for smooth scrolling */
+video {
+  will-change: auto;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 @keyframes blink {

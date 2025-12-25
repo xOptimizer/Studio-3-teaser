@@ -22,7 +22,7 @@ const App = () => {
   };
 
   return (
-    <main className="bg-black">
+    <main style={{ background: '#F7F7F7' }}>
       {isLoading && <LoadingScreen onLoadingComplete={handleLoadingComplete} />}
       {!isLoading && (
         <>

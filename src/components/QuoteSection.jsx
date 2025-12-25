@@ -72,9 +72,9 @@ const QuoteSection = () => {
       className="w-full min-h-screen flex flex-col px-4 sm:px-8 md:px-12 lg:px-20 xl:px-36"
       style={{ 
         fontFamily: "'Inter', sans-serif", 
-        background: 'linear-gradient(to bottom, #F7F7F7, #EDEDED)',
+        background: '#F7F7F7',
         scrollSnapAlign: 'start',
-        paddingTop: 'clamp(40px, 8vw, 72px)',
+        paddingTop: 'clamp(24px, 4vw, 48px)',
         paddingBottom: 'clamp(24px, 5vw, 44px)'
       }}
     >
@@ -111,7 +111,7 @@ const QuoteSection = () => {
         </div>
 
         {/* Desktop: Three Columns with Headings */}
-        <div className="hidden md:flex justify-center">
+        <div className="hidden lg:flex justify-center">
           {tabs.map((tab, tabIndex) => (
             <div key={tab.id} className="flex flex-col items-center" style={{ marginRight: tabIndex < tabs.length - 1 ? '48px' : '0' }}>
               <button
@@ -128,7 +128,7 @@ const QuoteSection = () => {
                   borderBottom: activeTab === tab.id ? '2px solid #000' : '2px solid #848597',
                   paddingBottom: '8px',
                   marginBottom: '16px',
-                  width: '380px',
+                  width: '420px',
                   textAlign: 'center',
                   background: 'none',
                   outline: 'none'
@@ -139,7 +139,7 @@ const QuoteSection = () => {
               <div 
                 className="rounded-lg overflow-hidden flex-shrink-0"
                 style={{
-                  width: '380px',
+                  width: '420px',
                   height: '580px',
                   backgroundColor: '#D1D5DB',
                   background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)'
@@ -154,9 +154,9 @@ const QuoteSection = () => {
         </div>
 
         {/* Mobile Layout - Tabs above, placeholder below, dots at bottom */}
-        <div className="md:hidden flex flex-col">
+        <div className="lg:hidden flex flex-col">
           {/* Tab Buttons for Mobile - Above placeholder */}
-          <div className="flex justify-center gap-4 mb-6">
+          <div className="flex justify-start gap-4 mb-6">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -201,8 +201,8 @@ const QuoteSection = () => {
                   <div 
                     className="rounded-lg overflow-hidden w-full mx-auto"
                     style={{
-                      aspectRatio: '380/580',
-                      maxWidth: '380px',
+                      aspectRatio: '420/580',
+                      maxWidth: '420px',
                       backgroundColor: '#D1D5DB',
                       background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)'
                     }}

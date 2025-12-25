@@ -70,9 +70,9 @@ const StudioSection = () => {
       
       // Try to play immediately if video is already loaded
       if (video.readyState >= 2) {
-      video.play().catch(err => {
-        console.log('Video play error:', err);
-      });
+        video.play().catch(err => {
+          console.log('Video play error:', err);
+        });
       }
 
       return () => {
@@ -86,49 +86,54 @@ const StudioSection = () => {
   return (
     <section
       id="studio"
-      className="w-full min-h-screen flex flex-col items-center justify-center py-24 px-8 md:px-12 lg:px-20 xl:px-32"
+      className="w-full min-h-screen flex flex-col px-4 sm:px-8 md:px-12 lg:px-20 xl:px-36"
       style={{ 
         fontFamily: "'Inter', sans-serif", 
         scrollSnapAlign: 'start',
-        background: 'linear-gradient(to bottom, #F7F7F7, #EDEDED)'
+        background: '#F7F7F7',
+        paddingTop: 'clamp(40px, 8vw, 72px)',
+        paddingBottom: 'clamp(40px, 10vw, 112px)'
       }}
     >
-      <div className="w-full flex flex-col items-center">
-        {/* Desktop: Fixed width layout */}
-        <div className="hidden md:flex flex-col items-center w-full">
-          {/* Heading Section - Aligned to Placeholder */}
-          <div className="flex flex-col items-start mb-8" style={{ width: '1227px' }}>
-            <h2 
-              className="mb-4"
-              style={{ 
-                fontFamily: "'Inter', sans-serif",
-                fontWeight: 700,
-                fontSize: '24pt',
-                lineHeight: '1.2',
-                color: '#000'
-              }}
-            >
-              The Studio
-            </h2>
-            <p 
-              style={{ 
-                fontFamily: "'Inter', sans-serif",
-                fontWeight: 700,
-                fontSize: '40pt',
-                lineHeight: '1.3',
-                color: '#848597'
-              }}
-            >
-              A creative home, not just a workspace.
-            </p>
-          </div>
+      <div className="w-full flex flex-col">
+        {/* Header Section */}
+        <div className="flex flex-col">
+          {/* Title */}
+          <h2 
+            className="text-black" 
+            style={{ 
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 700,
+              fontSize: 'clamp(18pt, 4vw, 24pt)',
+              lineHeight: '1.2',
+              marginBottom: 'clamp(16px, 3vw, 24px)'
+            }}
+          >
+            The Studio
+          </h2>
 
-          {/* Video Container */}
+          {/* Description */}
+          <p 
+            style={{ 
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 700,
+              fontSize: 'clamp(24pt, 6vw, 40pt)',
+              lineHeight: '1.3',
+              marginBottom: 'clamp(32px, 6vw, 48px)',
+              color: '#848597'
+            }}
+          >
+            A creative home, not just a workspace.
+          </p>
+        </div>
+
+        {/* Desktop: Video Container */}
+        <div className="hidden md:block mb-8">
           <div 
-            className="rounded-lg mb-8 overflow-hidden"
+            className="rounded-lg overflow-hidden w-full"
             style={{
-              width: '1227px',
-              height: '621px'
+              height: '720px',
+              maxWidth: '1500px'
             }}
           >
             <video
@@ -176,61 +181,31 @@ const StudioSection = () => {
               <source src={`${videoSrc}?v=${videoKey}`} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
-          </div>
-
-          {/* Body Text - Aligned to Placeholder */}
-          <div className="flex items-start" style={{ width: '1227px' }}>
-            <p 
-              className="flex-1"
-              style={{ 
-                fontFamily: "'Inter', sans-serif",
-                fontWeight: 400,
-                fontSize: '18pt',
-                lineHeight: '1.6',
-                color: '#848597'
-              }}
-            >
-              Our flagship <strong style={{ color: '#000' }}>Dallas</strong> studio blends creation, community, and wellness - a true <strong style={{ color: '#000' }}>third space</strong> for creatives.
-            </p>
           </div>
         </div>
 
-        {/* Mobile: Responsive layout */}
-        <div className="md:hidden flex flex-col items-center w-full px-4">
-          {/* Heading Section */}
-          <div className="flex flex-col items-start mb-6 w-full">
-            <h2 
-              className="mb-4"
-              style={{ 
-                fontFamily: "'Inter', sans-serif",
-                fontWeight: 700,
-                fontSize: 'clamp(18pt, 5vw, 24pt)',
-                lineHeight: '1.2',
-                color: '#000'
-              }}
-            >
-              The Studio
-            </h2>
-            <p 
-              style={{ 
-                fontFamily: "'Inter', sans-serif",
-                fontWeight: 700,
-                fontSize: 'clamp(24pt, 7vw, 40pt)',
-                lineHeight: '1.3',
-                color: '#848597'
-              }}
-            >
-              A creative home, not just a workspace.
-            </p>
-          </div>
+        {/* Desktop: Body Text */}
+        <div className="hidden md:flex items-start">
+          <p 
+            className="flex-1"
+            style={{ 
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 400,
+              fontSize: '18pt',
+              lineHeight: '1.6',
+              color: '#848597'
+            }}
+          >
+            Our flagship <strong style={{ color: '#000' }}>Dallas</strong> studio blends creation, community, and wellness - a true <strong style={{ color: '#000' }}>third space</strong> for creatives.
+          </p>
+        </div>
 
-          {/* Video Container */}
+        {/* Mobile: Video Container */}
+        <div className="md:hidden mb-6">
           <div 
-            className="rounded-lg mb-6 overflow-hidden"
+            className="rounded-lg overflow-hidden w-full"
             style={{
-              width: '360px',
-              height: '400px',
-              maxWidth: '100%'
+              height: 'clamp(400px, 50vh, 500px)'
             }}
           >
             <video
@@ -279,22 +254,22 @@ const StudioSection = () => {
               Your browser does not support the video tag.
             </video>
           </div>
+        </div>
 
-          {/* Body Text */}
-          <div className="flex items-start w-full">
-            <p 
-              className="flex-1"
-              style={{ 
-                fontFamily: "'Inter', sans-serif",
-                fontWeight: 400,
-                fontSize: 'clamp(14pt, 4vw, 18pt)',
-                lineHeight: '1.6',
-                color: '#848597'
-              }}
-            >
-              Our flagship <strong style={{ color: '#000' }}>Dallas</strong> studio blends creation, community, and wellness - a true <strong style={{ color: '#000' }}>third space</strong> for creatives.
-            </p>
-          </div>
+        {/* Mobile: Body Text */}
+        <div className="md:hidden flex items-start w-full">
+          <p 
+            className="flex-1"
+            style={{ 
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 400,
+              fontSize: 'clamp(14pt, 4vw, 18pt)',
+              lineHeight: '1.6',
+              color: '#848597'
+            }}
+          >
+            Our flagship <strong style={{ color: '#000' }}>Dallas</strong> studio blends creation, community, and wellness - a true <strong style={{ color: '#000' }}>third space</strong> for creatives.
+          </p>
         </div>
       </div>
     </section>

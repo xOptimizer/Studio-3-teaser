@@ -119,15 +119,13 @@ const MarketplaceSection = () => {
   return (
     <section
       id="marketplace"
-      className="w-full min-h-screen flex flex-col"
+      className="w-full min-h-screen flex flex-col px-4 sm:px-8 md:px-12 lg:px-20 xl:px-36"
       style={{ 
         fontFamily: "'Inter', sans-serif",
-        background: 'linear-gradient(to bottom, #F7F7F7, #EDEDED)',
+        background: '#F7F7F7',
         scrollSnapAlign: 'start',
-        paddingTop: '72px',
-        paddingBottom: '112px',
-        paddingLeft: '148px',
-        paddingRight: '148px'
+        paddingTop: 'clamp(40px, 8vw, 72px)',
+        paddingBottom: 'clamp(40px, 10vw, 112px)'
       }}
     >
       <div className="w-full flex flex-col">
@@ -139,9 +137,9 @@ const MarketplaceSection = () => {
             style={{ 
               fontFamily: "'Inter', sans-serif",
               fontWeight: 600,
-              fontSize: '24pt',
+              fontSize: 'clamp(18pt, 4vw, 24pt)',
               lineHeight: '1.2',
-              marginBottom: '24px'
+              marginBottom: 'clamp(16px, 3vw, 24px)'
             }}
           >
             The Marketplace
@@ -153,25 +151,57 @@ const MarketplaceSection = () => {
             style={{ 
               fontFamily: "'Inter', sans-serif",
               fontWeight: 600,
-              fontSize: '40pt',
+              fontSize: 'clamp(24pt, 6vw, 40pt)',
               lineHeight: '1.3',
-              marginBottom: '48px'
+              marginBottom: 'clamp(32px, 6vw, 48px)'
             }}
           >
             A curated creative supply marketplace offering the best prices with no hidden markups.
           </p>
         </div>
 
-        {/* Feature List and Placeholder Row */}
-        <div className="flex items-center" style={{ marginBottom: '48px' }}>
+        {/* Mobile: Feature + Photo pairs, Desktop: Side-by-side layout */}
+        {/* Mobile Layout - Feature then Photo for each */}
+        <div className="flex flex-col lg:hidden" style={{ marginBottom: 'clamp(32px, 6vw, 48px)', gap: '32px' }}>
+          {features.map((feature, index) => (
+            <div key={feature.id} className="flex flex-col w-full">
+              {/* Feature Title */}
+              <div 
+                ref={(el) => (featureRefs.current[index] = el)}
+                className="mb-4"
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontWeight: 600,
+                  fontSize: 'clamp(18pt, 4vw, 28pt)',
+                  color: '#000'
+                }}
+              >
+                {feature.title}
+              </div>
+              {/* Feature Photo */}
+              <div 
+                className="rounded-lg w-full"
+                style={{
+                  height: 'clamp(400px, 50vh, 500px)',
+                  backgroundColor: '#D1D5DB',
+                  background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)'
+                }}
+              >
+                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                  <span>{feature.placeholder}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop Layout - Side-by-side with lines */}
+        <div className="hidden lg:flex items-start" style={{ marginBottom: 'clamp(32px, 6vw, 48px)', gap: '24px' }}>
           {/* Left Column - Feature List */}
           <div 
             ref={listContainerRef}
-            className="flex-1 flex items-center overflow-y-auto" 
+            className="flex-1 flex items-center overflow-visible mr-6 min-h-[650px] max-h-[650px]" 
             style={{ 
-              marginRight: '24px', 
-              minHeight: '650px',
-              maxHeight: '650px',
               scrollBehavior: 'smooth'
             }}
           >
@@ -240,9 +270,8 @@ const MarketplaceSection = () => {
           {/* Right Column - Placeholder */}
           <div className="flex-shrink-0">
             <div 
-              className="rounded-lg transition-all duration-500"
+              className="rounded-lg transition-all duration-500 w-[712px]"
               style={{
-                width: '712px',
                 height: '650px',
                 backgroundColor: '#D1D5DB',
                 background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)'
