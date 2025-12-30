@@ -60,7 +60,7 @@ const HeroNew = () => {
       <div className="w-full max-w-7xl flex flex-col items-center text-center">
         {/* Primary Heading - studio 3 - Mobile: 60pt, Desktop: 200pt */}
         <h1
-          className="text-black text-[60pt] pt-[40px] mb-[24px] md:text-[200pt] md:pt-[96px] md:mb-[40px]"
+          className="text-black text-[68pt] pt-[40px] mb-[24px] md:text-[200pt] md:pt-[96px] md:mb-[40px]"
           style={{
             fontFamily: "'Inter', sans-serif",
             fontWeight: 700,

@@ -128,7 +128,7 @@ const QuoteSection = () => {
                   borderBottom: activeTab === tab.id ? '2px solid #000' : '2px solid #848597',
                   paddingBottom: '8px',
                   marginBottom: '16px',
-                  width: '420px',
+                  width: '380px',
                   textAlign: 'center',
                   background: 'none',
                   outline: 'none'
@@ -139,7 +139,7 @@ const QuoteSection = () => {
               <div 
                 className="rounded-lg overflow-hidden flex-shrink-0"
                 style={{
-                  width: '420px',
+                  width: '380px',
                   height: '580px',
                   backgroundColor: '#D1D5DB',
                   background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)'
@@ -201,8 +201,8 @@ const QuoteSection = () => {
                   <div 
                     className="rounded-lg overflow-hidden w-full mx-auto"
                     style={{
-                      aspectRatio: '420/580',
-                      maxWidth: '420px',
+                      aspectRatio: '400/580',
+                      maxWidth: '400px',
                       backgroundColor: '#D1D5DB',
                       background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)'
                     }}
