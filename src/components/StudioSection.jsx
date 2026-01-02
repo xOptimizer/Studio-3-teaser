@@ -104,7 +104,7 @@ const StudioSection = () => {
             style={{ 
               fontFamily: "'Inter', sans-serif",
               fontWeight: 700,
-              fontSize: 'clamp(18pt, 4vw, 24pt)',
+              fontSize: 'clamp(19pt, 4vw, 25pt)',
               lineHeight: '1.2',
               marginBottom: 'clamp(16px, 3vw, 24px)'
             }}
@@ -114,13 +114,13 @@ const StudioSection = () => {
 
           {/* Description */}
           <p 
+            className="text-gray"
             style={{ 
               fontFamily: "'Inter', sans-serif",
               fontWeight: 700,
               fontSize: 'clamp(24pt, 6vw, 40pt)',
               lineHeight: '1.3',
-              marginBottom: 'clamp(32px, 6vw, 48px)',
-              color: '#848597'
+              marginBottom: 'clamp(32px, 6vw, 48px)'
             }}
           >
             A creative home, not just a workspace.
@@ -130,7 +130,7 @@ const StudioSection = () => {
         {/* Desktop: Video Container */}
         <div className="hidden md:block mb-8">
           <div 
-            className="rounded-lg overflow-hidden w-full"
+            className="rounded-lg overflow-hidden w-full mx-auto"
             style={{
               height: '720px',
               maxWidth: '1500px'

@@ -8,22 +8,25 @@ const MarketplaceSection = () => {
   const features = [
     {
       id: 1,
-      title: 'Create with confidence',
-      placeholder: 'Create with confidence Image',
+      title: 'AI-Powered commerce',
+      placeholder: 'AI-Powered commerce Image',
+      src: '/assets/images/AI Powered .webp',
       fontWeight: 600,
       color: '#000'
     },
     {
       id: 2,
-      title: 'Quality supplies, no markups',
-      placeholder: 'Quality supplies Image',
+      title: 'Create with confidence',
+      placeholder: 'Create with confidence Image',
+      src: '/assets/images/Create with confidence.webp',
       fontWeight: 400,
       color: '#848597'
     },
     {
       id: 3,
-      title: 'AI-Powered commerce',
-      placeholder: 'AI-Powered commerce Image',
+      title: 'Quality supplies, no markups',
+      placeholder: 'Quality supplies Image',
+      src: '/assets/images/Quality supplies no markups.webp',
       fontWeight: 400,
       color: '#848597'
     }
@@ -137,7 +140,7 @@ const MarketplaceSection = () => {
             style={{ 
               fontFamily: "'Inter', sans-serif",
               fontWeight: 600,
-              fontSize: 'clamp(18pt, 4vw, 24pt)',
+              fontSize: 'clamp(19pt, 4vw, 25pt)',
               lineHeight: '1.2',
               marginBottom: 'clamp(16px, 3vw, 24px)'
             }}
@@ -180,16 +183,24 @@ const MarketplaceSection = () => {
               </div>
               {/* Feature Photo */}
               <div 
-                className="rounded-lg w-full"
+                className="rounded-lg w-full overflow-hidden"
                 style={{
                   height: 'clamp(400px, 50vh, 500px)',
                   backgroundColor: '#D1D5DB',
                   background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)'
                 }}
               >
-                <div className="w-full h-full flex items-center justify-center text-gray-400">
-                  <span>{feature.placeholder}</span>
-                </div>
+                {feature.src ? (
+                  <img 
+                    src={feature.src} 
+                    alt={feature.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    <span>{feature.placeholder}</span>
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -267,19 +278,27 @@ const MarketplaceSection = () => {
             </div>
           </div>
 
-          {/* Right Column - Placeholder */}
+          {/* Right Column - Image */}
           <div className="flex-shrink-0">
             <div 
-              className="rounded-lg transition-all duration-500 w-[712px]"
+              className="rounded-lg transition-all duration-500 w-[712px] overflow-hidden"
               style={{
                 height: '650px',
                 backgroundColor: '#D1D5DB',
                 background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)'
               }}
             >
-              <div className="w-full h-full flex items-center justify-center text-gray-400">
-                <span>{features[activeFeature]?.placeholder || 'Placeholder'}</span>
-              </div>
+              {features[activeFeature]?.src ? (
+                <img 
+                  src={features[activeFeature].src} 
+                  alt={features[activeFeature].title}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                  <span>{features[activeFeature]?.placeholder || 'Placeholder'}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

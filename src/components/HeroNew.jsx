@@ -89,7 +89,7 @@ const HeroNew = () => {
 
       {/* Video Container - Mobile: 450px, Desktop: 500px */}
       <div 
-        className="w-full overflow-hidden relative mt-[24px] mb-0 h-[450px] md:mt-[40px] md:h-[500px]"
+        className="w-full overflow-hidden relative mt-[24px] mb-0 h-[450px] md:mt-[40px] md:h-[600px]"
         style={{
           display: 'block',
           width: '100vw',

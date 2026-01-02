@@ -92,7 +92,7 @@ const QuoteSection = () => {
             style={{ 
               fontFamily: "'Inter', sans-serif",
               fontWeight: 600,
-              fontSize: 'clamp(18pt, 4vw, 24pt)',
+              fontSize: 'clamp(19pt, 4vw, 25pt)',
               lineHeight: '1.2',
               marginBottom: 'clamp(16px, 3vw, 24px)'
             }}
@@ -118,7 +118,7 @@ const QuoteSection = () => {
         {/* Desktop: Left-aligned tabs with content below */}
         <div className="hidden lg:flex flex-col">
           {/* Tab Buttons - Left aligned */}
-          <div className="flex justify-start gap-4 mb-6">
+          <div className="flex justify-start gap-6 mb-8">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -158,7 +158,7 @@ const QuoteSection = () => {
               {images.artists.map((image) => (
                 <div key={image.id} className="flex flex-col">
                   <div 
-                    className="rounded-lg overflow-hidden w-full cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
+                    className="rounded-lg overflow-hidden w-full cursor-pointer"
                     style={{
                       aspectRatio: '1/1',
                       marginBottom: '12px',
@@ -168,7 +168,7 @@ const QuoteSection = () => {
                     <img 
                       src={image.src} 
                       alt={image.description}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
                       style={{ borderRadius: '20px' }}
                     />
                   </div>
@@ -191,7 +191,7 @@ const QuoteSection = () => {
               {images.buyers.map((image) => (
                 <div key={image.id} className="flex flex-col">
                   <div 
-                    className="rounded-lg overflow-hidden w-full cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
+                    className="rounded-lg overflow-hidden w-full cursor-pointer"
                     style={{
                       aspectRatio: '1/1',
                       marginBottom: '12px',
@@ -201,7 +201,7 @@ const QuoteSection = () => {
                     <img 
                       src={image.src} 
                       alt={image.description}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
                       style={{ borderRadius: '20px' }}
                     />
                   </div>
@@ -234,7 +234,7 @@ const QuoteSection = () => {
                 <div className="flex flex-col" style={{ gridColumn: '1', gridRow: '1 / 3', gap: '12px' }}>
                   {/* Image 1: 294x168 - Top */}
                   <div 
-                    className="rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
+                    className="rounded-lg overflow-hidden cursor-pointer"
                     style={{
                       width: '100%',
                       aspectRatio: '294/168',
@@ -250,7 +250,7 @@ const QuoteSection = () => {
                   
                   {/* Image 2: 294x428 - Directly below Image 1, no gap */}
                   <div 
-                    className="rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
+                    className="rounded-lg overflow-hidden cursor-pointer"
                     style={{
                       width: '100%',
                       aspectRatio: '294/428',
@@ -267,7 +267,7 @@ const QuoteSection = () => {
                 
                 {/* Column 2: Image 3 - Top */}
                 <div 
-                  className="rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
+                  className="rounded-lg overflow-hidden cursor-pointer"
                   style={{
                     gridColumn: '2',
                     gridRow: '1',
@@ -285,7 +285,7 @@ const QuoteSection = () => {
                 
                 {/* Image 4: 602x168 - Below Image 3, spans columns 2-3, with gap */}
                 <div 
-                  className="rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
+                  className="rounded-lg overflow-hidden cursor-pointer"
                   style={{
                     gridColumn: '2 / 4',
                     gridRow: '2',
@@ -305,7 +305,7 @@ const QuoteSection = () => {
                 <div className="flex flex-col" style={{ gridColumn: '3', gridRow: '1 / 3', gap: '12px' }}>
                   {/* Image 5: 294x98 - Top */}
                   <div 
-                    className="rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
+                    className="rounded-lg overflow-hidden cursor-pointer"
                     style={{
                       width: '100%',
                       aspectRatio: '294/98',
@@ -321,7 +321,7 @@ const QuoteSection = () => {
                   
                   {/* Image 6: 294x312 - Directly below Image 5, no gap */}
                   <div 
-                    className="rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
+                    className="rounded-lg overflow-hidden cursor-pointer"
                     style={{
                       width: '100%',
                       aspectRatio: '294/312',
@@ -340,7 +340,7 @@ const QuoteSection = () => {
                 <div className="flex flex-col" style={{ gridColumn: '4', gridRow: '1 / 3', gap: '12px' }}>
                   {/* Image 7: 335x344 */}
                   <div 
-                    className="rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
+                    className="rounded-lg overflow-hidden cursor-pointer"
                     style={{
                       width: '100%',
                       aspectRatio: '335/344',
@@ -356,7 +356,7 @@ const QuoteSection = () => {
                   
                   {/* Image 8: 335x350 - Increased height to match bottom row */}
                   <div 
-                    className="rounded-lg overflow-hidden cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
+                    className="rounded-lg overflow-hidden cursor-pointer"
                     style={{
                       width: '100%',
                       aspectRatio: '335/330',
@@ -427,77 +427,235 @@ const QuoteSection = () => {
           </div>
 
           {/* Placeholder - Below tabs */}
-          <div 
-            ref={carouselRef}
-            className="relative overflow-hidden mb-6"
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
-            <div 
-              className="flex transition-transform duration-300 ease-out"
-              style={{
-                transform: `translateX(-${currentImageIndex * 100}%)`
-              }}
-            >
-              {images[activeTab].map((image) => (
-                <div key={image.id} className="flex-shrink-0 w-full">
-                  {image.src ? (
-                    <div 
-                      className="rounded-lg overflow-hidden w-full mx-auto cursor-pointer transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
-                      style={{
-                        aspectRatio: activeTab === 'artists' || activeTab === 'buyers' ? '1/1' : '400/580',
-                        maxWidth: activeTab === 'artists' || activeTab === 'buyers' ? '100%' : '400px',
-                        borderRadius: '20px'
-                      }}
-                    >
-                      <img 
-                        src={image.src} 
-                        alt={image.description || image.placeholder}
-                        className="w-full h-full object-cover"
-                        style={{ borderRadius: '20px' }}
-                      />
-                    </div>
+          {activeTab === 'enthusiasts' ? (
+            <div className="mb-6">
+              {/* Mobile Enthusiasts Collage - Portrait Layout with 4 images */}
+              <div 
+                className="grid"
+                style={{
+                  gridTemplateColumns: 'repeat(2, 1fr)',
+                  gridTemplateRows: 'repeat(3, auto)',
+                  gap: '8px'
+                }}
+              >
+                {/* Image 1: Top left - square */}
+                <div 
+                  className="rounded-lg overflow-hidden cursor-pointer"
+                  style={{
+                    gridColumn: '1',
+                    gridRow: '1',
+                    width: '100%',
+                    aspectRatio: '1/1',
+                    backgroundColor: '#D1D5DB',
+                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                    borderRadius: '20px'
+                  }}
+                >
+                  {images.enthusiasts[0]?.src ? (
+                    <img 
+                      src={images.enthusiasts[0].src} 
+                      alt={images.enthusiasts[0].placeholder}
+                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                      style={{ borderRadius: '20px' }}
+                    />
                   ) : (
-                    <div 
-                      className="rounded-lg overflow-hidden w-full mx-auto"
-                      style={{
-                        aspectRatio: '400/580',
-                        maxWidth: '400px',
-                        backgroundColor: '#D1D5DB',
-                        background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                        borderRadius: '20px'
-                      }}
-                    >
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        <span>{image.placeholder}</span>
-                      </div>
+                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                      <span>{images.enthusiasts[0]?.placeholder}</span>
                     </div>
                   )}
                 </div>
+                
+                {/* Image 2: Top right - tall */}
+                <div 
+                  className="rounded-lg overflow-hidden cursor-pointer"
+                  style={{
+                    gridColumn: '2',
+                    gridRow: '1 / 3',
+                    width: '100%',
+                    aspectRatio: '1/2',
+                    backgroundColor: '#D1D5DB',
+                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                    borderRadius: '20px'
+                  }}
+                >
+                  {images.enthusiasts[1]?.src ? (
+                    <img 
+                      src={images.enthusiasts[1].src} 
+                      alt={images.enthusiasts[1].placeholder}
+                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                      style={{ borderRadius: '20px' }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                      <span>{images.enthusiasts[1]?.placeholder}</span>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Image 3: Second row left - tall */}
+                <div 
+                  className="rounded-lg overflow-hidden cursor-pointer"
+                  style={{
+                    gridColumn: '1',
+                    gridRow: '2 / 4',
+                    width: '100%',
+                    aspectRatio: '1/2',
+                    backgroundColor: '#D1D5DB',
+                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                    borderRadius: '20px'
+                  }}
+                >
+                  {images.enthusiasts[2]?.src ? (
+                    <img 
+                      src={images.enthusiasts[2].src} 
+                      alt={images.enthusiasts[2].placeholder}
+                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                      style={{ borderRadius: '20px' }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                      <span>{images.enthusiasts[2]?.placeholder}</span>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Image 4: Third row right - square */}
+                <div 
+                  className="rounded-lg overflow-hidden cursor-pointer"
+                  style={{
+                    gridColumn: '2',
+                    gridRow: '3',
+                    width: '100%',
+                    aspectRatio: '1/1',
+                    backgroundColor: '#D1D5DB',
+                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                    borderRadius: '20px'
+                  }}
+                >
+                  {images.enthusiasts[3]?.src ? (
+                    <img 
+                      src={images.enthusiasts[3].src} 
+                      alt={images.enthusiasts[3].placeholder}
+                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                      style={{ borderRadius: '20px' }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                      <span>{images.enthusiasts[3]?.placeholder}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* Bottom Text */}
+              <p 
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontWeight: 400,
+                  fontSize: '16pt',
+                  color: '#000',
+                  lineHeight: '1.4',
+                  marginTop: '12px',
+                  textAlign: 'center'
+                }}
+              >
+                Experience Art Uninterrupted
+              </p>
+            </div>
+          ) : (
+            <div 
+              ref={carouselRef}
+              className="relative overflow-hidden mb-6"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
+              <div 
+                className="flex transition-transform duration-300 ease-out"
+                style={{
+                  transform: `translateX(-${currentImageIndex * 100}%)`
+                }}
+              >
+                {images[activeTab].map((image) => (
+                  <div key={image.id} className="flex-shrink-0 w-full flex flex-col">
+                    {image.src ? (
+                      <>
+                        <div 
+                          className="rounded-lg overflow-hidden w-full mx-auto cursor-pointer"
+                          style={{
+                            aspectRatio: activeTab === 'artists' || activeTab === 'buyers' ? '1/1' : '400/580',
+                            maxWidth: activeTab === 'artists' || activeTab === 'buyers' ? '100%' : '400px',
+                            borderRadius: '20px',
+                            marginBottom: image.description ? '12px' : '0'
+                          }}
+                        >
+                          <img 
+                            src={image.src} 
+                            alt={image.description || image.placeholder}
+                            className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                            style={{ borderRadius: '20px' }}
+                          />
+                        </div>
+                        {image.description && (
+                          <p 
+                            style={{
+                              fontFamily: "'Inter', sans-serif",
+                              fontWeight: 400,
+                              fontSize: '16pt',
+                              color: '#000',
+                              lineHeight: '1.4',
+                              textAlign: 'center',
+                              paddingLeft: '16px',
+                              paddingRight: '16px'
+                            }}
+                          >
+                            {image.description}
+                          </p>
+                        )}
+                      </>
+                    ) : (
+                      <div 
+                        className="rounded-lg overflow-hidden w-full mx-auto"
+                        style={{
+                          aspectRatio: '400/580',
+                          maxWidth: '400px',
+                          backgroundColor: '#D1D5DB',
+                          background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                          borderRadius: '20px'
+                        }}
+                      >
+                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                          <span>{image.placeholder}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Pagination Dots - At the bottom (hidden for enthusiasts) */}
+          {activeTab !== 'enthusiasts' && (
+            <div className="flex justify-center gap-2">
+              {images[activeTab].map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentImageIndex(index)}
+                  className={`rounded-full transition-all ${
+                    index === currentImageIndex 
+                      ? 'bg-gray-400' 
+                      : 'bg-gray-300'
+                  }`}
+                  style={{
+                    width: '8px',
+                    height: '8px'
+                  }}
+                  aria-label={`Go to image ${index + 1}`}
+                />
               ))}
             </div>
-          </div>
-
-          {/* Pagination Dots - At the bottom */}
-          <div className="flex justify-center gap-2">
-            {images[activeTab].map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentImageIndex(index)}
-                className={`rounded-full transition-all ${
-                  index === currentImageIndex 
-                    ? 'bg-gray-400' 
-                    : 'bg-gray-300'
-                }`}
-                style={{
-                  width: '8px',
-                  height: '8px'
-                }}
-                aria-label={`Go to image ${index + 1}`}
-              />
-            ))}
-          </div>
+          )}
         </div>
       </div>
     </section>

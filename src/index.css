@@ -29,7 +29,6 @@ body {
   height: 100%;
   background: #F7F7F7;
   border-color: #3b3b3b;
-  user-select: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: pan-y;
   /* Performance optimizations for smooth scrolling */
