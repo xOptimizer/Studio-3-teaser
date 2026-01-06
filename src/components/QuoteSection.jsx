@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { getCloudinaryImageUrl } from '../utils/cloudinary';
 
 const QuoteSection = () => {
   const [activeTab, setActiveTab] = useState('artists');
@@ -16,27 +17,83 @@ const QuoteSection = () => {
     { title: 'Enthusiasts', id: 'enthusiasts' }
   ];
 
-  // Images with descriptions for Artists section
+  // Images with descriptions for Artists section - using Cloudinary URLs
   const images = {
     artists: [
-      { id: 1, src: '/assets/images/artists-image-2.webp', description: 'Share Your Art' },
-      { id: 2, src: '/assets/images/artists-image-1.webp', description: 'Find Your Audience' },
-      { id: 3, src: '/assets/images/artists-image-4.webp', description: 'Focus on Creating' },
-      { id: 4, src: '/assets/images/artists-image-3.webp', description: 'Grow Your Practice' }
+      { 
+        id: 1, 
+        src: getCloudinaryImageUrl('artists-image-2.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        description: 'Share Your Art' 
+      },
+      { 
+        id: 2, 
+        src: getCloudinaryImageUrl('artists-image-1.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        description: 'Find Your Audience' 
+      },
+      { 
+        id: 3, 
+        src: getCloudinaryImageUrl('artists-image-4.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        description: 'Focus on Creating' 
+      },
+      { 
+        id: 4, 
+        src: getCloudinaryImageUrl('artists-image-3.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        description: 'Grow Your Practice' 
+      }
     ],
     buyers: [
-      { id: 4, src: '/assets/images/buyers-image-1.webp', description: 'Connect Directly with Artists' },
-      { id: 5, src: '/assets/images/buyers-image-2.webp', description: 'Purchase with Confidence' }
+      { 
+        id: 4, 
+        src: getCloudinaryImageUrl('buyers-image-1.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        description: 'Connect Directly with Artists' 
+      },
+      { 
+        id: 5, 
+        src: getCloudinaryImageUrl('buyers-image-2.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        description: 'Purchase with Confidence' 
+      }
     ],
     enthusiasts: [
-      { id: 7, src: '/assets/images/AdobeStock_118182508.webp', placeholder: 'Enthusiasts Image 1' },
-      { id: 8, src: '/assets/images/AdobeStock_135490522.webp', placeholder: 'Enthusiasts Image 2' },
-      { id: 9, src: '/assets/images/AdobeStock_213841942.webp', placeholder: 'Enthusiasts Image 3' },
-      { id: 10, src: '/assets/images/AdobeStock_231517092.webp', placeholder: 'Enthusiasts Image 4' },
-      { id: 11, src: '/assets/images/AdobeStock_421538237.webp', placeholder: 'Enthusiasts Image 5' },
-      { id: 12, src: '/assets/images/AdobeStock_460628886.webp', placeholder: 'Enthusiasts Image 6' },
-      { id: 13, src: '/assets/images/AdobeStock_469893497.webp', placeholder: 'Enthusiasts Image 7' },
-      { id: 14, src: '/assets/images/AdobeStock_785220762.webp', placeholder: 'Enthusiasts Image 8' }
+      { 
+        id: 7, 
+        src: getCloudinaryImageUrl('AdobeStock_118182508.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        placeholder: 'Enthusiasts Image 1' 
+      },
+      { 
+        id: 8, 
+        src: getCloudinaryImageUrl('AdobeStock_135490522.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        placeholder: 'Enthusiasts Image 2' 
+      },
+      { 
+        id: 9, 
+        src: getCloudinaryImageUrl('AdobeStock_213841942.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        placeholder: 'Enthusiasts Image 3' 
+      },
+      { 
+        id: 10, 
+        src: getCloudinaryImageUrl('AdobeStock_231517092.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        placeholder: 'Enthusiasts Image 4' 
+      },
+      { 
+        id: 11, 
+        src: getCloudinaryImageUrl('AdobeStock_421538237.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        placeholder: 'Enthusiasts Image 5' 
+      },
+      { 
+        id: 12, 
+        src: getCloudinaryImageUrl('AdobeStock_460628886.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        placeholder: 'Enthusiasts Image 6' 
+      },
+      { 
+        id: 13, 
+        src: getCloudinaryImageUrl('AdobeStock_469893497.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        placeholder: 'Enthusiasts Image 7' 
+      },
+      { 
+        id: 14, 
+        src: getCloudinaryImageUrl('AdobeStock_785220762.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        placeholder: 'Enthusiasts Image 8' 
+      }
     ]
   };
 
@@ -211,6 +268,8 @@ const QuoteSection = () => {
                       alt={image.description}
                       className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
                       style={{ borderRadius: '20px', willChange: 'transform' }}
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                   <p 
@@ -246,6 +305,8 @@ const QuoteSection = () => {
                       alt={image.description}
                       className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
                       style={{ borderRadius: '20px', willChange: 'transform' }}
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                   <p 
@@ -292,9 +353,11 @@ const QuoteSection = () => {
                       <img 
                         src={images.enthusiasts[0].src} 
                         alt={images.enthusiasts[0].placeholder}
-                        className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                        style={{ borderRadius: '20px' }}
-                      />
+                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                      style={{ borderRadius: '20px' }}
+                      loading="lazy"
+                      decoding="async"
+                    />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
                         <span>{images.enthusiasts[0]?.placeholder}</span>
@@ -319,9 +382,11 @@ const QuoteSection = () => {
                       <img 
                         src={images.enthusiasts[1].src} 
                         alt={images.enthusiasts[1].placeholder}
-                        className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                        style={{ borderRadius: '20px' }}
-                      />
+                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                      style={{ borderRadius: '20px' }}
+                      loading="lazy"
+                      decoding="async"
+                    />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
                         <span>{images.enthusiasts[1]?.placeholder}</span>
@@ -351,6 +416,8 @@ const QuoteSection = () => {
                       alt={images.enthusiasts[2].placeholder}
                       className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
                       style={{ borderRadius: '20px', willChange: 'transform' }}
+                      loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
@@ -380,6 +447,8 @@ const QuoteSection = () => {
                       alt={images.enthusiasts[3].placeholder}
                       className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
                       style={{ borderRadius: '20px', willChange: 'transform' }}
+                      loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
@@ -407,9 +476,11 @@ const QuoteSection = () => {
                       <img 
                         src={images.enthusiasts[4].src} 
                         alt={images.enthusiasts[4].placeholder}
-                        className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                        style={{ borderRadius: '20px' }}
-                      />
+                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                      style={{ borderRadius: '20px' }}
+                      loading="lazy"
+                      decoding="async"
+                    />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
                         <span>{images.enthusiasts[4]?.placeholder}</span>
@@ -434,9 +505,11 @@ const QuoteSection = () => {
                       <img 
                         src={images.enthusiasts[5].src} 
                         alt={images.enthusiasts[5].placeholder}
-                        className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                        style={{ borderRadius: '20px' }}
-                      />
+                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                      style={{ borderRadius: '20px' }}
+                      loading="lazy"
+                      decoding="async"
+                    />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
                         <span>{images.enthusiasts[5]?.placeholder}</span>
@@ -464,9 +537,11 @@ const QuoteSection = () => {
                       <img 
                         src={images.enthusiasts[6].src} 
                         alt={images.enthusiasts[6].placeholder}
-                        className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                        style={{ borderRadius: '20px' }}
-                      />
+                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                      style={{ borderRadius: '20px' }}
+                      loading="lazy"
+                      decoding="async"
+                    />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
                         <span>{images.enthusiasts[6]?.placeholder}</span>
@@ -491,9 +566,11 @@ const QuoteSection = () => {
                       <img 
                         src={images.enthusiasts[7].src} 
                         alt={images.enthusiasts[7].placeholder}
-                        className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                        style={{ borderRadius: '20px' }}
-                      />
+                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                      style={{ borderRadius: '20px' }}
+                      loading="lazy"
+                      decoding="async"
+                    />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
                         <span>{images.enthusiasts[7]?.placeholder}</span>
@@ -590,6 +667,8 @@ const QuoteSection = () => {
                       alt={images.enthusiasts[0].placeholder}
                       className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
                       style={{ borderRadius: '20px', willChange: 'transform' }}
+                      loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
@@ -619,6 +698,8 @@ const QuoteSection = () => {
                       alt={images.enthusiasts[1].placeholder}
                       className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
                       style={{ borderRadius: '20px', willChange: 'transform' }}
+                      loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
@@ -648,6 +729,8 @@ const QuoteSection = () => {
                       alt={images.enthusiasts[2].placeholder}
                       className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
                       style={{ borderRadius: '20px', willChange: 'transform' }}
+                      loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
@@ -677,6 +760,8 @@ const QuoteSection = () => {
                       alt={images.enthusiasts[3].placeholder}
                       className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
                       style={{ borderRadius: '20px', willChange: 'transform' }}
+                      loading="lazy"
+                      decoding="async"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
@@ -733,9 +818,11 @@ const QuoteSection = () => {
                           <img 
                             src={image.src} 
                             alt={image.description || image.placeholder}
-                            className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                            style={{ borderRadius: '20px' }}
-                          />
+                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                      style={{ borderRadius: '20px' }}
+                      loading="lazy"
+                      decoding="async"
+                    />
                         </div>
                         {image.description && (
                           <p 
@@ -1610,9 +1697,11 @@ const QuoteSection = () => {
                         <img 
                           src={images.enthusiasts[0].src} 
                           alt={images.enthusiasts[0].placeholder}
-                          className="w-full h-full object-cover"
-                          style={{ borderRadius: '12px' }}
-                        />
+                         className="w-full h-full object-cover"
+                         style={{ borderRadius: '12px' }}
+                         loading="eager"
+                         decoding="async"
+                       />
                       ) : null}
                     </div>
                     
@@ -1632,9 +1721,11 @@ const QuoteSection = () => {
                         <img 
                           src={images.enthusiasts[1].src} 
                           alt={images.enthusiasts[1].placeholder}
-                          className="w-full h-full object-cover"
-                          style={{ borderRadius: '12px' }}
-                        />
+                         className="w-full h-full object-cover"
+                         style={{ borderRadius: '12px' }}
+                         loading="eager"
+                         decoding="async"
+                       />
                       ) : null}
                     </div>
                     
@@ -1654,9 +1745,11 @@ const QuoteSection = () => {
                         <img 
                           src={images.enthusiasts[2].src} 
                           alt={images.enthusiasts[2].placeholder}
-                          className="w-full h-full object-cover"
-                          style={{ borderRadius: '12px' }}
-                        />
+                         className="w-full h-full object-cover"
+                         style={{ borderRadius: '12px' }}
+                         loading="eager"
+                         decoding="async"
+                       />
                       ) : null}
                     </div>
                     
@@ -1676,9 +1769,11 @@ const QuoteSection = () => {
                         <img 
                           src={images.enthusiasts[3].src} 
                           alt={images.enthusiasts[3].placeholder}
-                          className="w-full h-full object-cover"
-                          style={{ borderRadius: '12px' }}
-                        />
+                         className="w-full h-full object-cover"
+                         style={{ borderRadius: '12px' }}
+                         loading="eager"
+                         decoding="async"
+                       />
                       ) : null}
                     </div>
                   </div>
@@ -1703,9 +1798,11 @@ const QuoteSection = () => {
                         <img 
                           src={images.enthusiasts[0].src} 
                           alt={images.enthusiasts[0].placeholder}
-                          className="w-full h-full object-cover"
-                          style={{ borderRadius: '12px' }}
-                        />
+                         className="w-full h-full object-cover"
+                         style={{ borderRadius: '12px' }}
+                         loading="eager"
+                         decoding="async"
+                       />
                       ) : null}
                     </div>
                     
@@ -1722,9 +1819,11 @@ const QuoteSection = () => {
                         <img 
                           src={images.enthusiasts[1].src} 
                           alt={images.enthusiasts[1].placeholder}
-                          className="w-full h-full object-cover"
-                          style={{ borderRadius: '12px' }}
-                        />
+                         className="w-full h-full object-cover"
+                         style={{ borderRadius: '12px' }}
+                         loading="eager"
+                         decoding="async"
+                       />
                       ) : null}
                     </div>
                   </div>
@@ -1748,6 +1847,8 @@ const QuoteSection = () => {
                          alt={selectedImage.description || selectedImage.placeholder}
                          className="w-full h-full object-cover"
                          style={{ borderRadius: '12px' }}
+                         loading="eager"
+                         decoding="async"
                        />
                      </div>
                    </div>
@@ -1772,6 +1873,8 @@ const QuoteSection = () => {
                          alt={selectedImage.description || selectedImage.placeholder}
                          className="w-full h-full object-cover"
                          style={{ borderRadius: '12px' }}
+                         loading="eager"
+                         decoding="async"
                        />
                      </div>
                    </div>

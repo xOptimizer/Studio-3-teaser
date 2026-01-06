@@ -1,65 +1,27 @@
-import hero from "/assets/images/hero.jpeg";
+import { getCloudinaryVideoUrl } from './cloudinary';
 
-export const heroImg = hero;
-
-import hmv from "/assets/videos/hero.mp4";
-import smallmv from "/assets/videos/smallHero.mp4";
-import highlightFirstmv from "/assets/videos/highlight-first.mp4";
-import highlightFirstMobilemv from "/assets/videos/highlight-first-mobile.mp4";
-import highlightSectmv from "/assets/videos/hightlight-third.mp4";
-import highlightSecMobilemv from "/assets/videos/hightlight-sec-mobile.mp4";
-import highlightThirdmv from "/assets/videos/hightlight-sec.mp4";
-import highlightThirdMobilemv from "/assets/videos/hightlight-third-mobile.mp4";
-import highlightFourthmv from "/assets/videos/hightlight-fourth.mp4";
-import exploremv from "/assets/videos/explore.mp4";
-import framemv from "/assets/videos/frame.mp4";
-import studiomv from "/assets/videos/Final (2).mp4";
-
+// Keep SVG files as local imports since they're small and don't need optimization
 import apple from "/assets/images/apple.svg";
-import search from "/assets/images/search.svg";
-import bag from "/assets/images/bag.svg";
-import watch from "/assets/images/watch.svg";
-import right from "/assets/images/right.svg";
-import replay from "/assets/images/replay.svg";
-import play from "/assets/images/play.svg";
-import pause from "/assets/images/pause.svg";
 
-import yellow from "/assets/images/yellow.jpg";
-import blue from "/assets/images/blue.jpg";
-import white from "/assets/images/white.jpg";
-import black from "/assets/images/black.jpg";
-import explore1 from "/assets/images/explore1.jpg";
-import explore2 from "/assets/images/explore2.jpg";
-import chip from "/assets/images/chip.jpeg";
-import frame from "/assets/images/frame.png";
+// Videos from Cloudinary - optimized for streaming
+// Only videos that actually exist in public/assets/videos/
+export const heroVideo = getCloudinaryVideoUrl('hero.mp4', { 
+  width: 1920, 
+  quality: 'auto',
+  format: 'auto'
+});
 
-export const heroVideo = hmv;
-export const smallHeroVideo = smallmv;
-export const highlightFirstVideo = highlightFirstmv;
-export const highlightFirstVideoMobile = highlightFirstMobilemv;
-export const highlightSecondVideo = highlightSectmv;
-export const highlightSecondVideoMobile = highlightSecMobilemv;
-export const highlightThirdVideo = highlightThirdmv;
-export const highlightThirdVideoMobile = highlightThirdMobilemv;
-export const highlightFourthVideo = highlightFourthmv;
-export const exploreVideo = exploremv;
-export const frameVideo = framemv;
-export const studioVideo = studiomv;
+export const highlightThirdVideo = getCloudinaryVideoUrl('hightlight-sec.mp4', { 
+  width: 1920, 
+  quality: 'auto',
+  format: 'auto'
+});
 
+export const highlightThirdVideoMobile = getCloudinaryVideoUrl('hightlight-third-mobile.mp4', { 
+  width: 800, 
+  quality: 'auto',
+  format: 'auto'
+});
+
+// SVG images (kept as local)
 export const appleImg = apple;
-export const searchImg = search;
-export const bagImg = bag;
-export const watchImg = watch;
-export const rightImg = right;
-export const replayImg = replay;
-export const playImg = play;
-export const pauseImg = pause;
-
-export const yellowImg = yellow;
-export const blueImg = blue;
-export const whiteImg = white;
-export const blackImg = black;
-export const explore1Img = explore1;
-export const explore2Img = explore2;
-export const chipImg = chip;
-export const frameImg = frame;

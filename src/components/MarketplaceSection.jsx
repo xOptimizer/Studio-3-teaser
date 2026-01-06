@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { getCloudinaryImageUrl } from '../utils/cloudinary';
 
 const MarketplaceSection = () => {
   const [activeFeature, setActiveFeature] = useState(0);
@@ -10,7 +11,11 @@ const MarketplaceSection = () => {
       id: 1,
       title: 'AI-Powered Ecommerce',
       placeholder: 'AI-Powered commerce Image',
-      src: '/assets/images/AI Powered .webp',
+      src: getCloudinaryImageUrl('marketplace-image-1.webp', { 
+        width: 1400, 
+        quality: 'auto', 
+        format: 'auto' 
+      }),
       fontWeight: 600,
       color: '#000'
     },
@@ -18,7 +23,11 @@ const MarketplaceSection = () => {
       id: 2,
       title: 'Create with confidence',
       placeholder: 'Create with confidence Image',
-      src: '/assets/images/Create with confidence.webp',
+      src: getCloudinaryImageUrl('marketplace-image-2.webp', { 
+        width: 1400, 
+        quality: 'auto', 
+        format: 'auto' 
+      }),
       fontWeight: 400,
       color: '#848597'
     },
@@ -26,7 +35,11 @@ const MarketplaceSection = () => {
       id: 3,
       title: 'Quality supplies, no markups',
       placeholder: 'Quality supplies Image',
-      src: '/assets/images/Quality supplies no markups.webp',
+      src: getCloudinaryImageUrl('marketplace-image-3.webp', { 
+        width: 1400, 
+        quality: 'auto', 
+        format: 'auto' 
+      }),
       fontWeight: 400,
       color: '#848597'
     }
@@ -195,6 +208,8 @@ const MarketplaceSection = () => {
                     src={feature.src} 
                     alt={feature.title}
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -293,6 +308,8 @@ const MarketplaceSection = () => {
                   src={features[activeFeature].src} 
                   alt={features[activeFeature].title}
                   className="w-full h-full object-cover"
+                  loading="eager"
+                  decoding="async"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400">
