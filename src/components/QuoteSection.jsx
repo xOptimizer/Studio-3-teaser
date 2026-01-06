@@ -202,14 +202,15 @@ const QuoteSection = () => {
                     style={{
                       aspectRatio: '1/1',
                       marginBottom: '12px',
-                      borderRadius: '20px'
+                      borderRadius: '20px',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                     }}
                   >
                     <img 
                       src={image.src} 
                       alt={image.description}
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
+                      className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
+                      style={{ borderRadius: '20px', willChange: 'transform' }}
                     />
                   </div>
                   <p 
@@ -236,14 +237,15 @@ const QuoteSection = () => {
                     style={{
                       aspectRatio: '1/1',
                       marginBottom: '12px',
-                      borderRadius: '20px'
+                      borderRadius: '20px',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                     }}
                   >
                     <img 
                       src={image.src} 
                       alt={image.description}
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
+                      className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
+                      style={{ borderRadius: '20px', willChange: 'transform' }}
                     />
                   </div>
                   <p 
@@ -282,7 +284,8 @@ const QuoteSection = () => {
                       aspectRatio: '294/168',
                       backgroundColor: '#D1D5DB',
                       background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px'
+                      borderRadius: '20px',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                     }}
                   >
                     {images.enthusiasts[0]?.src ? (
@@ -308,7 +311,8 @@ const QuoteSection = () => {
                       aspectRatio: '294/428',
                       backgroundColor: '#D1D5DB',
                       background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px'
+                      borderRadius: '20px',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                     }}
                   >
                     {images.enthusiasts[1]?.src ? (
@@ -337,15 +341,16 @@ const QuoteSection = () => {
                     aspectRatio: '294/428',
                     backgroundColor: '#D1D5DB',
                     background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px'
+                    borderRadius: '20px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                   }}
                 >
                   {images.enthusiasts[2]?.src ? (
                     <img 
                       src={images.enthusiasts[2].src} 
                       alt={images.enthusiasts[2].placeholder}
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
+                      className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
+                      style={{ borderRadius: '20px', willChange: 'transform' }}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
@@ -365,15 +370,16 @@ const QuoteSection = () => {
                     aspectRatio: '602/168',
                     backgroundColor: '#D1D5DB',
                     background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px'
+                    borderRadius: '20px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                   }}
                 >
                   {images.enthusiasts[3]?.src ? (
                     <img 
                       src={images.enthusiasts[3].src} 
                       alt={images.enthusiasts[3].placeholder}
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
+                      className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
+                      style={{ borderRadius: '20px', willChange: 'transform' }}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
@@ -393,7 +399,8 @@ const QuoteSection = () => {
                       aspectRatio: '294/98',
                       backgroundColor: '#D1D5DB',
                       background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px'
+                      borderRadius: '20px',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                     }}
                   >
                     {images.enthusiasts[4]?.src ? (
@@ -419,7 +426,8 @@ const QuoteSection = () => {
                       aspectRatio: '294/312',
                       backgroundColor: '#D1D5DB',
                       background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px'
+                      borderRadius: '20px',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                     }}
                   >
                     {images.enthusiasts[5]?.src ? (
@@ -448,7 +456,8 @@ const QuoteSection = () => {
                       aspectRatio: '335/344',
                       backgroundColor: '#D1D5DB',
                       background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px'
+                      borderRadius: '20px',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                     }}
                   >
                     {images.enthusiasts[6]?.src ? (
@@ -474,7 +483,8 @@ const QuoteSection = () => {
                       aspectRatio: '335/330',
                       backgroundColor: '#D1D5DB',
                       background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px'
+                      borderRadius: '20px',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                     }}
                   >
                     {images.enthusiasts[7]?.src ? (
@@ -570,15 +580,16 @@ const QuoteSection = () => {
                     aspectRatio: '1/1',
                     backgroundColor: '#D1D5DB',
                     background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px'
+                    borderRadius: '20px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                   }}
                 >
                   {images.enthusiasts[0]?.src ? (
                     <img 
                       src={images.enthusiasts[0].src} 
                       alt={images.enthusiasts[0].placeholder}
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
+                      className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
+                      style={{ borderRadius: '20px', willChange: 'transform' }}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
@@ -598,15 +609,16 @@ const QuoteSection = () => {
                     aspectRatio: '1/2',
                     backgroundColor: '#D1D5DB',
                     background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px'
+                    borderRadius: '20px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                   }}
                 >
                   {images.enthusiasts[1]?.src ? (
                     <img 
                       src={images.enthusiasts[1].src} 
                       alt={images.enthusiasts[1].placeholder}
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
+                      className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
+                      style={{ borderRadius: '20px', willChange: 'transform' }}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
@@ -626,15 +638,16 @@ const QuoteSection = () => {
                     aspectRatio: '1/2',
                     backgroundColor: '#D1D5DB',
                     background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px'
+                    borderRadius: '20px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                   }}
                 >
                   {images.enthusiasts[2]?.src ? (
                     <img 
                       src={images.enthusiasts[2].src} 
                       alt={images.enthusiasts[2].placeholder}
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
+                      className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
+                      style={{ borderRadius: '20px', willChange: 'transform' }}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
@@ -654,15 +667,16 @@ const QuoteSection = () => {
                     aspectRatio: '1/1',
                     backgroundColor: '#D1D5DB',
                     background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px'
+                    borderRadius: '20px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                   }}
                 >
                   {images.enthusiasts[3]?.src ? (
                     <img 
                       src={images.enthusiasts[3].src} 
                       alt={images.enthusiasts[3].placeholder}
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
+                      className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
+                      style={{ borderRadius: '20px', willChange: 'transform' }}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
@@ -712,7 +726,8 @@ const QuoteSection = () => {
                             aspectRatio: activeTab === 'artists' || activeTab === 'buyers' ? '1/1' : '400/580',
                             maxWidth: activeTab === 'artists' || activeTab === 'buyers' ? '100%' : '400px',
                             borderRadius: '20px',
-                            marginBottom: image.description ? '12px' : '0'
+                            marginBottom: image.description ? '12px' : '0',
+                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                           }}
                         >
                           <img 
@@ -747,7 +762,8 @@ const QuoteSection = () => {
                           maxWidth: '400px',
                           backgroundColor: '#D1D5DB',
                           background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                          borderRadius: '20px'
+                          borderRadius: '20px',
+                          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                         }}
                       >
                         <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -833,7 +849,7 @@ const QuoteSection = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Left Panel - Content */}
-              <div className="flex flex-col md:justify-center">
+              <div className="flex flex-col md:justify-center md:pt-12">
                 {activeTab === 'artists' && selectedImage?.id === 1 ? (
                   <>
                     {/* Header */}
@@ -1586,7 +1602,8 @@ const QuoteSection = () => {
                         gridRow: '1',
                         width: '100%',
                         aspectRatio: '1/1',
-                        borderRadius: '12px'
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                       }}
                     >
                       {images.enthusiasts[0]?.src ? (
@@ -1607,7 +1624,8 @@ const QuoteSection = () => {
                         gridRow: '1 / 3',
                         width: '100%',
                         aspectRatio: '1/2',
-                        borderRadius: '12px'
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                       }}
                     >
                       {images.enthusiasts[1]?.src ? (
@@ -1628,7 +1646,8 @@ const QuoteSection = () => {
                         gridRow: '2 / 4',
                         width: '100%',
                         aspectRatio: '1/2',
-                        borderRadius: '12px'
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                       }}
                     >
                       {images.enthusiasts[2]?.src ? (
@@ -1649,7 +1668,8 @@ const QuoteSection = () => {
                         gridRow: '3',
                         width: '100%',
                         aspectRatio: '1/1',
-                        borderRadius: '12px'
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                       }}
                     >
                       {images.enthusiasts[3]?.src ? (
@@ -1675,7 +1695,8 @@ const QuoteSection = () => {
                       className="rounded-lg overflow-hidden w-full"
                       style={{
                         aspectRatio: '1/1',
-                        borderRadius: '12px'
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                       }}
                     >
                       {images.enthusiasts[0]?.src ? (
@@ -1693,7 +1714,8 @@ const QuoteSection = () => {
                       className="rounded-lg overflow-hidden w-full"
                       style={{
                         aspectRatio: '1/1',
-                        borderRadius: '12px'
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                       }}
                     >
                       {images.enthusiasts[1]?.src ? (
@@ -1717,7 +1739,8 @@ const QuoteSection = () => {
                        style={{
                          aspectRatio: '1/1',
                          borderRadius: '12px',
-                         maxWidth: '100%'
+                         maxWidth: '100%',
+                         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                        }}
                      >
                        <img 
@@ -1740,7 +1763,8 @@ const QuoteSection = () => {
                        className="rounded-lg overflow-hidden w-full"
                        style={{
                          aspectRatio: '1/1',
-                         borderRadius: '12px'
+                         borderRadius: '12px',
+                         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                        }}
                      >
                        <img 
