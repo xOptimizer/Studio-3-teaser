@@ -8,7 +8,7 @@ const MarketplaceSection = () => {
   const features = [
     {
       id: 1,
-      title: 'AI-Powered commerce',
+      title: 'AI-Powered Ecommerce',
       placeholder: 'AI-Powered commerce Image',
       src: '/assets/images/AI Powered .webp',
       fontWeight: 600,
