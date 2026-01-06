@@ -796,11 +796,13 @@ const QuoteSection = () => {
           
           {/* Modal Content - Landscape, Minimal */}
           <div 
-            className="relative z-10 bg-zinc-900 rounded-2xl p-6 w-full border border-gray-700 shadow-2xl"
+            className="relative z-10 bg-zinc-900 rounded-2xl p-6 w-full border border-gray-700 shadow-2xl overflow-y-auto"
             style={{ 
               maxWidth: '900px',
               width: '100%',
-              paddingTop: '48px'
+              maxHeight: '90vh',
+              marginTop: '20px',
+              marginBottom: '20px'
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -831,7 +833,7 @@ const QuoteSection = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Left Panel - Content */}
-              <div className="flex flex-col justify-center">
+              <div className="flex flex-col md:justify-center">
                 {activeTab === 'artists' && selectedImage?.id === 1 ? (
                   <>
                     {/* Header */}
@@ -1705,25 +1707,52 @@ const QuoteSection = () => {
                     </div>
                   </div>
                 </div>
-              ) : selectedImage ? (
-                // Single image for Artists/Buyers
-                <div className="flex items-center justify-center relative">
-                  <div 
-                    className="rounded-lg overflow-hidden w-full"
-                    style={{
-                      aspectRatio: '1/1',
-                      borderRadius: '12px'
-                    }}
-                  >
-                    <img 
-                      src={selectedImage.src} 
-                      alt={selectedImage.description}
-                      className="w-full h-full object-cover"
-                      style={{ borderRadius: '12px' }}
-                    />
-                  </div>
-                </div>
-              ) : null}
+                ) : selectedImage ? (
+                 // Single image for Artists/Buyers - Similar layout to enthusiasts on mobile
+                 <div className="flex items-center justify-center w-full">
+                   {/* Desktop: Single centered image */}
+                   <div className="hidden md:flex items-center justify-center relative w-full">
+                     <div 
+                       className="rounded-lg overflow-hidden w-full"
+                       style={{
+                         aspectRatio: '1/1',
+                         borderRadius: '12px',
+                         maxWidth: '100%'
+                       }}
+                     >
+                       <img 
+                         src={selectedImage.src} 
+                         alt={selectedImage.description || selectedImage.placeholder}
+                         className="w-full h-full object-cover"
+                         style={{ borderRadius: '12px' }}
+                       />
+                     </div>
+                   </div>
+                   
+                   {/* Mobile: Single image in similar container to enthusiasts */}
+                   <div 
+                     className="w-full md:hidden"
+                     style={{
+                       maxWidth: '100%'
+                     }}
+                   >
+                     <div 
+                       className="rounded-lg overflow-hidden w-full"
+                       style={{
+                         aspectRatio: '1/1',
+                         borderRadius: '12px'
+                       }}
+                     >
+                       <img 
+                         src={selectedImage.src} 
+                         alt={selectedImage.description || selectedImage.placeholder}
+                         className="w-full h-full object-cover"
+                         style={{ borderRadius: '12px' }}
+                       />
+                     </div>
+                   </div>
+                 </div>
+               ) : null}
             </div>
           </div>
         </div>,
