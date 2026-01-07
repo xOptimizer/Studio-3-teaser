@@ -56,42 +56,42 @@ const QuoteSection = () => {
     enthusiasts: [
       { 
         id: 7, 
-        src: getCloudinaryImageUrl('AdobeStock_118182508.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        src: getCloudinaryImageUrl('AdobeStock_213841942.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
         placeholder: 'Enthusiasts Image 1' 
       },
       { 
         id: 8, 
-        src: getCloudinaryImageUrl('AdobeStock_135490522.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        src: getCloudinaryImageUrl('AdobeStock_785220762.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
         placeholder: 'Enthusiasts Image 2' 
       },
       { 
         id: 9, 
-        src: getCloudinaryImageUrl('AdobeStock_213841942.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        src: getCloudinaryImageUrl('AdobeStock_469893497.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
         placeholder: 'Enthusiasts Image 3' 
       },
       { 
         id: 10, 
-        src: getCloudinaryImageUrl('AdobeStock_231517092.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        src: getCloudinaryImageUrl('AdobeStock_460628886.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
         placeholder: 'Enthusiasts Image 4' 
       },
       { 
         id: 11, 
-        src: getCloudinaryImageUrl('AdobeStock_421538237.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        src: getCloudinaryImageUrl('AdobeStock_231517092.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
         placeholder: 'Enthusiasts Image 5' 
       },
       { 
         id: 12, 
-        src: getCloudinaryImageUrl('AdobeStock_460628886.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        src: getCloudinaryImageUrl('AdobeStock_135490522.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
         placeholder: 'Enthusiasts Image 6' 
       },
       { 
         id: 13, 
-        src: getCloudinaryImageUrl('AdobeStock_469893497.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        src: getCloudinaryImageUrl('AdobeStock_118182508.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
         placeholder: 'Enthusiasts Image 7' 
       },
       { 
         id: 14, 
-        src: getCloudinaryImageUrl('AdobeStock_785220762.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        src: getCloudinaryImageUrl('AdobeStock_421538237.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
         placeholder: 'Enthusiasts Image 8' 
       }
     ]
@@ -893,13 +893,13 @@ const QuoteSection = () => {
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           {/* Overlay */}
           <div 
-            className="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-md"
+            className="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-md"
             onClick={() => setIsModalOpen(false)}
           />
           
           {/* Modal Content - Landscape, Minimal */}
           <div 
-            className="relative z-10 bg-zinc-900 rounded-2xl p-6 w-full border border-gray-700 shadow-2xl overflow-y-auto"
+            className="relative z-10 bg-zinc-900 rounded-2xl p-8 md:p-10 lg:p-12 w-full border border-gray-700 shadow-2xl overflow-y-auto"
             style={{ 
               maxWidth: '900px',
               width: '100%',
@@ -911,27 +911,10 @@ const QuoteSection = () => {
           >
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 md:left-4 md:right-auto w-5 h-5 rounded-full flex items-center justify-center z-30 transition-opacity hover:opacity-80"
-              style={{
-                backgroundColor: '#ff5f57',
-                boxShadow: '0 0 0 0.5px rgba(0, 0, 0, 0.1)',
-                marginTop: '4px',
-                marginRight: '4px'
-              }}
+              className="absolute top-4 right-4 text-gray hover:text-white transition-colors text-3xl leading-none w-8 h-8 flex items-center justify-center z-30"
               aria-label="Close modal"
             >
-              <span 
-                style={{
-                  color: '#000',
-                  fontSize: '14px',
-                  lineHeight: '1',
-                  fontWeight: 600,
-                  fontFamily: "'Inter', sans-serif",
-                  opacity: 0.8
-                }}
-              >
-                ×
-              </span>
+              ×
             </button>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1693,10 +1676,10 @@ const QuoteSection = () => {
                         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                       }}
                     >
-                      {images.enthusiasts[0]?.src ? (
+                      {images.enthusiasts[1]?.src ? (
                         <img 
-                          src={images.enthusiasts[0].src} 
-                          alt={images.enthusiasts[0].placeholder}
+                          src={images.enthusiasts[1].src} 
+                          alt={images.enthusiasts[1].placeholder}
                          className="w-full h-full object-cover"
                          style={{ borderRadius: '12px' }}
                          loading="eager"
@@ -1717,10 +1700,10 @@ const QuoteSection = () => {
                         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                       }}
                     >
-                      {images.enthusiasts[1]?.src ? (
+                      {images.enthusiasts[3]?.src ? (
                         <img 
-                          src={images.enthusiasts[1].src} 
-                          alt={images.enthusiasts[1].placeholder}
+                          src={images.enthusiasts[3].src} 
+                          alt={images.enthusiasts[3].placeholder}
                          className="w-full h-full object-cover"
                          style={{ borderRadius: '12px' }}
                          loading="eager"
@@ -1741,10 +1724,10 @@ const QuoteSection = () => {
                         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                       }}
                     >
-                      {images.enthusiasts[2]?.src ? (
+                      {images.enthusiasts[7]?.src ? (
                         <img 
-                          src={images.enthusiasts[2].src} 
-                          alt={images.enthusiasts[2].placeholder}
+                          src={images.enthusiasts[7].src} 
+                          alt={images.enthusiasts[7].placeholder}
                          className="w-full h-full object-cover"
                          style={{ borderRadius: '12px' }}
                          loading="eager"
@@ -1765,10 +1748,10 @@ const QuoteSection = () => {
                         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                       }}
                     >
-                      {images.enthusiasts[3]?.src ? (
+                      {images.enthusiasts[0]?.src ? (
                         <img 
-                          src={images.enthusiasts[3].src} 
-                          alt={images.enthusiasts[3].placeholder}
+                          src={images.enthusiasts[0].src} 
+                          alt={images.enthusiasts[0].placeholder}
                          className="w-full h-full object-cover"
                          style={{ borderRadius: '12px' }}
                          loading="eager"
@@ -1778,7 +1761,7 @@ const QuoteSection = () => {
                     </div>
                   </div>
                   
-                  {/* Mobile: 2 images side by side */}
+                  {/* Mobile: 4 images in 2x2 grid */}
                   <div 
                     className="grid grid-cols-2 gap-2 w-full md:hidden"
                     style={{
@@ -1794,10 +1777,10 @@ const QuoteSection = () => {
                         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                       }}
                     >
-                      {images.enthusiasts[0]?.src ? (
+                      {images.enthusiasts[1]?.src ? (
                         <img 
-                          src={images.enthusiasts[0].src} 
-                          alt={images.enthusiasts[0].placeholder}
+                          src={images.enthusiasts[1].src} 
+                          alt={images.enthusiasts[1].placeholder}
                          className="w-full h-full object-cover"
                          style={{ borderRadius: '12px' }}
                          loading="eager"
@@ -1815,10 +1798,52 @@ const QuoteSection = () => {
                         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
                       }}
                     >
-                      {images.enthusiasts[1]?.src ? (
+                      {images.enthusiasts[3]?.src ? (
                         <img 
-                          src={images.enthusiasts[1].src} 
-                          alt={images.enthusiasts[1].placeholder}
+                          src={images.enthusiasts[3].src} 
+                          alt={images.enthusiasts[3].placeholder}
+                         className="w-full h-full object-cover"
+                         style={{ borderRadius: '12px' }}
+                         loading="eager"
+                         decoding="async"
+                       />
+                      ) : null}
+                    </div>
+                    
+                    {/* Image 3 */}
+                    <div 
+                      className="rounded-lg overflow-hidden w-full"
+                      style={{
+                        aspectRatio: '1/1',
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                      }}
+                    >
+                      {images.enthusiasts[7]?.src ? (
+                        <img 
+                          src={images.enthusiasts[7].src} 
+                          alt={images.enthusiasts[7].placeholder}
+                         className="w-full h-full object-cover"
+                         style={{ borderRadius: '12px' }}
+                         loading="eager"
+                         decoding="async"
+                       />
+                      ) : null}
+                    </div>
+                    
+                    {/* Image 4 */}
+                    <div 
+                      className="rounded-lg overflow-hidden w-full"
+                      style={{
+                        aspectRatio: '1/1',
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                      }}
+                    >
+                      {images.enthusiasts[0]?.src ? (
+                        <img 
+                          src={images.enthusiasts[0].src} 
+                          alt={images.enthusiasts[0].placeholder}
                          className="w-full h-full object-cover"
                          style={{ borderRadius: '12px' }}
                          loading="eager"

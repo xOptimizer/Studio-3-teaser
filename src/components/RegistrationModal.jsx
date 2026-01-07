@@ -108,7 +108,7 @@ const RegistrationModal = ({ isOpen, onClose }) => {
       {/* Overlay */}
       <div 
         ref={overlayRef}
-        className="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-md"
+        className="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-md"
         onClick={onClose}
         style={{ opacity: 0 }}
       />
