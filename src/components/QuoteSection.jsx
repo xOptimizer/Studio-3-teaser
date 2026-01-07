@@ -22,34 +22,34 @@ const QuoteSection = () => {
     artists: [
       { 
         id: 1, 
-        src: getCloudinaryImageUrl('artists-image-2.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        src: getCloudinaryImageUrl('artists-image-2.webp', { width: 2400, quality: 90, format: 'auto' }), 
         description: 'Share Your Art' 
       },
       { 
         id: 2, 
-        src: getCloudinaryImageUrl('artists-image-1.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        src: getCloudinaryImageUrl('artists-image-1.webp', { width: 2400, quality: 90, format: 'auto' }), 
         description: 'Find Your Audience' 
       },
       { 
         id: 3, 
-        src: getCloudinaryImageUrl('artists-image-4.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        src: getCloudinaryImageUrl('artists-image-4.webp', { width: 2400, quality: 90, format: 'auto' }), 
         description: 'Focus on Creating' 
       },
       { 
         id: 4, 
-        src: getCloudinaryImageUrl('artists-image-3.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        src: getCloudinaryImageUrl('artists-image-3.webp', { width: 2400, quality: 90, format: 'auto' }), 
         description: 'Grow Your Practice' 
       }
     ],
     buyers: [
       { 
         id: 4, 
-        src: getCloudinaryImageUrl('buyers-image-1.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        src: getCloudinaryImageUrl('buyers-image-1.webp', { width: 2400, quality: 90, format: 'auto' }), 
         description: 'Connect Directly with Artists' 
       },
       { 
         id: 5, 
-        src: getCloudinaryImageUrl('buyers-image-2.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
+        src: getCloudinaryImageUrl('buyers-image-2.webp', { width: 2400, quality: 90, format: 'auto' }), 
         description: 'Purchase with Confidence' 
       }
     ],
