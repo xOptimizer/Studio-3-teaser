@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { getCloudinaryImageUrl } from '../utils/cloudinary';
 
@@ -137,6 +137,67 @@ const QuoteSection = () => {
       }
     }
   };
+
+  // Navigation functions for artist and buyers modal
+  const handleNextImage = useCallback(() => {
+    if (activeTab === 'artists' && selectedImage) {
+      const currentIndex = images.artists.findIndex(img => img.id === selectedImage.id);
+      if (currentIndex < images.artists.length - 1) {
+        setSelectedImage(images.artists[currentIndex + 1]);
+      } else {
+        // Loop to first image
+        setSelectedImage(images.artists[0]);
+      }
+    } else if (activeTab === 'buyers' && selectedImage) {
+      const currentIndex = images.buyers.findIndex(img => img.id === selectedImage.id);
+      if (currentIndex < images.buyers.length - 1) {
+        setSelectedImage(images.buyers[currentIndex + 1]);
+      } else {
+        // Loop to first image
+        setSelectedImage(images.buyers[0]);
+      }
+    }
+  }, [activeTab, selectedImage]);
+
+  const handlePreviousImage = useCallback(() => {
+    if (activeTab === 'artists' && selectedImage) {
+      const currentIndex = images.artists.findIndex(img => img.id === selectedImage.id);
+      if (currentIndex > 0) {
+        setSelectedImage(images.artists[currentIndex - 1]);
+      } else {
+        // Loop to last image
+        setSelectedImage(images.artists[images.artists.length - 1]);
+      }
+    } else if (activeTab === 'buyers' && selectedImage) {
+      const currentIndex = images.buyers.findIndex(img => img.id === selectedImage.id);
+      if (currentIndex > 0) {
+        setSelectedImage(images.buyers[currentIndex - 1]);
+      } else {
+        // Loop to last image
+        setSelectedImage(images.buyers[images.buyers.length - 1]);
+      }
+    }
+  }, [activeTab, selectedImage]);
+
+  // Keyboard navigation for artist and buyers modal
+  useEffect(() => {
+    if (!isModalOpen || (activeTab !== 'artists' && activeTab !== 'buyers')) return;
+
+    const handleKeyPress = (e) => {
+      if (e.key === 'ArrowLeft') {
+        handlePreviousImage();
+      } else if (e.key === 'ArrowRight') {
+        handleNextImage();
+      } else if (e.key === 'Escape') {
+        setIsModalOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [isModalOpen, activeTab, selectedImage, handleNextImage, handlePreviousImage]);
 
   // Handle touch events for swipe
   const handleTouchStart = (e) => {
@@ -488,13 +549,13 @@ const QuoteSection = () => {
                     )}
                   </div>
                   
-                  {/* Image 6: 294x312 - Directly below Image 5, no gap */}
+                  {/* Image 6: 294x318 - Aligned with end of Image 3 */}
                   <div 
                     className="rounded-lg overflow-hidden cursor-pointer"
                     onClick={() => handleImageClick(images.enthusiasts[5]?.id)}
                     style={{
                       width: '100%',
-                      aspectRatio: '294/312',
+                      aspectRatio: '294/318',
                       backgroundColor: '#D1D5DB',
                       background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
                       borderRadius: '20px',
@@ -829,7 +890,7 @@ const QuoteSection = () => {
                             style={{
                               fontFamily: "'Inter', sans-serif",
                               fontWeight: 400,
-                              fontSize: '16pt',
+                              fontSize: '12pt',
                               color: '#000',
                               lineHeight: '1.4',
                               textAlign: 'center',
@@ -888,38 +949,68 @@ const QuoteSection = () => {
         </div>
       </div>
 
-      {/* Artist Modal - Dark Glassmorphism Landscape */}
+      {/* Artist Modal - White Glassmorphism Landscape */}
       {isModalOpen && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-          {/* Overlay */}
+          {/* Overlay with white glass effect */}
           <div 
-            className="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-md"
+            className="fixed inset-0 bg-white bg-opacity-20 backdrop-blur-md"
+            style={{
+              boxShadow: 'inset 0 0 100px rgba(255, 255, 255, 0.2), 0 0 200px rgba(0, 0, 0, 0.15)'
+            }}
             onClick={() => setIsModalOpen(false)}
           />
           
-          {/* Modal Content - Landscape, Minimal */}
+          {/* Modal Content - White Glass with transparency */}
           <div 
-            className="relative z-10 bg-zinc-900 rounded-2xl p-8 md:p-10 lg:p-12 w-full border border-gray-700 shadow-2xl overflow-y-auto"
+            className={`relative z-10 rounded-2xl w-full border border-white border-opacity-20 shadow-2xl overflow-y-auto flex flex-col group ${
+              (activeTab === 'artists' || activeTab === 'buyers') ? 'pl-16 pr-16 py-8 md:py-10 lg:py-12' : 'p-8 md:p-10 lg:p-12'
+            }`}
             style={{ 
-              maxWidth: '900px',
-              width: '100%',
+              maxWidth: '90vw',
+              width: '90vw',
               maxHeight: '90vh',
-              marginTop: '20px',
-              marginBottom: '20px'
+              minHeight: '85vh',
+              margin: 'auto',
+              backgroundColor: 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(20px)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.3)'
             }}
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 text-gray hover:text-white transition-colors text-3xl leading-none w-8 h-8 flex items-center justify-center z-30"
+              className="absolute top-4 right-4 text-gray-700 hover:text-black transition-colors text-3xl leading-none w-8 h-8 flex items-center justify-center z-30"
               aria-label="Close modal"
             >
               ×
             </button>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Left Panel - Content */}
-              <div className="flex flex-col md:justify-center md:pt-12">
+            {/* Navigation Arrows - For Artists and Buyers */}
+            {(activeTab === 'artists' || activeTab === 'buyers') && selectedImage && (
+              <>
+                {/* Previous Arrow - Visible on mobile, hover on desktop */}
+                <button
+                  onClick={handlePreviousImage}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-800 hover:text-black transition-all text-4xl md:text-5xl leading-none w-10 h-10 flex items-center justify-center z-30 opacity-100 md:opacity-0 md:group-hover:opacity-100"
+                  aria-label="Previous image"
+                >
+                  ‹
+                </button>
+                {/* Next Arrow - Visible on mobile, hover on desktop */}
+                <button
+                  onClick={handleNextImage}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-800 hover:text-black transition-all text-4xl md:text-5xl leading-none w-10 h-10 flex items-center justify-center z-30 opacity-100 md:opacity-0 md:group-hover:opacity-100"
+                  aria-label="Next image"
+                >
+                  ›
+                </button>
+              </>
+            )}
+
+            <div className="flex flex-col md:grid md:grid-cols-2 gap-6 items-center flex-1">
+              {/* Left Panel - Content - Top on mobile, left on desktop */}
+              <div className="flex flex-col justify-center order-1 md:order-1 w-full">
                 {activeTab === 'artists' && selectedImage?.id === 1 ? (
                   <>
                     {/* Header */}
@@ -928,7 +1019,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
                         fontSize: '12pt',
-                        color: '#848597',
+                        color: '#4B5563',
                         marginBottom: '8px'
                       }}
                     >
@@ -941,7 +1032,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 600,
                         fontSize: '24pt',
-                        color: '#fff',
+                        color: '#000',
                         lineHeight: '1.2',
                         marginBottom: '12px'
                       }}
@@ -955,7 +1046,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
                         fontSize: '14pt',
-                        color: '#848597',
+                        color: '#4B5563',
                         lineHeight: '1.5',
                         marginBottom: '20px'
                       }}
@@ -972,7 +1063,7 @@ const QuoteSection = () => {
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
                             fontSize: '14pt',
-                            color: '#fff',
+                            color: '#000',
                             marginBottom: '4px'
                           }}
                         >
@@ -982,8 +1073,8 @@ const QuoteSection = () => {
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
-                            fontSize: '13pt',
-                            color: '#848597',
+                            fontSize: '12pt',
+                            color: '#4B5563',
                             lineHeight: '1.4'
                           }}
                         >
@@ -998,7 +1089,7 @@ const QuoteSection = () => {
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
                             fontSize: '14pt',
-                            color: '#fff',
+                            color: '#000',
                             marginBottom: '4px'
                           }}
                         >
@@ -1008,8 +1099,8 @@ const QuoteSection = () => {
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
-                            fontSize: '13pt',
-                            color: '#848597',
+                            fontSize: '12pt',
+                            color: '#4B5563',
                             lineHeight: '1.4'
                           }}
                         >
@@ -1026,7 +1117,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
                         fontSize: '12pt',
-                        color: '#848597',
+                        color: '#4B5563',
                         marginBottom: '8px'
                       }}
                     >
@@ -1039,7 +1130,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 600,
                         fontSize: '24pt',
-                        color: '#fff',
+                        color: '#000',
                         lineHeight: '1.2',
                         marginBottom: '12px'
                       }}
@@ -1053,7 +1144,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
                         fontSize: '14pt',
-                        color: '#848597',
+                        color: '#4B5563',
                         lineHeight: '1.5',
                         marginBottom: '20px'
                       }}
@@ -1070,7 +1161,7 @@ const QuoteSection = () => {
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
                             fontSize: '14pt',
-                            color: '#fff',
+                            color: '#000',
                             marginBottom: '4px'
                           }}
                         >
@@ -1080,8 +1171,8 @@ const QuoteSection = () => {
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
-                            fontSize: '13pt',
-                            color: '#848597',
+                            fontSize: '12pt',
+                            color: '#4B5563',
                             lineHeight: '1.4'
                           }}
                         >
@@ -1096,7 +1187,7 @@ const QuoteSection = () => {
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
                             fontSize: '14pt',
-                            color: '#fff',
+                            color: '#000',
                             marginBottom: '4px'
                           }}
                         >
@@ -1106,8 +1197,8 @@ const QuoteSection = () => {
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
-                            fontSize: '13pt',
-                            color: '#848597',
+                            fontSize: '12pt',
+                            color: '#4B5563',
                             lineHeight: '1.4'
                           }}
                         >
@@ -1124,7 +1215,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
                         fontSize: '12pt',
-                        color: '#848597',
+                        color: '#4B5563',
                         marginBottom: '8px'
                       }}
                     >
@@ -1137,7 +1228,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 600,
                         fontSize: '24pt',
-                        color: '#fff',
+                        color: '#000',
                         lineHeight: '1.2',
                         marginBottom: '12px'
                       }}
@@ -1151,7 +1242,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
                         fontSize: '14pt',
-                        color: '#848597',
+                        color: '#4B5563',
                         lineHeight: '1.5',
                         marginBottom: '20px'
                       }}
@@ -1168,7 +1259,7 @@ const QuoteSection = () => {
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
                             fontSize: '14pt',
-                            color: '#fff',
+                            color: '#000',
                             marginBottom: '4px'
                           }}
                         >
@@ -1178,8 +1269,8 @@ const QuoteSection = () => {
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
-                            fontSize: '13pt',
-                            color: '#848597',
+                            fontSize: '12pt',
+                            color: '#4B5563',
                             lineHeight: '1.4'
                           }}
                         >
@@ -1194,7 +1285,7 @@ const QuoteSection = () => {
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
                             fontSize: '14pt',
-                            color: '#fff',
+                            color: '#000',
                             marginBottom: '4px'
                           }}
                         >
@@ -1204,8 +1295,8 @@ const QuoteSection = () => {
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
-                            fontSize: '13pt',
-                            color: '#848597',
+                            fontSize: '12pt',
+                            color: '#4B5563',
                             lineHeight: '1.4'
                           }}
                         >
@@ -1222,7 +1313,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
                         fontSize: '12pt',
-                        color: '#848597',
+                        color: '#4B5563',
                         marginBottom: '8px'
                       }}
                     >
@@ -1235,7 +1326,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 600,
                         fontSize: '24pt',
-                        color: '#fff',
+                        color: '#000',
                         lineHeight: '1.2',
                         marginBottom: '12px'
                       }}
@@ -1249,7 +1340,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
                         fontSize: '14pt',
-                        color: '#848597',
+                        color: '#4B5563',
                         lineHeight: '1.5',
                         marginBottom: '20px'
                       }}
@@ -1266,7 +1357,7 @@ const QuoteSection = () => {
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
                             fontSize: '14pt',
-                            color: '#fff',
+                            color: '#000',
                             marginBottom: '4px'
                           }}
                         >
@@ -1276,8 +1367,8 @@ const QuoteSection = () => {
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
-                            fontSize: '13pt',
-                            color: '#848597',
+                            fontSize: '12pt',
+                            color: '#4B5563',
                             lineHeight: '1.4'
                           }}
                         >
@@ -1292,7 +1383,7 @@ const QuoteSection = () => {
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
                             fontSize: '14pt',
-                            color: '#fff',
+                            color: '#000',
                             marginBottom: '4px'
                           }}
                         >
@@ -1302,8 +1393,8 @@ const QuoteSection = () => {
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
-                            fontSize: '13pt',
-                            color: '#848597',
+                            fontSize: '12pt',
+                            color: '#4B5563',
                             lineHeight: '1.4'
                           }}
                         >
@@ -1320,7 +1411,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
                         fontSize: '12pt',
-                        color: '#848597',
+                        color: '#4B5563',
                         marginBottom: '8px'
                       }}
                     >
@@ -1333,7 +1424,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 600,
                         fontSize: '24pt',
-                        color: '#fff',
+                        color: '#000',
                         lineHeight: '1.2',
                         marginBottom: '12px'
                       }}
@@ -1347,7 +1438,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
                         fontSize: '14pt',
-                        color: '#848597',
+                        color: '#4B5563',
                         lineHeight: '1.5',
                         marginBottom: '20px'
                       }}
@@ -1364,7 +1455,7 @@ const QuoteSection = () => {
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
                             fontSize: '14pt',
-                            color: '#fff',
+                            color: '#000',
                             marginBottom: '4px'
                           }}
                         >
@@ -1374,8 +1465,8 @@ const QuoteSection = () => {
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
-                            fontSize: '13pt',
-                            color: '#848597',
+                            fontSize: '12pt',
+                            color: '#4B5563',
                             lineHeight: '1.4'
                           }}
                         >
@@ -1390,7 +1481,7 @@ const QuoteSection = () => {
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
                             fontSize: '14pt',
-                            color: '#fff',
+                            color: '#000',
                             marginBottom: '4px'
                           }}
                         >
@@ -1400,8 +1491,8 @@ const QuoteSection = () => {
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
-                            fontSize: '13pt',
-                            color: '#848597',
+                            fontSize: '12pt',
+                            color: '#4B5563',
                             lineHeight: '1.4'
                           }}
                         >
@@ -1418,7 +1509,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
                         fontSize: '12pt',
-                        color: '#848597',
+                        color: '#4B5563',
                         marginBottom: '8px'
                       }}
                     >
@@ -1431,7 +1522,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 600,
                         fontSize: '24pt',
-                        color: '#fff',
+                        color: '#000',
                         lineHeight: '1.2',
                         marginBottom: '12px'
                       }}
@@ -1445,7 +1536,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
                         fontSize: '14pt',
-                        color: '#848597',
+                        color: '#4B5563',
                         lineHeight: '1.5',
                         marginBottom: '20px'
                       }}
@@ -1462,7 +1553,7 @@ const QuoteSection = () => {
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
                             fontSize: '14pt',
-                            color: '#fff',
+                            color: '#000',
                             marginBottom: '4px'
                           }}
                         >
@@ -1472,8 +1563,8 @@ const QuoteSection = () => {
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
-                            fontSize: '13pt',
-                            color: '#848597',
+                            fontSize: '12pt',
+                            color: '#4B5563',
                             lineHeight: '1.4'
                           }}
                         >
@@ -1488,7 +1579,7 @@ const QuoteSection = () => {
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
                             fontSize: '14pt',
-                            color: '#fff',
+                            color: '#000',
                             marginBottom: '4px'
                           }}
                         >
@@ -1498,8 +1589,8 @@ const QuoteSection = () => {
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
-                            fontSize: '13pt',
-                            color: '#848597',
+                            fontSize: '12pt',
+                            color: '#4B5563',
                             lineHeight: '1.4'
                           }}
                         >
@@ -1516,7 +1607,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
                         fontSize: '12pt',
-                        color: '#848597',
+                        color: '#4B5563',
                         marginBottom: '8px'
                       }}
                     >
@@ -1529,7 +1620,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 600,
                         fontSize: '24pt',
-                        color: '#fff',
+                        color: '#000',
                         lineHeight: '1.2',
                         marginBottom: '12px'
                       }}
@@ -1543,7 +1634,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
                         fontSize: '14pt',
-                        color: '#848597',
+                        color: '#4B5563',
                         lineHeight: '1.5',
                         marginBottom: '20px'
                       }}
@@ -1560,7 +1651,7 @@ const QuoteSection = () => {
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
                             fontSize: '14pt',
-                            color: '#fff',
+                            color: '#000',
                             marginBottom: '4px'
                           }}
                         >
@@ -1570,8 +1661,8 @@ const QuoteSection = () => {
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
-                            fontSize: '13pt',
-                            color: '#848597',
+                            fontSize: '12pt',
+                            color: '#4B5563',
                             lineHeight: '1.4'
                           }}
                         >
@@ -1586,7 +1677,7 @@ const QuoteSection = () => {
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
                             fontSize: '14pt',
-                            color: '#fff',
+                            color: '#000',
                             marginBottom: '4px'
                           }}
                         >
@@ -1596,8 +1687,8 @@ const QuoteSection = () => {
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
-                            fontSize: '13pt',
-                            color: '#848597',
+                            fontSize: '12pt',
+                            color: '#4B5563',
                             lineHeight: '1.4'
                           }}
                         >
@@ -1614,7 +1705,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
                         fontSize: '12pt',
-                        color: '#848597',
+                        color: '#4B5563',
                         marginBottom: '8px'
                       }}
                     >
@@ -1626,7 +1717,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 600,
                         fontSize: '24pt',
-                        color: '#fff',
+                        color: '#000',
                         lineHeight: '1.2',
                         marginBottom: '12px'
                       }}
@@ -1639,7 +1730,7 @@ const QuoteSection = () => {
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
                         fontSize: '14pt',
-                        color: '#848597',
+                        color: '#4B5563',
                         lineHeight: '1.5',
                         marginBottom: '20px'
                       }}
@@ -1650,10 +1741,10 @@ const QuoteSection = () => {
                 )}
               </div>
 
-              {/* Right Panel - Image or Collage */}
+              {/* Right Panel - Image or Collage - Bottom on mobile, right on desktop */}
               {selectedImage && activeTab === 'enthusiasts' ? (
                 // Enthusiasts Collage - 4 images on desktop, 2 images on mobile
-                <div className="flex items-center justify-center w-full">
+                <div className="flex items-center justify-center w-full order-2 md:order-2">
                   {/* Desktop: 4-image collage */}
                   <div 
                     className="hidden md:grid w-full"
@@ -1661,25 +1752,26 @@ const QuoteSection = () => {
                       gridTemplateColumns: 'repeat(2, 1fr)',
                       gridTemplateRows: 'repeat(3, auto)',
                       gap: '8px',
-                      maxWidth: '400px'
+                      maxWidth: '850px',
+                      width: '100%'
                     }}
                   >
-                    {/* Image 1: Top left - square */}
+                    {/* Image 1: Top left - 306x202 */}
                     <div 
                       className="rounded-lg overflow-hidden"
                       style={{
                         gridColumn: '1',
                         gridRow: '1',
                         width: '100%',
-                        aspectRatio: '1/1',
+                        aspectRatio: '306/202',
                         borderRadius: '12px',
-                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                       }}
                     >
-                      {images.enthusiasts[1]?.src ? (
+                      {images.enthusiasts[0]?.src ? (
                         <img 
-                          src={images.enthusiasts[1].src} 
-                          alt={images.enthusiasts[1].placeholder}
+                          src={images.enthusiasts[0].src} 
+                          alt={images.enthusiasts[0].placeholder}
                          className="w-full h-full object-cover"
                          style={{ borderRadius: '12px' }}
                          loading="eager"
@@ -1688,16 +1780,16 @@ const QuoteSection = () => {
                       ) : null}
                     </div>
                     
-                    {/* Image 2: Top right - tall */}
+                    {/* Image 2: Top right - 306x431 */}
                     <div 
                       className="rounded-lg overflow-hidden"
                       style={{
                         gridColumn: '2',
                         gridRow: '1 / 3',
                         width: '100%',
-                        aspectRatio: '1/2',
+                        aspectRatio: '306/431',
                         borderRadius: '12px',
-                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                       }}
                     >
                       {images.enthusiasts[3]?.src ? (
@@ -1712,22 +1804,22 @@ const QuoteSection = () => {
                       ) : null}
                     </div>
                     
-                    {/* Image 3: Second row left - tall */}
+                    {/* Image 3: Second row left - 306x431 */}
                     <div 
                       className="rounded-lg overflow-hidden"
                       style={{
                         gridColumn: '1',
                         gridRow: '2 / 4',
                         width: '100%',
-                        aspectRatio: '1/2',
+                        aspectRatio: '306/431',
                         borderRadius: '12px',
-                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                       }}
                     >
-                      {images.enthusiasts[7]?.src ? (
+                      {images.enthusiasts[1]?.src ? (
                         <img 
-                          src={images.enthusiasts[7].src} 
-                          alt={images.enthusiasts[7].placeholder}
+                          src={images.enthusiasts[1].src} 
+                          alt={images.enthusiasts[1].placeholder}
                          className="w-full h-full object-cover"
                          style={{ borderRadius: '12px' }}
                          loading="eager"
@@ -1736,22 +1828,22 @@ const QuoteSection = () => {
                       ) : null}
                     </div>
                     
-                    {/* Image 4: Third row right - square */}
+                    {/* Image 4: Third row right - 306x202 */}
                     <div 
                       className="rounded-lg overflow-hidden"
                       style={{
                         gridColumn: '2',
                         gridRow: '3',
                         width: '100%',
-                        aspectRatio: '1/1',
+                        aspectRatio: '306/202',
                         borderRadius: '12px',
-                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                       }}
                     >
-                      {images.enthusiasts[0]?.src ? (
+                      {images.enthusiasts[7]?.src ? (
                         <img 
-                          src={images.enthusiasts[0].src} 
-                          alt={images.enthusiasts[0].placeholder}
+                          src={images.enthusiasts[7].src} 
+                          alt={images.enthusiasts[7].placeholder}
                          className="w-full h-full object-cover"
                          style={{ borderRadius: '12px' }}
                          loading="eager"
@@ -1774,13 +1866,13 @@ const QuoteSection = () => {
                       style={{
                         aspectRatio: '1/1',
                         borderRadius: '12px',
-                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                       }}
                     >
-                      {images.enthusiasts[1]?.src ? (
+                      {images.enthusiasts[0]?.src ? (
                         <img 
-                          src={images.enthusiasts[1].src} 
-                          alt={images.enthusiasts[1].placeholder}
+                          src={images.enthusiasts[0].src} 
+                          alt={images.enthusiasts[0].placeholder}
                          className="w-full h-full object-cover"
                          style={{ borderRadius: '12px' }}
                          loading="eager"
@@ -1795,7 +1887,7 @@ const QuoteSection = () => {
                       style={{
                         aspectRatio: '1/1',
                         borderRadius: '12px',
-                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                       }}
                     >
                       {images.enthusiasts[3]?.src ? (
@@ -1816,13 +1908,13 @@ const QuoteSection = () => {
                       style={{
                         aspectRatio: '1/1',
                         borderRadius: '12px',
-                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                       }}
                     >
-                      {images.enthusiasts[7]?.src ? (
+                      {images.enthusiasts[1]?.src ? (
                         <img 
-                          src={images.enthusiasts[7].src} 
-                          alt={images.enthusiasts[7].placeholder}
+                          src={images.enthusiasts[1].src} 
+                          alt={images.enthusiasts[1].placeholder}
                          className="w-full h-full object-cover"
                          style={{ borderRadius: '12px' }}
                          loading="eager"
@@ -1837,13 +1929,13 @@ const QuoteSection = () => {
                       style={{
                         aspectRatio: '1/1',
                         borderRadius: '12px',
-                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                       }}
                     >
-                      {images.enthusiasts[0]?.src ? (
+                      {images.enthusiasts[7]?.src ? (
                         <img 
-                          src={images.enthusiasts[0].src} 
-                          alt={images.enthusiasts[0].placeholder}
+                          src={images.enthusiasts[7].src} 
+                          alt={images.enthusiasts[7].placeholder}
                          className="w-full h-full object-cover"
                          style={{ borderRadius: '12px' }}
                          loading="eager"
@@ -1854,17 +1946,18 @@ const QuoteSection = () => {
                   </div>
                 </div>
                 ) : selectedImage ? (
-                 // Single image for Artists/Buyers - Similar layout to enthusiasts on mobile
-                 <div className="flex items-center justify-center w-full">
-                   {/* Desktop: Single centered image */}
+                 // Single image for Artists/Buyers - Bottom on mobile, right on desktop
+                 <div className="flex items-center justify-center w-full order-2 md:order-2">
+                   {/* Desktop: Single centered image - Consistent size */}
                    <div className="hidden md:flex items-center justify-center relative w-full">
                      <div 
-                       className="rounded-lg overflow-hidden w-full"
+                       className="rounded-lg overflow-hidden"
                        style={{
                          aspectRatio: '1/1',
                          borderRadius: '12px',
-                         maxWidth: '100%',
-                         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                         width: '100%',
+                         maxWidth: '850px',
+                         boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                        }}
                      >
                        <img 
@@ -1890,7 +1983,7 @@ const QuoteSection = () => {
                        style={{
                          aspectRatio: '1/1',
                          borderRadius: '12px',
-                         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                         boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                        }}
                      >
                        <img 
@@ -1906,6 +1999,46 @@ const QuoteSection = () => {
                  </div>
                ) : null}
             </div>
+
+            {/* Pagination - For Artists and Buyers */}
+            {activeTab === 'artists' && selectedImage && (
+              <div className="flex justify-center items-center gap-2 mt-6 pb-4">
+                {images.artists.map((image, index) => {
+                  const currentIndex = images.artists.findIndex(img => img.id === selectedImage.id);
+                  return (
+                    <button
+                      key={image.id}
+                      onClick={() => setSelectedImage(image)}
+                      className={`transition-all rounded-full ${
+                        index === currentIndex
+                          ? 'bg-gray-800 w-3 h-3'
+                          : 'bg-gray-400 bg-opacity-60 w-2 h-2 hover:bg-opacity-80'
+                      }`}
+                      aria-label={`Go to image ${index + 1}`}
+                    />
+                  );
+                })}
+              </div>
+            )}
+            {activeTab === 'buyers' && selectedImage && (
+              <div className="flex justify-center items-center gap-2 mt-6 pb-4">
+                {images.buyers.map((image, index) => {
+                  const currentIndex = images.buyers.findIndex(img => img.id === selectedImage.id);
+                  return (
+                    <button
+                      key={image.id}
+                      onClick={() => setSelectedImage(image)}
+                      className={`transition-all rounded-full ${
+                        index === currentIndex
+                          ? 'bg-gray-800 w-3 h-3'
+                          : 'bg-gray-400 bg-opacity-60 w-2 h-2 hover:bg-opacity-80'
+                      }`}
+                      aria-label={`Go to image ${index + 1}`}
+                    />
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>,
         document.body
