@@ -33,7 +33,7 @@ const QuoteSection = () => {
       { 
         id: 3, 
         src: getCloudinaryImageUrl('artists-image-4.webp', { width: 2400, quality: 90, format: 'auto' }), 
-        description: 'Focus on Creating' 
+        description: 'Focus On Creating' 
       },
       { 
         id: 4, 
@@ -45,12 +45,12 @@ const QuoteSection = () => {
       { 
         id: 4, 
         src: getCloudinaryImageUrl('buyers-image-1.webp', { width: 2400, quality: 90, format: 'auto' }), 
-        description: 'Connect Directly with Artists' 
+        description: 'Connect Directly With Artists' 
       },
       { 
         id: 5, 
         src: getCloudinaryImageUrl('buyers-image-2.webp', { width: 2400, quality: 90, format: 'auto' }), 
-        description: 'Purchase with Confidence' 
+        description: 'Purchase With Peace of Mind' 
       }
     ],
     enthusiasts: [
@@ -972,8 +972,7 @@ const QuoteSection = () => {
               maxHeight: '90vh',
               minHeight: '85vh',
               margin: 'auto',
-              backgroundColor: 'rgba(255, 255, 255, 0.15)',
-              backdropFilter: 'blur(20px)',
+              backgroundColor: '#FFFFFF',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.3)'
             }}
             onClick={(e) => e.stopPropagation()}
@@ -1443,7 +1442,7 @@ const QuoteSection = () => {
                         marginBottom: '20px'
                       }}
                     >
-                      Your work is displayed instantly in a gallery style environment, and surfaced by discovery tools that prioritize creativity over trends.
+                      Explore art in a gallery style space guided by creativity, and connect directly with artists to deepen your collection and follow their evolving practice.
                     </p>
 
                     {/* Features List - Minimal */}
@@ -1583,7 +1582,7 @@ const QuoteSection = () => {
                             marginBottom: '4px'
                           }}
                         >
-                          • Build relationships that deepen your collection
+                          • Secure payments, safe delivery
                         </p>
                         <p 
                           style={{
@@ -1765,7 +1764,6 @@ const QuoteSection = () => {
                         width: '100%',
                         aspectRatio: '306/202',
                         borderRadius: '12px',
-                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                       }}
                     >
                       {images.enthusiasts[0]?.src ? (
@@ -1789,7 +1787,6 @@ const QuoteSection = () => {
                         width: '100%',
                         aspectRatio: '306/431',
                         borderRadius: '12px',
-                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                       }}
                     >
                       {images.enthusiasts[3]?.src ? (
@@ -1813,7 +1810,6 @@ const QuoteSection = () => {
                         width: '100%',
                         aspectRatio: '306/431',
                         borderRadius: '12px',
-                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                       }}
                     >
                       {images.enthusiasts[1]?.src ? (
@@ -1837,7 +1833,6 @@ const QuoteSection = () => {
                         width: '100%',
                         aspectRatio: '306/202',
                         borderRadius: '12px',
-                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                       }}
                     >
                       {images.enthusiasts[7]?.src ? (
@@ -1866,7 +1861,6 @@ const QuoteSection = () => {
                       style={{
                         aspectRatio: '1/1',
                         borderRadius: '12px',
-                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                       }}
                     >
                       {images.enthusiasts[0]?.src ? (
@@ -1887,7 +1881,6 @@ const QuoteSection = () => {
                       style={{
                         aspectRatio: '1/1',
                         borderRadius: '12px',
-                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                       }}
                     >
                       {images.enthusiasts[3]?.src ? (
@@ -1908,7 +1901,6 @@ const QuoteSection = () => {
                       style={{
                         aspectRatio: '1/1',
                         borderRadius: '12px',
-                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                       }}
                     >
                       {images.enthusiasts[1]?.src ? (
@@ -1929,7 +1921,6 @@ const QuoteSection = () => {
                       style={{
                         aspectRatio: '1/1',
                         borderRadius: '12px',
-                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                       }}
                     >
                       {images.enthusiasts[7]?.src ? (
@@ -1957,7 +1948,6 @@ const QuoteSection = () => {
                          borderRadius: '12px',
                          width: '100%',
                          maxWidth: '850px',
-                         boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                        }}
                      >
                        <img 
@@ -1983,7 +1973,6 @@ const QuoteSection = () => {
                        style={{
                          aspectRatio: '1/1',
                          borderRadius: '12px',
-                         boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0, 0, 0, 0.3)'
                        }}
                      >
                        <img 

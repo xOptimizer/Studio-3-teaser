@@ -196,7 +196,7 @@ const StudioSection = () => {
               color: '#848597'
             }}
           >
-            Our flagship <strong style={{ color: '#000' }}>Dallas</strong> studio blends creation, community, and wellness - a true <strong style={{ color: '#000' }}>third space</strong> for creatives.
+            Our flagship <strong style={{ color: '#000' }}>Dallas</strong> studio blends creation, community, and wellness - <strong style={{ color: '#000', fontWeight: 700 }}>a true third space for creatives.</strong>
           </p>
         </div>
 
@@ -268,7 +268,7 @@ const StudioSection = () => {
               color: '#848597'
             }}
           >
-            Our flagship <strong style={{ color: '#000' }}>Dallas</strong> studio blends creation, community, and wellness - a true <strong style={{ color: '#000' }}>third space</strong> for creatives.
+            Our flagship <strong style={{ color: '#000' }}>Dallas</strong> studio blends creation, community, and wellness - <strong style={{ color: '#000', fontWeight: 700 }}>a true third space for creatives.</strong>
           </p>
         </div>
       </div>

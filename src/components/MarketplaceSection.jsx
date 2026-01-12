@@ -1,38 +1,23 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { getCloudinaryImageUrl } from '../utils/cloudinary';
 
 const MarketplaceSection = () => {
-  const [activeFeature, setActiveFeature] = useState(0);
-  const featureRefs = useRef([]);
-  const listContainerRef = useRef(null);
+  const [expandedFeature, setExpandedFeature] = useState(1);
 
   const features = [
     {
       id: 1,
-      title: 'AI-Powered Ecommerce',
+      title: 'AI-Powered E-Commerce',
       placeholder: 'AI-Powered commerce Image',
       src: getCloudinaryImageUrl('marketplace-image-1.webp', { 
         width: 2800, 
         quality: 90, 
         format: 'auto' 
       }),
-      fontWeight: 600,
-      color: '#000'
+      description: 'AI powered insights that identify the best tools for your style, build project ready supply lists, and make choosing materials feel effortless.'
     },
     {
       id: 2,
-      title: 'Create with confidence',
-      placeholder: 'Create with confidence Image',
-      src: getCloudinaryImageUrl('marketplace-image-2.webp', { 
-        width: 2800, 
-        quality: 90, 
-        format: 'auto' 
-      }),
-      fontWeight: 400,
-      color: '#848597'
-    },
-    {
-      id: 3,
       title: 'Quality supplies, no markups',
       placeholder: 'Quality supplies Image',
       src: getCloudinaryImageUrl('marketplace-image-3.webp', {
@@ -40,97 +25,24 @@ const MarketplaceSection = () => {
         quality: 90, 
         format: 'auto' 
       }),
-      fontWeight: 400,
-      color: '#848597'
+      description: 'Professional materials priced fairly, with no additional Studio 3 margin.'
+    },
+    {
+      id: 3,
+      title: 'Purchase with Confidence',
+      placeholder: 'Purchase with confidence Image',
+      src: getCloudinaryImageUrl('marketplace-image-2.webp', { 
+        width: 2800, 
+        quality: 90, 
+        format: 'auto' 
+      }),
+      description: "You'll always know exactly what to buy and why it fits your needs."
     }
   ];
 
-  // Intersection Observer to detect which feature is in view
-  useEffect(() => {
-    const container = listContainerRef.current;
-    if (!container) return;
-
-    // Method 1: Intersection Observer (works when container is scrollable)
-    const observers = featureRefs.current.map((ref, index) => {
-      if (!ref) return null;
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              setActiveFeature(index);
-            }
-          });
-        },
-        {
-          root: container,
-          threshold: 0.6,
-          rootMargin: '-30% 0px -30% 0px'
-        }
-      );
-
-      observer.observe(ref);
-      return observer;
-    });
-
-    // Method 2: Scroll event listener (fallback for viewport scrolling)
-    const handleScroll = () => {
-      const containerRect = container.getBoundingClientRect();
-      const containerCenter = containerRect.top + containerRect.height / 2;
-
-      featureRefs.current.forEach((ref, index) => {
-        if (!ref) return;
-        const refRect = ref.getBoundingClientRect();
-        const refCenter = refRect.top + refRect.height / 2;
-
-        // Check if this feature's center is closest to container center
-        if (Math.abs(refCenter - containerCenter) < refRect.height / 2) {
-          setActiveFeature(index);
-        }
-      });
-    };
-
-    // Use viewport-based intersection observer as fallback
-    const viewportObservers = featureRefs.current.map((ref, index) => {
-      if (!ref) return null;
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              // Check if it's in the center area of viewport
-              const rect = entry.boundingClientRect;
-              const viewportCenter = window.innerHeight / 2;
-              const elementCenter = rect.top + rect.height / 2;
-              
-              if (Math.abs(elementCenter - viewportCenter) < rect.height) {
-                setActiveFeature(index);
-              }
-            }
-          });
-        },
-        {
-          threshold: 0.5,
-          rootMargin: '-30% 0px -30% 0px'
-        }
-      );
-
-      observer.observe(ref);
-      return observer;
-    });
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      observers.forEach((observer) => {
-        if (observer) observer.disconnect();
-      });
-      viewportObservers.forEach((observer) => {
-        if (observer) observer.disconnect();
-      });
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+  const toggleFeature = (featureId) => {
+    setExpandedFeature(expandedFeature === featureId ? null : featureId);
+  };
 
   return (
     <section
@@ -183,7 +95,6 @@ const MarketplaceSection = () => {
             <div key={feature.id} className="flex flex-col w-full">
               {/* Feature Title */}
               <div 
-                ref={(el) => (featureRefs.current[index] = el)}
                 className="mb-4"
                 style={{
                   fontFamily: "'Inter', sans-serif",
@@ -221,16 +132,10 @@ const MarketplaceSection = () => {
           ))}
         </div>
 
-        {/* Desktop Layout - Side-by-side with lines */}
+        {/* Desktop Layout - Side-by-side with dropdown */}
         <div className="hidden lg:flex items-start" style={{ marginBottom: 'clamp(32px, 6vw, 48px)', gap: '24px' }}>
           {/* Left Column - Feature List */}
-          <div 
-            ref={listContainerRef}
-            className="flex-1 flex items-center overflow-visible mr-6 min-h-[650px] max-h-[650px]" 
-            style={{ 
-              scrollBehavior: 'smooth'
-            }}
-          >
+          <div className="flex-1 flex items-center overflow-visible mr-6 min-h-[650px] max-h-[650px]">
             <div className="flex flex-col w-full">
               {/* Top Line */}
               <div 
@@ -242,44 +147,130 @@ const MarketplaceSection = () => {
                 }}
               />
               <ul className="flex flex-col w-full">
-                {features.map((feature, index) => (
-                  <li 
-                    key={feature.id}
-                    ref={(el) => (featureRefs.current[index] = el)}
-                    className="flex flex-col transition-all duration-300 cursor-pointer"
-                    style={{ 
-                      marginBottom: index < features.length - 1 ? '24px' : '0',
-                      opacity: activeFeature === index ? 1 : 0.6
-                    }}
-                    onMouseEnter={() => setActiveFeature(index)}
-                    onMouseLeave={() => {
-                      // Optional: You can keep the hover state or revert to scroll-based
-                      // For now, we'll keep it on hover for better UX
-                    }}
-                  >
-                    <span 
-                      style={{
-                        fontFamily: "'Inter', sans-serif",
-                        fontWeight: activeFeature === index ? 600 : feature.fontWeight,
-                        fontSize: '28pt',
-                        color: activeFeature === index ? '#000' : feature.color,
-                        transition: 'all 0.3s ease'
+                {features.map((feature, index) => {
+                  const isExpanded = expandedFeature === feature.id;
+                  return (
+                    <li 
+                      key={feature.id}
+                      className="flex flex-col"
+                      style={{ 
+                        marginBottom: index < features.length - 1 ? '24px' : '0'
                       }}
                     >
-                      {feature.title}
-                    </span>
-                    {index < features.length - 1 && (
-                      <div 
+                      {/* Feature Header with Dropdown */}
+                      <div
+                        className="flex w-full"
                         style={{
-                          width: '100%',
-                          height: '1px',
-                          backgroundColor: '#848597',
-                          marginTop: '24px'
+                          alignItems: 'flex-start',
+                          gap: '16px'
                         }}
-                      />
-                    )}
-                  </li>
-                ))}
+                      >
+                        {/* Text Content (Title + Description) */}
+                        <div 
+                          className="flex-1"
+                          style={{
+                            minWidth: 0
+                          }}
+                        >
+                          <button
+                            onClick={() => toggleFeature(feature.id)}
+                            className="w-full text-left cursor-pointer"
+                            style={{
+                              padding: 0,
+                              background: 'none',
+                              border: 'none',
+                              outline: 'none',
+                              width: '100%'
+                            }}
+                          >
+                            <span 
+                              style={{
+                                fontFamily: "'Inter', sans-serif",
+                                fontWeight: isExpanded ? 600 : 400,
+                                fontSize: '28pt',
+                                color: isExpanded ? '#000' : '#848597',
+                                transition: 'all 0.3s ease',
+                                display: 'block',
+                                lineHeight: '1.2'
+                              }}
+                            >
+                              {feature.title}
+                            </span>
+                          </button>
+
+                          {/* Dropdown Content */}
+                          {isExpanded && feature.description && (
+                            <div
+                              style={{
+                                marginTop: '12px',
+                                animation: 'fadeIn 0.3s ease'
+                              }}
+                            >
+                              <p
+                                style={{
+                                  fontFamily: "'Inter', sans-serif",
+                                  fontWeight: 400,
+                                  fontSize: '14pt',
+                                  color: '#4B5563',
+                                  lineHeight: '1.5',
+                                  textAlign: 'left',
+                                  margin: 0,
+                                  padding: 0
+                                }}
+                              >
+                                {feature.description}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Chevron Icon - Vertically Centered */}
+                        <button
+                          onClick={() => toggleFeature(feature.id)}
+                          className="flex-shrink-0 cursor-pointer"
+                          style={{
+                            padding: 0,
+                            background: 'none',
+                            border: 'none',
+                            outline: 'none',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            alignSelf: 'center',
+                            width: '24px',
+                            height: '24px',
+                            marginTop: 0
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontFamily: "'Inter', sans-serif",
+                              fontSize: '24pt',
+                              color: '#848597',
+                              transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)',
+                              transition: 'transform 0.3s ease',
+                              display: 'block',
+                              lineHeight: '1'
+                            }}
+                          >
+                            ›
+                          </span>
+                        </button>
+                      </div>
+
+                      {index < features.length - 1 && (
+                        <div 
+                          style={{
+                            width: '100%',
+                            height: '1px',
+                            backgroundColor: '#848597',
+                            marginTop: '24px'
+                          }}
+                        />
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
               {/* Bottom Line */}
               <div 
@@ -293,36 +284,55 @@ const MarketplaceSection = () => {
             </div>
           </div>
 
-          {/* Right Column - Image */}
+          {/* Right Column - Image (only shown when feature is expanded) */}
           <div className="flex-shrink-0">
-            <div 
-              className="rounded-lg transition-all duration-500 w-[712px] overflow-hidden"
-              style={{
-                height: '650px',
-                backgroundColor: '#D1D5DB',
-                background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)'
-              }}
-            >
-              {features[activeFeature]?.src ? (
-                <img 
-                  src={features[activeFeature].src} 
-                  alt={features[activeFeature].title}
-                  className="w-full h-full object-cover"
-                  loading="eager"
-                  decoding="async"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400">
-                  <span>{features[activeFeature]?.placeholder || 'Placeholder'}</span>
-                </div>
-              )}
-            </div>
+            {expandedFeature && (
+              <div 
+                className="rounded-lg transition-all duration-500 overflow-hidden"
+                style={{
+                  width: '691px',
+                  height: '631px',
+                  backgroundColor: '#D1D5DB',
+                  background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                  animation: 'fadeIn 0.3s ease'
+                }}
+              >
+                {(() => {
+                  const activeFeature = features.find(f => f.id === expandedFeature);
+                  return activeFeature?.src ? (
+                    <img 
+                      src={activeFeature.src} 
+                      alt={activeFeature.title}
+                      className="w-full h-full object-cover"
+                      loading="eager"
+                      decoding="async"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      <span>{activeFeature?.placeholder || 'Placeholder'}</span>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </section>
   );
 };
 
 export default MarketplaceSection;
-

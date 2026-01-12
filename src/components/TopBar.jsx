@@ -44,17 +44,8 @@ const TopBar = () => {
           </h1>
         </div>
 
-        {/* Right: About Us + Join Launch List Button */}
+        {/* Right: Join Launch List Button */}
         <div className="flex items-center gap-2 sm:gap-3 md:gap-4 lg:gap-6 xl:gap-8">
-          {/* About Us Link */}
-          <a 
-            href="#about" 
-            className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-black hover:opacity-70 transition-opacity duration-200 whitespace-nowrap"
-            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-          >
-            About Us
-          </a>
-
           {/* Join Launch List Button */}
           <button 
             onClick={() => setIsModalOpen(true)}

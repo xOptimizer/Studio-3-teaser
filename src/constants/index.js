@@ -33,7 +33,7 @@ export const hightlightsSlides = [
     video: highlightSecondVideo,
     videoMobile: highlightSecondVideoMobile,
     videoDuration: 5,
-    captionTitle: "The Social Discover",
+    captionTitle: "A creator focused social platform where your art isn't buried by algorithms.",
     caption: "Where art work is discovered for its craft, collected for its meaning, and valued for its story.",
   },
   {
