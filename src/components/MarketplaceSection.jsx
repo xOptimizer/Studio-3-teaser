@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { getCloudinaryImageUrl } from '../utils/cloudinary';
 
 const MarketplaceSection = () => {
   const [expandedFeature, setExpandedFeature] = useState(1);
+  const [isMobile, setIsMobile] = useState(false);
 
   const features = [
     {
@@ -11,6 +12,11 @@ const MarketplaceSection = () => {
       placeholder: 'AI-Powered commerce Image',
       src: getCloudinaryImageUrl('marketplace-image-1.webp', { 
         width: 2800, 
+        quality: 90, 
+        format: 'auto' 
+      }),
+      mobileSrc: getCloudinaryImageUrl('marketplace-image-1-mobile.webp', { 
+        width: 1200, 
         quality: 90, 
         format: 'auto' 
       }),
@@ -25,6 +31,11 @@ const MarketplaceSection = () => {
         quality: 90, 
         format: 'auto' 
       }),
+      mobileSrc: getCloudinaryImageUrl('marketplace-image-3-mobile.webp', {
+        width: 1200, 
+        quality: 90, 
+        format: 'auto' 
+      }),
       description: 'Professional materials priced fairly, with no additional Studio 3 margin.'
     },
     {
@@ -36,6 +47,11 @@ const MarketplaceSection = () => {
         quality: 90, 
         format: 'auto' 
       }),
+      mobileSrc: getCloudinaryImageUrl('marketplace-image-2-mobile.webp', { 
+        width: 1200, 
+        quality: 90, 
+        format: 'auto' 
+      }),
       description: "You'll always know exactly what to buy and why it fits your needs."
     }
   ];
@@ -43,6 +59,17 @@ const MarketplaceSection = () => {
   const toggleFeature = (featureId) => {
     setExpandedFeature(expandedFeature === featureId ? null : featureId);
   };
+
+  // Detect mobile view
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   return (
     <section
@@ -89,25 +116,13 @@ const MarketplaceSection = () => {
         </div>
 
         {/* Mobile: Feature + Photo pairs, Desktop: Side-by-side layout */}
-        {/* Mobile Layout - Feature then Photo for each */}
+        {/* Mobile Layout - Image, then Title, then Description */}
         <div className="flex flex-col lg:hidden" style={{ marginBottom: 'clamp(32px, 6vw, 48px)', gap: '32px' }}>
           {features.map((feature, index) => (
             <div key={feature.id} className="flex flex-col w-full">
-              {/* Feature Title */}
-              <div 
-                className="mb-4"
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontWeight: 600,
-                  fontSize: 'clamp(18pt, 4vw, 28pt)',
-                  color: '#000'
-                }}
-              >
-                {feature.title}
-              </div>
               {/* Feature Photo */}
               <div 
-                className="rounded-lg w-full overflow-hidden"
+                className="rounded-lg w-full overflow-hidden mb-4"
                 style={{
                   height: 'clamp(400px, 50vh, 500px)',
                   backgroundColor: '#D1D5DB',
@@ -116,7 +131,7 @@ const MarketplaceSection = () => {
               >
                 {feature.src ? (
                   <img 
-                    src={feature.src} 
+                    src={isMobile && feature.mobileSrc ? feature.mobileSrc : feature.src} 
                     alt={feature.title}
                     className="w-full h-full object-cover"
                     loading="lazy"
@@ -128,6 +143,37 @@ const MarketplaceSection = () => {
                   </div>
                 )}
               </div>
+              
+              {/* Feature Title */}
+              <div 
+                className="mb-3"
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontWeight: 600,
+                  fontSize: 'clamp(18pt, 4vw, 28pt)',
+                  color: '#000',
+                  lineHeight: '1.2'
+                }}
+              >
+                {feature.title}
+              </div>
+              
+              {/* Feature Description */}
+              {feature.description && (
+                <p
+                  style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontWeight: 400,
+                    fontSize: '11pt',
+                    color: '#4B5563',
+                    lineHeight: '1.5',
+                    textAlign: 'left',
+                    margin: 0
+                  }}
+                >
+                  {feature.description}
+                </p>
+              )}
             </div>
           ))}
         </div>
@@ -306,6 +352,15 @@ const MarketplaceSection = () => {
                       className="w-full h-full object-cover"
                       loading="eager"
                       decoding="async"
+                      onError={(e) => {
+                        console.error('Desktop marketplace image failed to load:', e.target.src);
+                        console.error('Feature object:', activeFeature);
+                      }}
+                      onLoad={() => {
+                        if (import.meta.env.DEV) {
+                          console.log('Desktop marketplace image loaded:', activeFeature.src);
+                        }
+                      }}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400">

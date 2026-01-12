@@ -7,6 +7,7 @@ const QuoteSection = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0); // For mobile carousel - tracks which image in the active tab
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
   const carouselRef = useRef(null);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
@@ -23,21 +24,25 @@ const QuoteSection = () => {
       { 
         id: 1, 
         src: getCloudinaryImageUrl('artists-image-2.webp', { width: 2400, quality: 90, format: 'auto' }), 
+        mobileSrc: getCloudinaryImageUrl('artists-image-2-mobile.webp', { width: 1200, quality: 90, format: 'auto' }),
         description: 'Share Your Art' 
       },
       { 
         id: 2, 
         src: getCloudinaryImageUrl('artists-image-1.webp', { width: 2400, quality: 90, format: 'auto' }), 
+        mobileSrc: getCloudinaryImageUrl('artists-image-1-mobile.webp', { width: 1200, quality: 90, format: 'auto' }),
         description: 'Find Your Audience' 
       },
       { 
         id: 3, 
         src: getCloudinaryImageUrl('artists-image-4.webp', { width: 2400, quality: 90, format: 'auto' }), 
-        description: 'Focus On Creating' 
+        mobileSrc: getCloudinaryImageUrl('artists-image-4-mobile.webp', { width: 1200, quality: 90, format: 'auto' }),
+        description: 'Focus on Your Art, We\'ll Handle the Rest' 
       },
       { 
         id: 4, 
         src: getCloudinaryImageUrl('artists-image-3.webp', { width: 2400, quality: 90, format: 'auto' }), 
+        mobileSrc: getCloudinaryImageUrl('artists-image-3-mobile.webp', { width: 1200, quality: 90, format: 'auto' }),
         description: 'Grow Your Practice' 
       }
     ],
@@ -45,11 +50,13 @@ const QuoteSection = () => {
       { 
         id: 4, 
         src: getCloudinaryImageUrl('buyers-image-1.webp', { width: 2400, quality: 90, format: 'auto' }), 
+        mobileSrc: getCloudinaryImageUrl('buyers-image-1-mobile.webp', { width: 1200, quality: 90, format: 'auto' }),
         description: 'Connect Directly With Artists' 
       },
       { 
         id: 5, 
         src: getCloudinaryImageUrl('buyers-image-2.webp', { width: 2400, quality: 90, format: 'auto' }), 
+        mobileSrc: getCloudinaryImageUrl('buyers-image-2-mobile.webp', { width: 1200, quality: 90, format: 'auto' }),
         description: 'Purchase With Peace of Mind' 
       }
     ],
@@ -97,10 +104,52 @@ const QuoteSection = () => {
     ]
   };
 
+  // Feature descriptions for artists mobile slider
+  const artistFeatureDescriptions = {
+    1: "Your work is displayed instantly in a gallery style environment, and surfaced by discovery tools that prioritize creativity over trends.",
+    2: "Reach people who value your work through aligned visibility. Your art is surfaced to viewers who appreciate your style, with discovery that recognizes skill, intention, and artistic depth.",
+    3: "From global sales tax (VAT/GST) and PCI compliance to fraud protection, chargebacks, packaging, and delivery, Studio 3 handles the heavy lifting so you can stay focused on what you love: making art.",
+    4: "Build direct collector relationships without markups or gatekeepers. Set your own pricing and value, and use real insights on views, saves, and collector interest to guide demand, pricing, and future work."
+  };
+
+  // Feature descriptions for buyers mobile slider
+  const buyerFeatureDescriptions = {
+    4: "Explore art in a gallery style space guided by creativity, connect with artists in real time, and build relationships that deepen your collection as their work and practice evolve.",
+    5: "We authenticate each piece, secure every payment with encryption and insurance, and ship with professional packaging and tracking for a safe, confident collecting experience."
+  };
+
   // Reset image index when tab changes
   useEffect(() => {
     setCurrentImageIndex(0);
   }, [activeTab]);
+
+  // Detect mobile view
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Debug: Log image URLs in development
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      console.log('QuoteSection - Desktop image URLs:');
+      images.artists.forEach(img => {
+        console.log(`Artists ${img.id}:`, img.src);
+      });
+      images.buyers.forEach(img => {
+        console.log(`Buyers ${img.id}:`, img.src);
+        if (img.id === 4) {
+          console.log('🔍 Buyers Image 1 (ID 4) URL:', img.src);
+          console.log('🔍 Buyers Image 1 filename: buyers-image-1.webp');
+        }
+      });
+    }
+  }, []);
 
   // Lock body scroll when modal is open
   useEffect(() => {
@@ -115,7 +164,12 @@ const QuoteSection = () => {
   }, [isModalOpen]);
 
   const handleImageClick = (imageId) => {
-    // Open modal for artist or buyers/collectors images
+    // Don't open modal on mobile (lg breakpoint is 1024px)
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      return;
+    }
+
+    // Open modal for artist or buyers/collectors images (desktop only)
     if (activeTab === 'artists') {
       const clickedImage = images.artists.find(img => img.id === imageId);
       if (clickedImage) {
@@ -331,6 +385,15 @@ const QuoteSection = () => {
                       style={{ borderRadius: '20px', willChange: 'transform' }}
                       loading="lazy"
                       decoding="async"
+                      onError={(e) => {
+                        console.error('Desktop image failed to load:', e.target.src);
+                        console.error('Image object:', image);
+                      }}
+                      onLoad={() => {
+                        if (import.meta.env.DEV) {
+                          console.log('Desktop image loaded:', image.src);
+                        }
+                      }}
                     />
                   </div>
                   <p 
@@ -368,6 +431,24 @@ const QuoteSection = () => {
                       style={{ borderRadius: '20px', willChange: 'transform' }}
                       loading="lazy"
                       decoding="async"
+                      onError={(e) => {
+                        console.error('❌ Desktop buyers image failed to load:', e.target.src);
+                        console.error('Image ID:', image.id);
+                        console.error('Image description:', image.description);
+                        console.error('Full image object:', image);
+                        // Try to open the URL directly for debugging
+                        if (import.meta.env.DEV && image.id === 4) {
+                          console.error('🔍 Buyers Image 1 (ID 4) - Check if this URL works in browser:', e.target.src);
+                        }
+                      }}
+                      onLoad={() => {
+                        if (import.meta.env.DEV) {
+                          console.log('✅ Desktop buyers image loaded:', image.src);
+                          if (image.id === 4) {
+                            console.log('✅ Buyers Image 1 (ID 4) loaded successfully!');
+                          }
+                        }
+                      }}
                     />
                   </div>
                   <p 
@@ -627,7 +708,7 @@ const QuoteSection = () => {
                       <img 
                         src={images.enthusiasts[7].src} 
                         alt={images.enthusiasts[7].placeholder}
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                        className="w-full h-full object-cover"
                       style={{ borderRadius: '20px' }}
                       loading="lazy"
                       decoding="async"
@@ -698,98 +779,68 @@ const QuoteSection = () => {
           {/* Placeholder - Below tabs */}
           {activeTab === 'enthusiasts' ? (
             <div className="mb-6">
-              {/* Mobile Enthusiasts Collage - Portrait Layout with 4 images */}
+              {/* Mobile Enthusiasts Collage - 3 images: Image 5 (wide top), Image 3 and Image 6 (squares bottom) */}
               <div 
-                className="grid"
+                className="flex flex-col"
                 style={{
-                  gridTemplateColumns: 'repeat(2, 1fr)',
-                  gridTemplateRows: 'repeat(3, auto)',
-                  gap: '8px'
+                  gap: '8px',
+                  width: '100%'
                 }}
               >
-                {/* Image 1: Top left - square */}
+                {/* Image 5: Top - wide/rectangular */}
                 <div 
                   className="rounded-lg overflow-hidden cursor-pointer"
-                  onClick={() => handleImageClick(images.enthusiasts[0]?.id)}
+                  onClick={() => handleImageClick(images.enthusiasts[4]?.id)}
                   style={{
-                    gridColumn: '1',
-                    gridRow: '1',
                     width: '100%',
-                    aspectRatio: '1/1',
+                    aspectRatio: '353/157',
                     backgroundColor: '#D1D5DB',
                     background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                    borderRadius: '20px'
                   }}
                 >
-                  {images.enthusiasts[0]?.src ? (
+                  {images.enthusiasts[4]?.src ? (
                     <img 
-                      src={images.enthusiasts[0].src} 
-                      alt={images.enthusiasts[0].placeholder}
-                      className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
-                      style={{ borderRadius: '20px', willChange: 'transform' }}
+                      src={images.enthusiasts[4].src} 
+                      alt={images.enthusiasts[4].placeholder}
+                      className="w-full h-full object-cover"
+                      style={{ borderRadius: '20px' }}
                       loading="lazy"
                       decoding="async"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                      <span>{images.enthusiasts[0]?.placeholder}</span>
+                      <span>{images.enthusiasts[4]?.placeholder}</span>
                     </div>
                   )}
                 </div>
                 
-                {/* Image 2: Top right - tall */}
+                {/* Bottom row: Image 3 and Image 6 side by side */}
                 <div 
-                  className="rounded-lg overflow-hidden cursor-pointer"
-                  onClick={() => handleImageClick(images.enthusiasts[1]?.id)}
+                  className="grid"
                   style={{
-                    gridColumn: '2',
-                    gridRow: '1 / 3',
-                    width: '100%',
-                    aspectRatio: '1/2',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                    gridTemplateColumns: 'repeat(2, 1fr)',
+                    gap: '8px'
                   }}
                 >
-                  {images.enthusiasts[1]?.src ? (
-                    <img 
-                      src={images.enthusiasts[1].src} 
-                      alt={images.enthusiasts[1].placeholder}
-                      className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
-                      style={{ borderRadius: '20px', willChange: 'transform' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                      <span>{images.enthusiasts[1]?.placeholder}</span>
-                    </div>
-                  )}
-                </div>
-                
-                {/* Image 3: Second row left - tall */}
+                  {/* Image 3: Bottom left */}
                 <div 
                   className="rounded-lg overflow-hidden cursor-pointer"
                   onClick={() => handleImageClick(images.enthusiasts[2]?.id)}
                   style={{
-                    gridColumn: '1',
-                    gridRow: '2 / 4',
                     width: '100%',
-                    aspectRatio: '1/2',
+                      aspectRatio: '172/228',
                     backgroundColor: '#D1D5DB',
                     background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                      borderRadius: '20px'
                   }}
                 >
                   {images.enthusiasts[2]?.src ? (
                     <img 
                       src={images.enthusiasts[2].src} 
                       alt={images.enthusiasts[2].placeholder}
-                      className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
-                      style={{ borderRadius: '20px', willChange: 'transform' }}
+                        className="w-full h-full object-cover"
+                        style={{ borderRadius: '20px' }}
                       loading="lazy"
                       decoding="async"
                     />
@@ -800,35 +851,33 @@ const QuoteSection = () => {
                   )}
                 </div>
                 
-                {/* Image 4: Third row right - square */}
+                  {/* Image 6: Bottom right */}
                 <div 
                   className="rounded-lg overflow-hidden cursor-pointer"
-                  onClick={() => handleImageClick(images.enthusiasts[3]?.id)}
+                    onClick={() => handleImageClick(images.enthusiasts[5]?.id)}
                   style={{
-                    gridColumn: '2',
-                    gridRow: '3',
                     width: '100%',
-                    aspectRatio: '1/1',
+                      aspectRatio: '172/228',
                     backgroundColor: '#D1D5DB',
                     background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                      borderRadius: '20px'
                   }}
                 >
-                  {images.enthusiasts[3]?.src ? (
+                    {images.enthusiasts[5]?.src ? (
                     <img 
-                      src={images.enthusiasts[3].src} 
-                      alt={images.enthusiasts[3].placeholder}
-                      className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
-                      style={{ borderRadius: '20px', willChange: 'transform' }}
+                        src={images.enthusiasts[5].src} 
+                        alt={images.enthusiasts[5].placeholder}
+                        className="w-full h-full object-cover"
+                        style={{ borderRadius: '20px' }}
                       loading="lazy"
                       decoding="async"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                      <span>{images.enthusiasts[3]?.placeholder}</span>
+                        <span>{images.enthusiasts[5]?.placeholder}</span>
                     </div>
                   )}
+                  </div>
                 </div>
               </div>
               
@@ -837,14 +886,31 @@ const QuoteSection = () => {
                 style={{
                   fontFamily: "'Inter', sans-serif",
                   fontWeight: 400,
-                  fontSize: '16pt',
+                  fontSize: '14pt',
                   color: '#000',
                   lineHeight: '1.4',
                   marginTop: '12px',
-                  textAlign: 'center'
+                  textAlign: 'left',
+                  width: '100%',
+                  marginBottom: '12px'
                 }}
               >
                 Experience Art Uninterrupted
+              </p>
+              
+              {/* Feature Description */}
+              <p 
+                style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontWeight: 400,
+                  fontSize: '11pt',
+                  color: '#4B5563',
+                  lineHeight: '1.5',
+                  textAlign: 'left',
+                  width: '100%'
+                }}
+              >
+                A space to explore art without the noise of conventional social media. Engage with creativity driven discovery, dive into stories and materials, and gather inspiration that broadens how you experience art
               </p>
             </div>
           ) : (
@@ -855,6 +921,7 @@ const QuoteSection = () => {
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
+
               <div 
                 className="flex transition-transform duration-300 ease-out"
                 style={{
@@ -866,40 +933,71 @@ const QuoteSection = () => {
                     {image.src ? (
                       <>
                         <div 
-                          className="rounded-lg overflow-hidden w-full mx-auto cursor-pointer"
-                          onClick={() => handleImageClick(image.id)}
+                          className="rounded-lg overflow-hidden w-full"
                           style={{
-                            aspectRatio: activeTab === 'artists' || activeTab === 'buyers' ? '1/1' : '400/580',
-                            maxWidth: activeTab === 'artists' || activeTab === 'buyers' ? '100%' : '400px',
+                            height: activeTab === 'artists' || activeTab === 'buyers' ? 'clamp(400px, 50vh, 500px)' : 'clamp(400px, 50vh, 500px)',
                             borderRadius: '20px',
                             marginBottom: image.description ? '12px' : '0',
-                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                            backgroundColor: '#D1D5DB',
+                            background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)'
                           }}
                         >
                           <img 
-                            src={image.src} 
+                            src={isMobile && image.mobileSrc ? image.mobileSrc : image.src} 
                             alt={image.description || image.placeholder}
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                            className="w-full h-full object-cover"
                       style={{ borderRadius: '20px' }}
                       loading="lazy"
                       decoding="async"
                     />
                         </div>
                         {image.description && (
+                          <>
                           <p 
                             style={{
                               fontFamily: "'Inter', sans-serif",
                               fontWeight: 400,
-                              fontSize: '12pt',
+                                fontSize: '14pt',
                               color: '#000',
                               lineHeight: '1.4',
-                              textAlign: 'center',
-                              paddingLeft: '16px',
-                              paddingRight: '16px'
+                                textAlign: 'left',
+                                width: '100%',
+                                marginBottom: (activeTab === 'artists' || activeTab === 'buyers') ? '12px' : '0'
                             }}
                           >
                             {image.description}
                           </p>
+                            {activeTab === 'artists' && artistFeatureDescriptions[image.id] && (
+                              <p 
+                                style={{
+                                  fontFamily: "'Inter', sans-serif",
+                                  fontWeight: 400,
+                                  fontSize: '11pt',
+                                  color: '#4B5563',
+                                  lineHeight: '1.5',
+                                  textAlign: 'left',
+                                  width: '100%'
+                                }}
+                              >
+                                {artistFeatureDescriptions[image.id]}
+                              </p>
+                            )}
+                            {activeTab === 'buyers' && buyerFeatureDescriptions[image.id] && (
+                              <p 
+                                style={{
+                                  fontFamily: "'Inter', sans-serif",
+                                  fontWeight: 400,
+                                  fontSize: '11pt',
+                                  color: '#4B5563',
+                                  lineHeight: '1.5',
+                                  textAlign: 'left',
+                                  width: '100%'
+                                }}
+                              >
+                                {buyerFeatureDescriptions[image.id]}
+                              </p>
+                            )}
+                          </>
                         )}
                       </>
                     ) : (
@@ -910,8 +1008,7 @@ const QuoteSection = () => {
                           maxWidth: '400px',
                           backgroundColor: '#D1D5DB',
                           background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                          borderRadius: '20px',
-                          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                          borderRadius: '20px'
                         }}
                       >
                         <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -925,23 +1022,76 @@ const QuoteSection = () => {
             </div>
           )}
 
-          {/* Pagination Dots - At the bottom (hidden for enthusiasts) */}
-          {activeTab !== 'enthusiasts' && (
-            <div className="flex justify-center gap-2">
+          {/* Pagination Dots - At the bottom */}
+          {activeTab !== 'enthusiasts' ? (
+            <div className="flex justify-center gap-4 items-center">
+              {/* Left Arrow */}
+              {currentImageIndex > 0 && (
+                <button
+                  onClick={() => setCurrentImageIndex(currentImageIndex - 1)}
+                  className="transition-opacity hover:opacity-70"
+                  aria-label="Previous image"
+                  style={{
+                    fontFamily: "'Inter', sans-serif",
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    cursor: 'pointer'
+                  }}
+                >
+                  <span style={{ fontSize: '24px', color: '#000', lineHeight: '1', fontWeight: 300 }}>‹</span>
+                </button>
+              )}
+              
+              {/* Pagination Dots */}
+              <div className="flex gap-2 items-center">
               {images[activeTab].map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentImageIndex(index)}
-                  className={`rounded-full transition-all ${
-                    index === currentImageIndex 
-                      ? 'bg-gray-400' 
-                      : 'bg-gray-300'
-                  }`}
+                    className="rounded-full transition-all"
                   style={{
-                    width: '8px',
-                    height: '8px'
+                      width: index === currentImageIndex ? '10px' : '8px',
+                      height: index === currentImageIndex ? '10px' : '8px',
+                      backgroundColor: index === currentImageIndex ? '#000' : '#D1D5DB',
+                      opacity: index === currentImageIndex ? 1 : 0.5
                   }}
                   aria-label={`Go to image ${index + 1}`}
+                />
+              ))}
+            </div>
+              
+              {/* Right Arrow */}
+              {currentImageIndex < images[activeTab].length - 1 && (
+                <button
+                  onClick={() => setCurrentImageIndex(currentImageIndex + 1)}
+                  className="transition-opacity hover:opacity-70"
+                  aria-label="Next image"
+                  style={{
+                    fontFamily: "'Inter', sans-serif",
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    cursor: 'pointer'
+                  }}
+                >
+                  <span style={{ fontSize: '24px', color: '#000', lineHeight: '1', fontWeight: 300 }}>›</span>
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="flex justify-center gap-2 items-center">
+              {/* Show 3 dots for the 3 images displayed (Image 5, Image 3, Image 6) */}
+              {[0, 1, 2].map((index) => (
+                <div
+                  key={index}
+                  className="rounded-full transition-all"
+                  style={{
+                    width: index === 0 ? '10px' : '8px',
+                    height: index === 0 ? '10px' : '8px',
+                    backgroundColor: index === 0 ? '#000' : '#D1D5DB',
+                    opacity: index === 0 ? 1 : 0.5
+                  }}
                 />
               ))}
             </div>
