@@ -374,8 +374,7 @@ const QuoteSection = () => {
                     style={{
                       aspectRatio: '1/1',
                       marginBottom: '12px',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                      borderRadius: '20px'
                     }}
                   >
                     <img 
@@ -420,8 +419,7 @@ const QuoteSection = () => {
                     style={{
                       aspectRatio: '1/1',
                       marginBottom: '12px',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                      borderRadius: '20px'
                     }}
                   >
                     <img 
@@ -1104,9 +1102,9 @@ const QuoteSection = () => {
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           {/* Overlay with white glass effect */}
           <div 
-            className="fixed inset-0 bg-white bg-opacity-20 backdrop-blur-md"
+            className="fixed inset-0 bg-white bg-opacity-10 backdrop-blur-md"
             style={{
-              boxShadow: 'inset 0 0 100px rgba(255, 255, 255, 0.2), 0 0 200px rgba(0, 0, 0, 0.15)'
+              boxShadow: 'inset 0 0 100px rgba(255, 255, 255, 0.1), 0 0 200px rgba(0, 0, 0, 0.1)'
             }}
             onClick={() => setIsModalOpen(false)}
           />
@@ -1122,7 +1120,8 @@ const QuoteSection = () => {
               maxHeight: '90vh',
               minHeight: '85vh',
               margin: 'auto',
-              backgroundColor: '#FFFFFF',
+              backgroundColor: 'rgba(255, 255, 255, 0.7)',
+              backdropFilter: 'blur(20px)',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.3)'
             }}
             onClick={(e) => e.stopPropagation()}

@@ -108,11 +108,11 @@ const RegistrationModal = ({ isOpen, onClose }) => {
       {/* Overlay */}
       <div 
         ref={overlayRef}
-        className="fixed inset-0 bg-white bg-opacity-20 backdrop-blur-md"
+        className="fixed inset-0 bg-white bg-opacity-10 backdrop-blur-md"
         onClick={onClose}
         style={{ 
           opacity: 0,
-          boxShadow: 'inset 0 0 100px rgba(255, 255, 255, 0.2), 0 0 200px rgba(0, 0, 0, 0.15)'
+          boxShadow: 'inset 0 0 100px rgba(255, 255, 255, 0.1), 0 0 200px rgba(0, 0, 0, 0.1)'
         }}
       />
       
@@ -124,7 +124,8 @@ const RegistrationModal = ({ isOpen, onClose }) => {
           maxHeight: '90vh',
           maxWidth: '600px',
           width: '100%',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: 'rgba(255, 255, 255, 0.7)',
+          backdropFilter: 'blur(20px)',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.3)'
         }}
       >
