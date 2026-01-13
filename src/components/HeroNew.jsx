@@ -53,7 +53,7 @@ const HeroNew = () => {
         fontFamily: "'Inter', sans-serif",
         background: '#F7F7F7',
         scrollSnapAlign: 'start',
-        paddingTop: '0',
+        paddingTop: 'clamp(60px, 8vw, 80px)',
         paddingBottom: 'clamp(0px, 0vw, 48px)'
       }}
     >

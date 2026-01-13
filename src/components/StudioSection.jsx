@@ -86,14 +86,13 @@ const StudioSection = () => {
   return (
     <section
       id="studio"
-      className="w-full min-h-screen md:min-h-screen flex flex-col px-4 sm:px-8 md:px-12 lg:px-20 xl:px-36"
+      className="w-full flex flex-col px-4 sm:px-8 md:px-12 lg:px-20 xl:px-36"
       style={{ 
         fontFamily: "'Inter', sans-serif", 
         scrollSnapAlign: 'start',
         background: '#F7F7F7',
         paddingTop: 'clamp(40px, 8vw, 72px)',
-        paddingBottom: 'clamp(40px, 10vw, 112px)',
-        minHeight: 'calc(90vh)'
+        paddingBottom: 'clamp(40px, 10vw, 112px)'
       }}
     >
       <div className="w-full flex flex-col">
