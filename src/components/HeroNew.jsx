@@ -48,16 +48,16 @@ const HeroNew = () => {
   return (
     <section
       id="about"
-      className="w-full min-h-screen flex flex-col items-center justify-center px-4 sm:px-8 md:px-12 lg:px-20 xl:px-32 relative"
+      className="w-full min-h-screen flex flex-col items-center justify-between px-4 sm:px-8 md:px-12 lg:px-20 xl:px-32 relative md:justify-center"
       style={{ 
         fontFamily: "'Inter', sans-serif",
         background: '#F7F7F7',
         scrollSnapAlign: 'start',
         paddingTop: '0',
-        paddingBottom: 'clamp(24px, 6vw, 48px)'
+        paddingBottom: 'clamp(0px, 0vw, 48px)'
       }}
     >
-      <div className="w-full max-w-7xl flex flex-col items-center text-center">
+      <div className="w-full max-w-7xl flex flex-col items-center text-center flex-1 flex items-center justify-center">
         {/* Primary Heading - studio 3 - Mobile: 60pt, Desktop: 200pt */}
         <h1
           className="text-black text-[68pt] pt-[40px] mb-[24px] md:text-[200pt] md:pt-[96px] md:mb-[40px]"
@@ -89,7 +89,7 @@ const HeroNew = () => {
 
       {/* Video Container - Mobile: 450px, Desktop: 500px */}
       <div 
-        className="w-full overflow-hidden relative mt-[24px] mb-0 h-[450px] md:mt-[40px] md:h-[600px]"
+        className="w-full overflow-hidden relative mt-auto mb-0 h-[450px] md:mt-[40px] md:h-[600px]"
         style={{
           display: 'block',
           width: '100vw',

@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { getCloudinaryImageUrl } from '../utils/cloudinary';
 
+// Cache busting version - update this when images are refreshed in Cloudinary
+const IMAGE_CACHE_VERSION = Date.now();
+
 const MarketplaceSection = () => {
   const [expandedFeature, setExpandedFeature] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
@@ -50,7 +53,8 @@ const MarketplaceSection = () => {
       mobileSrc: getCloudinaryImageUrl('marketplace-image-2-mobile.webp', { 
         width: 1200, 
         quality: 90, 
-        format: 'auto' 
+        format: 'auto',
+        cacheBust: IMAGE_CACHE_VERSION
       }),
       description: "You'll always know exactly what to buy and why it fits your needs."
     }

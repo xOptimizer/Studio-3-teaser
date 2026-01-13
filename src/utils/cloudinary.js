@@ -44,6 +44,7 @@ export const getCloudinaryImageUrl = (filename, options = {}) => {
     format = 'auto',
     crop = 'fill',
     fetchFormat = 'auto',
+    cacheBust, // Optional cache busting parameter (timestamp or version number)
   } = options;
 
   // Build transformation parameters
@@ -63,7 +64,15 @@ export const getCloudinaryImageUrl = (filename, options = {}) => {
   // URL encode the folder and filename to handle spaces and special characters
   const encodedPath = `${FOLDER}/${filename}`.split('/').map(encodeURIComponent).join('/');
 
-  return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${transformationString}/${encodedPath}`;
+  // Build base URL
+  let url = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${transformationString}/${encodedPath}`;
+  
+  // Add cache busting query parameter if provided
+  if (cacheBust) {
+    url += `?_t=${cacheBust}`;
+  }
+
+  return url;
 };
 
 /**

@@ -2,6 +2,9 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { getCloudinaryImageUrl } from '../utils/cloudinary';
 
+// Cache busting version - update this when images are refreshed in Cloudinary
+const IMAGE_CACHE_VERSION = Date.now();
+
 const QuoteSection = () => {
   const [activeTab, setActiveTab] = useState('artists');
   const [currentImageIndex, setCurrentImageIndex] = useState(0); // For mobile carousel - tracks which image in the active tab
@@ -50,13 +53,13 @@ const QuoteSection = () => {
       { 
         id: 4, 
         src: getCloudinaryImageUrl('buyers-image-1.webp', { width: 2400, quality: 90, format: 'auto' }), 
-        mobileSrc: getCloudinaryImageUrl('buyers-image-1-mobile.webp', { width: 1200, quality: 90, format: 'auto' }),
+        mobileSrc: getCloudinaryImageUrl('buyers-image-1-mobile.webp', { width: 1200, quality: 90, format: 'auto', cacheBust: IMAGE_CACHE_VERSION }),
         description: 'Connect Directly With Artists' 
       },
       { 
         id: 5, 
         src: getCloudinaryImageUrl('buyers-image-2.webp', { width: 2400, quality: 90, format: 'auto' }), 
-        mobileSrc: getCloudinaryImageUrl('buyers-image-2-mobile.webp', { width: 1200, quality: 90, format: 'auto' }),
+        mobileSrc: getCloudinaryImageUrl('buyers-image-2-mobile.webp', { width: 1200, quality: 90, format: 'auto', cacheBust: IMAGE_CACHE_VERSION }),
         description: 'Purchase With Peace of Mind' 
       }
     ],
