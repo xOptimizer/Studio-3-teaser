@@ -293,7 +293,7 @@ const QuoteSection = () => {
         fontFamily: "'Inter', sans-serif", 
         background: '#F7F7F7',
         scrollSnapAlign: 'start',
-        paddingTop: 'clamp(24px, 4vw, 48px)',
+        paddingTop: 'clamp(60px, 8vw, 80px)',
         paddingBottom: 'clamp(24px, 5vw, 44px)'
       }}
     >

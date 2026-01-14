@@ -11,8 +11,8 @@ const MarketplaceSection = () => {
   const features = [
     {
       id: 1,
-      title: 'AI-Powered E-Commerce',
-      placeholder: 'AI-Powered commerce Image',
+      title: 'AI Powered E-Commerce',
+      placeholder: 'AI Powered E-Commerce Image',
       src: getCloudinaryImageUrl('marketplace-image-1.webp', { 
         width: 2800, 
         quality: 90, 
@@ -27,7 +27,7 @@ const MarketplaceSection = () => {
     },
     {
       id: 2,
-      title: 'Quality supplies, no markups',
+      title: 'Quality Supplies, No Markups',
       placeholder: 'Quality supplies Image',
       src: getCloudinaryImageUrl('marketplace-image-3.webp', {
         width: 2800, 
@@ -43,7 +43,7 @@ const MarketplaceSection = () => {
     },
     {
       id: 3,
-      title: 'Purchase with Confidence',
+      title: 'Purchase With Confidence',
       placeholder: 'Purchase with confidence Image',
       src: getCloudinaryImageUrl('marketplace-image-2.webp', { 
         width: 2800, 
