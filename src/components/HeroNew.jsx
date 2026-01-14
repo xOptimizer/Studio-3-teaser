@@ -112,8 +112,9 @@ const HeroNew = () => {
       // Get the width of one mobile set
       const mobileSetWidth = mobileMarquee.children[0]?.offsetWidth || 0;
       
-      // When we've moved one full set width, reset to 0 seamlessly
-      if (Math.abs(mobilePositionRef.current) >= mobileSetWidth) {
+      // When we've moved the width of the first 6 sets, reset to 0 seamlessly
+      // This creates infinite loop using the duplicate sets (7-9) as buffer
+      if (Math.abs(mobilePositionRef.current) >= mobileSetWidth * 6) {
         mobilePositionRef.current = 0;
       }
       
