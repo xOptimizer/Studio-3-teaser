@@ -74,10 +74,11 @@ const HeroNew = () => {
     const animate = () => {
       positionRef.current -= 1; // Speed of movement (pixels per frame)
       
-      // Get the width of one grid set
-      const gridWidth = marquee.children[0]?.offsetWidth || 0;
+      // Get the width of one image set (first child)
+      const firstSet = marquee.children[0];
+      const gridWidth = firstSet?.offsetWidth || 0;
       
-      // When we've moved one full grid width, reset to 0 seamlessly
+      // When we've moved one full set width, reset to 0 seamlessly
       if (Math.abs(positionRef.current) >= gridWidth) {
         positionRef.current = 0;
       }
@@ -177,1634 +178,684 @@ const HeroNew = () => {
         </h2>
       </div>
 
-      {/* Image Collage Container - Mobile: 450px, Desktop: 600px */}
+      {/* Image Collage Container */}
       <div 
-        className="overflow-hidden relative mt-auto mb-0 h-[450px] md:mt-[40px] md:h-[600px]"
+        className="overflow-hidden relative mt-auto mb-0"
         style={{
-          display: 'block',
+          display: 'flex',
           width: '100vw',
           marginLeft: 'calc(-50vw + 50%)',
-          marginRight: 'calc(-50vw + 50%)'
+          marginRight: 'calc(-50vw + 50%)',
+          padding: '0',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: 'calc(100vh - 400px)'
         }}
       >
-        {/* Desktop Layout - Original Grid */}
+        {/* Desktop Layout - New Grid */}
         {!isMobile && (
           <div 
-            className="w-full h-full overflow-hidden"
+            className="w-full flex flex-col items-center justify-center"
             style={{
-              padding: '0 clamp(20px, 4vw, 120px)'
+                gap: '12px',
+              paddingTop: '40px',
+              paddingBottom: '40px',
+                    width: '100vw',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'flex-start',
+              overflow: 'hidden'
             }}
           >
             <div 
+              style={{
+                width: '100%',
+                overflow: 'hidden',
+                paddingTop: '20px'
+              }}
+            >
+            <div 
               ref={marqueeRef}
-              className="flex h-full"
+              className="flex"
               style={{
-                gap: '12px'
-              }}
-            >
-            {/* First Grid Set */}
-            <div 
-              className="flex-shrink-0 h-full"
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gridTemplateRows: 'auto auto',
                 gap: '12px',
-                width: 'calc(100vw - clamp(40px, 8vw, 240px))'
+                width: 'max-content',
+                willChange: 'transform'
               }}
             >
-              {/* Column 1: Image 1 and Image 2 stacked */}
-              <div className="flex flex-col" style={{ gridColumn: '1', gridRow: '1 / 3', gap: '12px' }}>
-                {/* Image 1: Top */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '294/168',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_213841942.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 1"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                
-                {/* Image 2: Bottom */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '294/428',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_785220762.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 2"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              </div>
-              
-              {/* Column 2: Image 3 - Top */}
-              <div 
-                className="rounded-lg overflow-hidden"
+            {/* First Image Set */}
+            <div 
+              className="flex-shrink-0"
+              style={{
+                gap: '12px',
+                display: 'flex',
+                alignItems: 'flex-start'
+              }}
+            >
+            {/* Row 1: Image 1 (left, tall) + Images 2, 3, 5 (middle) + Image 6 (left) + Images 7, 8, 9, 10, 11 (right) */}
+            <div 
+              className="flex"
                 style={{
-                  gridColumn: '2',
-                  gridRow: '1',
-                  width: '100%',
-                  aspectRatio: '294/428',
+                gap: '12px',
+                    width: 'max-content',
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start'
+              }}
+            >
+              {/* Image 1 - Left, tall */}
+              <div 
+                  style={{
+                  width: '364px',
+                  height: '563px',
+                    borderRadius: '20px',
                   backgroundColor: '#D1D5DB',
                   background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                  borderRadius: '20px',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                  flexShrink: 0
                 }}
-              >
-                <img 
-                  src={getCloudinaryImageUrl('AdobeStock_469893497.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                  alt="Hero Image 3"
-                  className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
-                  style={{ borderRadius: '20px', willChange: 'transform' }}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
+              />
               
-              {/* Image 4: Bottom - Spans columns 2-3 */}
-              <div 
-                className="rounded-lg overflow-hidden"
+              {/* Middle section: Images 2, 3, and 5 */}
+              <div className="flex flex-col" style={{ gap: '12px' }}>
+                {/* Top row: Images 2 & 3 side by side */}
+                <div className="flex" style={{ gap: '12px' }}>
+                  {/* Image 2 - Left */}
+                  <div 
                 style={{
-                  gridColumn: '2 / 4',
-                  gridRow: '2',
-                  width: '100%',
-                  aspectRatio: '602/168',
+                      width: '459px',
+                      height: '263px',
+                  borderRadius: '20px',
+                    backgroundColor: '#D1D5DB',
+                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                      flexShrink: 0
+                    }}
+                  />
+                  
+                  {/* Image 3 - Right */}
+                  <div 
+                  style={{
+                      width: '679px',
+                      height: '263px',
+                    borderRadius: '20px',
+                    backgroundColor: '#D1D5DB',
+                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                      flexShrink: 0
+                    }}
+                  />
+                </div>
+                
+                {/* Bottom: Image 5 directly below Images 2 & 3 */}
+                <div 
+                  style={{
+                    width: '1150px',
+                    height: '288px',
+                    borderRadius: '20px',
+                    backgroundColor: '#D1D5DB',
+                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                    flexShrink: 0
+                  }}
+                  />
+                </div>
+                
+              {/* Right section: Image 6 (left, tall) + Images 7, 8, 9 (right column) */}
+              <div className="flex" style={{ gap: '12px', alignItems: 'flex-start' }}>
+                {/* Image 6 - Left, tall */}
+                <div 
+                  style={{
+                    width: '364px',
+                    height: '563px',
+                    borderRadius: '20px',
                   backgroundColor: '#D1D5DB',
                   background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                  borderRadius: '20px',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                }}
-              >
-                <img 
-                  src={getCloudinaryImageUrl('AdobeStock_460628886.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                  alt="Hero Image 4"
-                  className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
-                  style={{ borderRadius: '20px', willChange: 'transform' }}
-                  loading="lazy"
-                  decoding="async"
+                    flexShrink: 0
+                  }}
                 />
-              </div>
-              
-              {/* Column 3: Image 5 and Image 6 stacked */}
-              <div className="flex flex-col" style={{ gridColumn: '3', gridRow: '1 / 3', gap: '12px' }}>
-                {/* Image 5: Top */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '294/98',
+                
+                {/* Right column: Image 7 + Image 10 (top row) + Images 8, 9, 11 (bottom row) */}
+                <div className="flex flex-col" style={{ gap: '12px' }}>
+                  {/* Top row: Image 7 + Image 10 side by side */}
+                  <div className="flex" style={{ gap: '12px' }}>
+                    {/* Image 7 - Left, wide */}
+                    <div 
+                style={{
+                        width: '1067px',
+                        height: '263px',
+                  borderRadius: '20px',
                     backgroundColor: '#D1D5DB',
                     background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
+                    />
+                    
+                    {/* Image 10 - Right */}
+                    <div 
+                  style={{
+                        width: '364px',
+                        height: '263px',
                     borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_231517092.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 5"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
+                    backgroundColor: '#D1D5DB',
+                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
                   />
                 </div>
                 
-                {/* Image 6: Bottom */}
+                  {/* Bottom row: Images 8, 9 & 11 side by side */}
+                  <div className="flex" style={{ gap: '12px' }}>
+                    {/* Image 8 - Left */}
                 <div 
-                  className="rounded-lg overflow-hidden"
                   style={{
-                    width: '100%',
-                    aspectRatio: '294/318',
+                        width: '364px',
+                        height: '288px',
+                    borderRadius: '20px',
                     backgroundColor: '#D1D5DB',
                     background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
+                    />
+                    
+                    {/* Image 9 - Middle */}
+                    <div 
+                  style={{
+                        width: '691px',
+                        height: '288px',
                     borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_135490522.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 6"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
+                  backgroundColor: '#D1D5DB',
+                  background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
+                    />
+                    
+                    {/* Image 11 - Right */}
+                    <div 
+                style={{
+                        width: '364px',
+                        height: '288px',
+                  borderRadius: '20px',
+                    backgroundColor: '#D1D5DB',
+                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
                   />
+                </div>
                 </div>
               </div>
-              
-              {/* Column 4: Image 7 and Image 8 stacked */}
-              <div className="flex flex-col" style={{ gridColumn: '4', gridRow: '1 / 3', gap: '12px' }}>
-                {/* Image 7 */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '335/344',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_118182508.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 7"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                
-                {/* Image 8 */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '335/330',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_421538237.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 8"
-                    className="w-full h-full object-cover"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              </div>
+            </div>
             </div>
 
-            {/* Second Duplicate Grid Set for Infinite Loop */}
+            {/* Duplicate Image Set for Infinite Loop */}
             <div 
-              className="flex-shrink-0 h-full"
+              className="flex-shrink-0"
               style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gridTemplateRows: 'auto auto',
                 gap: '12px',
-                width: 'calc(100vw - clamp(40px, 8vw, 240px))'
+                display: 'flex',
+                alignItems: 'flex-start'
               }}
             >
-              {/* Column 1: Image 1 and Image 2 stacked - Second Duplicate */}
-              <div className="flex flex-col" style={{ gridColumn: '1', gridRow: '1 / 3', gap: '12px' }}>
-                {/* Image 1: Top - Second Duplicate */}
-                <div 
-                  className="rounded-lg overflow-hidden"
+            {/* Row 1: Image 1 (left, tall) + Images 2, 3, 5 (middle) + Image 6 (left) + Images 7, 8, 9, 10, 11 (right) - Duplicate */}
+            <div 
+              className="flex"
+                style={{
+                gap: '12px',
+                    width: 'max-content',
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start'
+              }}
+            >
+              {/* Image 1 - Left, tall - Duplicate */}
+              <div 
                   style={{
-                    width: '100%',
-                    aspectRatio: '294/168',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                  width: '364px',
+                  height: '563px',
                     borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_213841942.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 1"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
+                  backgroundColor: '#D1D5DB',
+                  background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                  flexShrink: 0
+                }}
+              />
+              
+              {/* Middle section: Images 2, 3, and 5 - Duplicate */}
+              <div className="flex flex-col" style={{ gap: '12px' }}>
+                {/* Top row: Images 2 & 3 side by side - Duplicate */}
+                <div className="flex" style={{ gap: '12px' }}>
+                  {/* Image 2 - Left - Duplicate */}
+                  <div 
+                    style={{
+                      width: '459px',
+                      height: '263px',
+                      borderRadius: '20px',
+                      backgroundColor: '#D1D5DB',
+                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                      flexShrink: 0
+                    }}
+                  />
+                  
+                  {/* Image 3 - Right - Duplicate */}
+                  <div 
+                    style={{
+                      width: '679px',
+                      height: '263px',
+                      borderRadius: '20px',
+                      backgroundColor: '#D1D5DB',
+                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                      flexShrink: 0
+                    }}
                   />
                 </div>
                 
-                {/* Image 2: Bottom - Second Duplicate */}
+                {/* Bottom: Image 5 directly below Images 2 & 3 - Duplicate */}
                 <div 
-                  className="rounded-lg overflow-hidden"
                   style={{
-                    width: '100%',
-                    aspectRatio: '294/428',
+                    width: '1150px',
+                    height: '288px',
+                    borderRadius: '20px',
                     backgroundColor: '#D1D5DB',
                     background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                    flexShrink: 0
                   }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_785220762.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 2"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              </div>
-              
-              {/* Column 2: Image 3 - Second Duplicate */}
-              <div 
-                className="rounded-lg overflow-hidden"
-                style={{
-                  gridColumn: '2',
-                  gridRow: '1',
-                  width: '100%',
-                  aspectRatio: '294/428',
-                  backgroundColor: '#D1D5DB',
-                  background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                  borderRadius: '20px',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                }}
-              >
-                <img 
-                  src={getCloudinaryImageUrl('AdobeStock_469893497.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                  alt="Hero Image 3"
-                  className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
-                  style={{ borderRadius: '20px', willChange: 'transform' }}
-                  loading="lazy"
-                  decoding="async"
                 />
               </div>
               
-              {/* Image 4: Bottom - Spans columns 2-3 - Second Duplicate */}
-              <div 
-                className="rounded-lg overflow-hidden"
-                style={{
-                  gridColumn: '2 / 4',
-                  gridRow: '2',
-                  width: '100%',
-                  aspectRatio: '602/168',
+              {/* Right section: Image 6 (left, tall) + Images 7, 8, 9, 10, 11 (right column) - Duplicate */}
+              <div className="flex" style={{ gap: '12px', alignItems: 'flex-start' }}>
+                {/* Image 6 - Left, tall - Duplicate */}
+                <div 
+                  style={{
+                    width: '364px',
+                    height: '563px',
+                    borderRadius: '20px',
                   backgroundColor: '#D1D5DB',
                   background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                  borderRadius: '20px',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                }}
-              >
-                <img 
-                  src={getCloudinaryImageUrl('AdobeStock_460628886.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                  alt="Hero Image 4"
-                  className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
-                  style={{ borderRadius: '20px', willChange: 'transform' }}
-                  loading="lazy"
-                  decoding="async"
+                    flexShrink: 0
+                  }}
                 />
-              </div>
-              
-              {/* Column 3: Image 5 and Image 6 stacked - Second Duplicate */}
-              <div className="flex flex-col" style={{ gridColumn: '3', gridRow: '1 / 3', gap: '12px' }}>
-                {/* Image 5: Top - Second Duplicate */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '294/98',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_231517092.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 5"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
                 
-                {/* Image 6: Bottom - Second Duplicate */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '294/318',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_135490522.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 6"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
+                {/* Right column: Image 7 + Image 10 (top row) + Images 8, 9, 11 (bottom row) - Duplicate */}
+                <div className="flex flex-col" style={{ gap: '12px' }}>
+                  {/* Top row: Image 7 + Image 10 side by side - Duplicate */}
+                  <div className="flex" style={{ gap: '12px' }}>
+                    {/* Image 7 - Left, wide - Duplicate */}
+                    <div 
+                      style={{
+                        width: '1067px',
+                        height: '263px',
+                        borderRadius: '20px',
+                        backgroundColor: '#D1D5DB',
+                        background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
+                    />
+                    
+                    {/* Image 10 - Right - Duplicate */}
+                    <div 
+                      style={{
+                        width: '364px',
+                        height: '263px',
+                        borderRadius: '20px',
+                        backgroundColor: '#D1D5DB',
+                        background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Bottom row: Images 8, 9 & 11 side by side - Duplicate */}
+                  <div className="flex" style={{ gap: '12px' }}>
+                    {/* Image 8 - Left - Duplicate */}
+                    <div 
+                      style={{
+                        width: '364px',
+                        height: '288px',
+                        borderRadius: '20px',
+                        backgroundColor: '#D1D5DB',
+                        background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
+                    />
+                    
+                    {/* Image 9 - Middle - Duplicate */}
+                    <div 
+                      style={{
+                        width: '691px',
+                        height: '288px',
+                        borderRadius: '20px',
+                        backgroundColor: '#D1D5DB',
+                        background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
+                    />
+                    
+                    {/* Image 11 - Right - Duplicate */}
+                    <div 
+                      style={{
+                        width: '364px',
+                        height: '288px',
+                        borderRadius: '20px',
+                        backgroundColor: '#D1D5DB',
+                        background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
-              
-              {/* Column 4: Image 7 and Image 8 stacked - Second Duplicate */}
-              <div className="flex flex-col" style={{ gridColumn: '4', gridRow: '1 / 3', gap: '12px' }}>
-                {/* Image 7 - Second Duplicate */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '335/344',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_118182508.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 7"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                
-                {/* Image 8 - Second Duplicate */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '335/330',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_421538237.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 8"
-                    className="w-full h-full object-cover"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              </div>
+            </div>
             </div>
 
-            {/* Third Duplicate Grid Set for Infinite Loop */}
+            {/* Third Image Set for Infinite Loop */}
             <div 
-              className="flex-shrink-0 h-full"
+              className="flex-shrink-0"
               style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gridTemplateRows: 'auto auto',
                 gap: '12px',
-                width: 'calc(100vw - clamp(40px, 8vw, 240px))'
+                display: 'flex',
+                alignItems: 'flex-start'
               }}
             >
-              {/* Column 1: Image 1 and Image 2 stacked - Third Duplicate */}
-              <div className="flex flex-col" style={{ gridColumn: '1', gridRow: '1 / 3', gap: '12px' }}>
-                {/* Image 1: Top - Third Duplicate */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '294/168',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_213841942.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 1"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                
-                {/* Image 2: Bottom - Third Duplicate */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '294/428',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_785220762.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 2"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              </div>
-              
-              {/* Column 2: Image 3 - Third Duplicate */}
-              <div 
-                className="rounded-lg overflow-hidden"
+            <div 
+              className="flex"
                 style={{
-                  gridColumn: '2',
-                  gridRow: '1',
-                  width: '100%',
-                  aspectRatio: '294/428',
+                gap: '12px',
+                    width: 'max-content',
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start'
+              }}
+            >
+              <div 
+                  style={{
+                  width: '364px',
+                  height: '563px',
+                    borderRadius: '20px',
                   backgroundColor: '#D1D5DB',
                   background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                  borderRadius: '20px',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                  flexShrink: 0
                 }}
-              >
-                <img 
-                  src={getCloudinaryImageUrl('AdobeStock_469893497.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                  alt="Hero Image 3"
-                  className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
-                  style={{ borderRadius: '20px', willChange: 'transform' }}
-                  loading="lazy"
-                  decoding="async"
+              />
+              <div className="flex flex-col" style={{ gap: '12px' }}>
+                <div className="flex" style={{ gap: '12px' }}>
+                  <div 
+                    style={{
+                      width: '459px',
+                      height: '263px',
+                      borderRadius: '20px',
+                      backgroundColor: '#D1D5DB',
+                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                      flexShrink: 0
+                    }}
+                  />
+                  <div 
+                    style={{
+                      width: '679px',
+                      height: '263px',
+                      borderRadius: '20px',
+                      backgroundColor: '#D1D5DB',
+                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                      flexShrink: 0
+                    }}
+                  />
+                </div>
+                <div 
+                  style={{
+                    width: '1150px',
+                    height: '288px',
+                    borderRadius: '20px',
+                    backgroundColor: '#D1D5DB',
+                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                    flexShrink: 0
+                  }}
                 />
               </div>
-              
-              {/* Image 4: Bottom - Spans columns 2-3 - Third Duplicate */}
-              <div 
-                className="rounded-lg overflow-hidden"
-                style={{
-                  gridColumn: '2 / 4',
-                  gridRow: '2',
-                  width: '100%',
-                  aspectRatio: '602/168',
+              <div className="flex" style={{ gap: '12px', alignItems: 'flex-start' }}>
+                <div 
+                  style={{
+                    width: '364px',
+                    height: '563px',
+                    borderRadius: '20px',
                   backgroundColor: '#D1D5DB',
                   background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                  borderRadius: '20px',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                }}
-              >
-                <img 
-                  src={getCloudinaryImageUrl('AdobeStock_460628886.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                  alt="Hero Image 4"
-                  className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
-                  style={{ borderRadius: '20px', willChange: 'transform' }}
-                  loading="lazy"
-                  decoding="async"
+                    flexShrink: 0
+                  }}
                 />
-              </div>
-              
-              {/* Column 3: Image 5 and Image 6 stacked - Third Duplicate */}
-              <div className="flex flex-col" style={{ gridColumn: '3', gridRow: '1 / 3', gap: '12px' }}>
-                {/* Image 5: Top - Third Duplicate */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '294/98',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_231517092.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 5"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                
-                {/* Image 6: Bottom - Third Duplicate */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '294/318',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_135490522.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 6"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              </div>
-              
-              {/* Column 4: Image 7 and Image 8 stacked - Third Duplicate */}
-              <div className="flex flex-col" style={{ gridColumn: '4', gridRow: '1 / 3', gap: '12px' }}>
-                {/* Image 7 - Third Duplicate */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '335/344',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_118182508.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 7"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                
-                {/* Image 8 - Third Duplicate */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '335/330',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_421538237.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 8"
-                    className="w-full h-full object-cover"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
+                <div className="flex flex-col" style={{ gap: '12px' }}>
+                  <div className="flex" style={{ gap: '12px' }}>
+                    <div 
+                      style={{
+                        width: '1067px',
+                        height: '263px',
+                        borderRadius: '20px',
+                        backgroundColor: '#D1D5DB',
+                        background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
+                    />
+                    <div 
+                      style={{
+                        width: '364px',
+                        height: '263px',
+                        borderRadius: '20px',
+                        backgroundColor: '#D1D5DB',
+                        background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
+                    />
+                  </div>
+                  <div className="flex" style={{ gap: '12px' }}>
+                    <div 
+                      style={{
+                        width: '364px',
+                        height: '288px',
+                        borderRadius: '20px',
+                        backgroundColor: '#D1D5DB',
+                        background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
+                    />
+                    <div 
+                      style={{
+                        width: '691px',
+                        height: '288px',
+                        borderRadius: '20px',
+                        backgroundColor: '#D1D5DB',
+                        background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
+                    />
+                    <div 
+                      style={{
+                        width: '364px',
+                        height: '288px',
+                        borderRadius: '20px',
+                        backgroundColor: '#D1D5DB',
+                        background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
+            </div>
             </div>
 
-            {/* Fourth Duplicate Grid Set for Infinite Loop */}
+            {/* Fourth Image Set for Infinite Loop */}
             <div 
-              className="flex-shrink-0 h-full"
+              className="flex-shrink-0"
               style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gridTemplateRows: 'auto auto',
                 gap: '12px',
-                width: 'calc(100vw - clamp(40px, 8vw, 240px))'
+                display: 'flex',
+                alignItems: 'flex-start'
               }}
             >
-              {/* Column 1: Image 1 and Image 2 stacked - Fourth Duplicate */}
-              <div className="flex flex-col" style={{ gridColumn: '1', gridRow: '1 / 3', gap: '12px' }}>
-                {/* Image 1: Top - Fourth Duplicate */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '294/168',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_213841942.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 1"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                
-                {/* Image 2: Bottom - Fourth Duplicate */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '294/428',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_785220762.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 2"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              </div>
-              
-              {/* Column 2: Image 3 - Fourth Duplicate */}
-              <div 
-                className="rounded-lg overflow-hidden"
+            <div 
+              className="flex"
                 style={{
-                  gridColumn: '2',
-                  gridRow: '1',
-                  width: '100%',
-                  aspectRatio: '294/428',
+                gap: '12px',
+                    width: 'max-content',
+                justifyContent: 'flex-start',
+                alignItems: 'flex-start'
+              }}
+            >
+              <div 
+                  style={{
+                  width: '364px',
+                  height: '563px',
+                    borderRadius: '20px',
                   backgroundColor: '#D1D5DB',
                   background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                  borderRadius: '20px',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                  flexShrink: 0
                 }}
-              >
-                <img 
-                  src={getCloudinaryImageUrl('AdobeStock_469893497.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                  alt="Hero Image 3"
-                  className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
-                  style={{ borderRadius: '20px', willChange: 'transform' }}
-                  loading="lazy"
-                  decoding="async"
+              />
+              <div className="flex flex-col" style={{ gap: '12px' }}>
+                <div className="flex" style={{ gap: '12px' }}>
+                  <div 
+                    style={{
+                      width: '459px',
+                      height: '263px',
+                      borderRadius: '20px',
+                      backgroundColor: '#D1D5DB',
+                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                      flexShrink: 0
+                    }}
+                  />
+                  <div 
+                    style={{
+                      width: '679px',
+                      height: '263px',
+                      borderRadius: '20px',
+                      backgroundColor: '#D1D5DB',
+                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                      flexShrink: 0
+                    }}
+                  />
+                </div>
+                <div 
+                  style={{
+                    width: '1150px',
+                    height: '288px',
+                    borderRadius: '20px',
+                    backgroundColor: '#D1D5DB',
+                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                    flexShrink: 0
+                  }}
                 />
               </div>
-              
-              {/* Image 4: Bottom - Spans columns 2-3 - Fourth Duplicate */}
-              <div 
-                className="rounded-lg overflow-hidden"
-                style={{
-                  gridColumn: '2 / 4',
-                  gridRow: '2',
-                  width: '100%',
-                  aspectRatio: '602/168',
+              <div className="flex" style={{ gap: '12px', alignItems: 'flex-start' }}>
+                <div 
+                  style={{
+                    width: '364px',
+                    height: '563px',
+                    borderRadius: '20px',
                   backgroundColor: '#D1D5DB',
                   background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                  borderRadius: '20px',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                }}
-              >
-                <img 
-                  src={getCloudinaryImageUrl('AdobeStock_460628886.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                  alt="Hero Image 4"
-                  className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
-                  style={{ borderRadius: '20px', willChange: 'transform' }}
-                  loading="lazy"
-                  decoding="async"
+                    flexShrink: 0
+                  }}
                 />
-              </div>
-              
-              {/* Column 3: Image 5 and Image 6 stacked - Fourth Duplicate */}
-              <div className="flex flex-col" style={{ gridColumn: '3', gridRow: '1 / 3', gap: '12px' }}>
-                {/* Image 5: Top - Fourth Duplicate */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '294/98',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_231517092.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 5"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                
-                {/* Image 6: Bottom - Fourth Duplicate */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '294/318',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_135490522.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 6"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              </div>
-              
-              {/* Column 4: Image 7 and Image 8 stacked - Fourth Duplicate */}
-              <div className="flex flex-col" style={{ gridColumn: '4', gridRow: '1 / 3', gap: '12px' }}>
-                {/* Image 7 - Fourth Duplicate */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '335/344',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_118182508.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 7"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                
-                {/* Image 8 - Fourth Duplicate */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '335/330',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_421538237.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Image 8"
-                    className="w-full h-full object-cover"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
+                <div className="flex flex-col" style={{ gap: '12px' }}>
+                  <div className="flex" style={{ gap: '12px' }}>
+                    <div 
+                      style={{
+                        width: '1067px',
+                        height: '263px',
+                        borderRadius: '20px',
+                        backgroundColor: '#D1D5DB',
+                        background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
+                    />
+                    <div 
+                      style={{
+                        width: '364px',
+                        height: '263px',
+                        borderRadius: '20px',
+                        backgroundColor: '#D1D5DB',
+                        background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
+                    />
+                  </div>
+                  <div className="flex" style={{ gap: '12px' }}>
+                    <div 
+                      style={{
+                        width: '364px',
+                        height: '288px',
+                        borderRadius: '20px',
+                        backgroundColor: '#D1D5DB',
+                        background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
+                    />
+                    <div 
+                      style={{
+                        width: '691px',
+                        height: '288px',
+                        borderRadius: '20px',
+                        backgroundColor: '#D1D5DB',
+                        background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
+                    />
+                    <div 
+                      style={{
+                        width: '364px',
+                        height: '288px',
+                        borderRadius: '20px',
+                        backgroundColor: '#D1D5DB',
+                        background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                        flexShrink: 0
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+            </div>
+            </div>
+            </div>
           </div>
         )}
         
-        {/* Mobile Layout - Following Enthusiasts Structure */}
+        {/* Mobile Layout */}
         {isMobile && (
           <div 
-            className="w-full h-full overflow-hidden"
+            className="w-full flex flex-col items-center"
             style={{
-              padding: '0 clamp(20px, 4vw, 60px)'
-            }}
-          >
-            <div 
-              ref={mobileMarqueeRef}
-              className="flex h-full"
-              style={{
-                gap: '8px'
+                  gap: '8px',
+              paddingTop: '20px',
+              paddingBottom: '20px'
+                }}
+              >
+            {/* Mobile layout placeholder - same structure as desktop but responsive */}
+                <div 
+              className="flex flex-col"
+                  style={{
+                    gap: '8px',
+                width: '100%'
               }}
             >
-              {/* First Mobile Set - Images 5, 3, 6 */}
-              <div 
-                className="flex-shrink-0 h-full"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  width: 'calc(100vw - clamp(40px, 8vw, 120px))'
-                }}
-              >
-                {/* Top Wide Image - Image 5 */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '353/157',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_231517092.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Mobile Image 5"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                
-                {/* Bottom Row: Two Square Images */}
-                <div 
-                  className="grid"
-                  style={{
-                    gridTemplateColumns: 'repeat(2, 1fr)',
-                    gap: '8px',
-                    flex: 1
-                  }}
-                >
-                  {/* Left Square - Image 3 */}
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '172/228',
-                      backgroundColor: '#D1D5DB',
-                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
-                    <img 
-                      src={getCloudinaryImageUrl('AdobeStock_469893497.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                      alt="Hero Mobile Image 3"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
+              {/* Mobile Row 1: Image 1, Image 2, Image 3 */}
+              <div className="flex" style={{ gap: '8px', width: '100%' }}>
+                <div style={{ width: '30%', height: '200px', borderRadius: '20px', backgroundColor: '#D1D5DB' }} />
+                <div style={{ width: '35%', height: '200px', borderRadius: '20px', backgroundColor: '#D1D5DB' }} />
+                <div style={{ width: '35%', height: '200px', borderRadius: '20px', backgroundColor: '#D1D5DB' }} />
                   </div>
                   
-                  {/* Right Square - Image 6 */}
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '172/228',
-                      backgroundColor: '#D1D5DB',
-                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
-                    <img 
-                      src={getCloudinaryImageUrl('AdobeStock_135490522.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                      alt="Hero Mobile Image 6"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Second Mobile Set - Images 1, 7, 8 */}
-              <div 
-                className="flex-shrink-0 h-full"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  width: 'calc(100vw - clamp(40px, 8vw, 120px))'
-                }}
-              >
-                {/* Top Wide Image - Image 1 */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '353/157',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_213841942.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Mobile Image 1"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
+              {/* Mobile Row 2: Image 5 */}
+              <div style={{ width: '100%', height: '150px', borderRadius: '20px', backgroundColor: '#D1D5DB' }} />
+              
+              {/* Mobile Row 3: Image 6, Image 7 */}
+              <div className="flex" style={{ gap: '8px', width: '100%' }}>
+                <div style={{ width: '30%', height: '200px', borderRadius: '20px', backgroundColor: '#D1D5DB' }} />
+                <div style={{ width: '70%', height: '200px', borderRadius: '20px', backgroundColor: '#D1D5DB' }} />
                 </div>
                 
-                {/* Bottom Row: Two Square Images */}
-                <div 
-                  className="grid"
-                  style={{
-                    gridTemplateColumns: 'repeat(2, 1fr)',
-                    gap: '8px',
-                    flex: 1
-                  }}
-                >
-                  {/* Left Square - Image 7 */}
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '172/228',
-                      backgroundColor: '#D1D5DB',
-                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
-                    <img 
-                      src={getCloudinaryImageUrl('AdobeStock_118182508.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                      alt="Hero Mobile Image 7"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
+              {/* Mobile Row 4: Image 8, Image 9 */}
+              <div className="flex" style={{ gap: '8px', width: '100%' }}>
+                <div style={{ width: '30%', height: '150px', borderRadius: '20px', backgroundColor: '#D1D5DB' }} />
+                <div style={{ width: '70%', height: '150px', borderRadius: '20px', backgroundColor: '#D1D5DB' }} />
                   </div>
                   
-                  {/* Right Square - Image 8 */}
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '172/228',
-                      backgroundColor: '#D1D5DB',
-                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
-                    <img 
-                      src={getCloudinaryImageUrl('AdobeStock_421538237.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                      alt="Hero Mobile Image 8"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Third Mobile Set - Images 2, 4, 5 */}
-              <div 
-                className="flex-shrink-0 h-full"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  width: 'calc(100vw - clamp(40px, 8vw, 120px))'
-                }}
-              >
-                {/* Top Wide Image - Image 2 */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '353/157',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_785220762.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Mobile Image 2"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                
-                {/* Bottom Row: Two Square Images */}
-                <div 
-                  className="grid"
-                  style={{
-                    gridTemplateColumns: 'repeat(2, 1fr)',
-                    gap: '8px',
-                    flex: 1
-                  }}
-                >
-                  {/* Left Square - Image 4 */}
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '172/228',
-                      backgroundColor: '#D1D5DB',
-                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
-                    <img 
-                      src={getCloudinaryImageUrl('AdobeStock_460628886.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                      alt="Hero Mobile Image 4"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                  
-                  {/* Right Square - Image 5 */}
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '172/228',
-                      backgroundColor: '#D1D5DB',
-                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
-                    <img 
-                      src={getCloudinaryImageUrl('AdobeStock_231517092.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                      alt="Hero Mobile Image 5"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Fourth Mobile Set - Images 3, 1, 2 */}
-              <div 
-                className="flex-shrink-0 h-full"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  width: 'calc(100vw - clamp(40px, 8vw, 120px))'
-                }}
-              >
-                {/* Top Wide Image - Image 3 */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '353/157',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_469893497.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Mobile Image 3"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                
-                {/* Bottom Row: Two Square Images */}
-                <div 
-                  className="grid"
-                  style={{
-                    gridTemplateColumns: 'repeat(2, 1fr)',
-                    gap: '8px',
-                    flex: 1
-                  }}
-                >
-                  {/* Left Square - Image 1 */}
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '172/228',
-                      backgroundColor: '#D1D5DB',
-                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
-                    <img 
-                      src={getCloudinaryImageUrl('AdobeStock_213841942.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                      alt="Hero Mobile Image 1"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                  
-                  {/* Right Square - Image 2 */}
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '172/228',
-                      backgroundColor: '#D1D5DB',
-                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
-                    <img 
-                      src={getCloudinaryImageUrl('AdobeStock_785220762.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                      alt="Hero Mobile Image 2"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Fifth Mobile Set - Images 6, 7, 8 */}
-              <div 
-                className="flex-shrink-0 h-full"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  width: 'calc(100vw - clamp(40px, 8vw, 120px))'
-                }}
-              >
-                {/* Top Wide Image - Image 6 */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '353/157',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_135490522.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Mobile Image 6"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                
-                {/* Bottom Row: Two Square Images */}
-                <div 
-                  className="grid"
-                  style={{
-                    gridTemplateColumns: 'repeat(2, 1fr)',
-                    gap: '8px',
-                    flex: 1
-                  }}
-                >
-                  {/* Left Square - Image 7 */}
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '172/228',
-                      backgroundColor: '#D1D5DB',
-                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
-                    <img 
-                      src={getCloudinaryImageUrl('AdobeStock_118182508.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                      alt="Hero Mobile Image 7"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                  
-                  {/* Right Square - Image 8 */}
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '172/228',
-                      backgroundColor: '#D1D5DB',
-                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
-                    <img 
-                      src={getCloudinaryImageUrl('AdobeStock_421538237.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                      alt="Hero Mobile Image 8"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Sixth Mobile Set - Images 4, 3, 1 */}
-              <div 
-                className="flex-shrink-0 h-full"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  width: 'calc(100vw - clamp(40px, 8vw, 120px))'
-                }}
-              >
-                {/* Top Wide Image - Image 4 */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '353/157',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_460628886.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Mobile Image 4"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                
-                {/* Bottom Row: Two Square Images */}
-                <div 
-                  className="grid"
-                  style={{
-                    gridTemplateColumns: 'repeat(2, 1fr)',
-                    gap: '8px',
-                    flex: 1
-                  }}
-                >
-                  {/* Left Square - Image 3 */}
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '172/228',
-                      backgroundColor: '#D1D5DB',
-                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
-                    <img 
-                      src={getCloudinaryImageUrl('AdobeStock_469893497.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                      alt="Hero Mobile Image 3"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                  
-                  {/* Right Square - Image 1 */}
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '172/228',
-                      backgroundColor: '#D1D5DB',
-                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
-                    <img 
-                      src={getCloudinaryImageUrl('AdobeStock_213841942.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                      alt="Hero Mobile Image 1"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Seventh Mobile Set - Duplicate of First for Infinite Loop */}
-              <div 
-                className="flex-shrink-0 h-full"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  width: 'calc(100vw - clamp(40px, 8vw, 120px))'
-                }}
-              >
-                {/* Top Wide Image - Image 5 */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '353/157',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_231517092.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Mobile Image 5"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                
-                {/* Bottom Row: Two Square Images */}
-                <div 
-                  className="grid"
-                  style={{
-                    gridTemplateColumns: 'repeat(2, 1fr)',
-                    gap: '8px',
-                    flex: 1
-                  }}
-                >
-                  {/* Left Square - Image 3 */}
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '172/228',
-                      backgroundColor: '#D1D5DB',
-                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
-                    <img 
-                      src={getCloudinaryImageUrl('AdobeStock_469893497.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                      alt="Hero Mobile Image 3"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                  
-                  {/* Right Square - Image 6 */}
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '172/228',
-                      backgroundColor: '#D1D5DB',
-                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
-                    <img 
-                      src={getCloudinaryImageUrl('AdobeStock_135490522.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                      alt="Hero Mobile Image 6"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Eighth Mobile Set - Duplicate of Second for Infinite Loop */}
-              <div 
-                className="flex-shrink-0 h-full"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  width: 'calc(100vw - clamp(40px, 8vw, 120px))'
-                }}
-              >
-                {/* Top Wide Image - Image 1 */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '353/157',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_213841942.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Mobile Image 1"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                
-                {/* Bottom Row: Two Square Images */}
-                <div 
-                  className="grid"
-                  style={{
-                    gridTemplateColumns: 'repeat(2, 1fr)',
-                    gap: '8px',
-                    flex: 1
-                  }}
-                >
-                  {/* Left Square - Image 7 */}
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '172/228',
-                      backgroundColor: '#D1D5DB',
-                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
-                    <img 
-                      src={getCloudinaryImageUrl('AdobeStock_118182508.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                      alt="Hero Mobile Image 7"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                  
-                  {/* Right Square - Image 8 */}
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '172/228',
-                      backgroundColor: '#D1D5DB',
-                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
-                    <img 
-                      src={getCloudinaryImageUrl('AdobeStock_421538237.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                      alt="Hero Mobile Image 8"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Ninth Mobile Set - Duplicate of Third for Infinite Loop */}
-              <div 
-                className="flex-shrink-0 h-full"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  width: 'calc(100vw - clamp(40px, 8vw, 120px))'
-                }}
-              >
-                {/* Top Wide Image - Image 2 */}
-                <div 
-                  className="rounded-lg overflow-hidden"
-                  style={{
-                    width: '100%',
-                    aspectRatio: '353/157',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                  }}
-                >
-                  <img 
-                    src={getCloudinaryImageUrl('AdobeStock_785220762.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                    alt="Hero Mobile Image 2"
-                    className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                    style={{ borderRadius: '20px' }}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-                
-                {/* Bottom Row: Two Square Images */}
-                <div 
-                  className="grid"
-                  style={{
-                    gridTemplateColumns: 'repeat(2, 1fr)',
-                    gap: '8px',
-                    flex: 1
-                  }}
-                >
-                  {/* Left Square - Image 4 */}
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '172/228',
-                      backgroundColor: '#D1D5DB',
-                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
-                    <img 
-                      src={getCloudinaryImageUrl('AdobeStock_460628886.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                      alt="Hero Mobile Image 4"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                  
-                  {/* Right Square - Image 5 */}
-                  <div 
-                    className="rounded-lg overflow-hidden"
-                    style={{
-                      width: '100%',
-                      aspectRatio: '172/228',
-                      backgroundColor: '#D1D5DB',
-                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
-                      borderRadius: '20px',
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
-                    }}
-                  >
-                    <img 
-                      src={getCloudinaryImageUrl('AdobeStock_231517092.webp', { width: 1200, quality: 'auto', format: 'auto' })}
-                      alt="Hero Mobile Image 5"
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                </div>
+              {/* Mobile Row 5: Image 10, Image 11 */}
+              <div className="flex" style={{ gap: '8px', width: '100%' }}>
+                <div style={{ width: '50%', height: '150px', borderRadius: '20px', backgroundColor: '#D1D5DB' }} />
+                <div style={{ width: '50%', height: '150px', borderRadius: '20px', backgroundColor: '#D1D5DB' }} />
               </div>
             </div>
           </div>
