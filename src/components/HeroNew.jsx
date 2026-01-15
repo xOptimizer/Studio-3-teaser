@@ -72,7 +72,7 @@ const HeroNew = () => {
     if (!marquee) return;
 
     const animate = () => {
-      positionRef.current -= 0.5; // Speed of movement (pixels per frame) - reduced for slower animation
+      positionRef.current -= 0.525; // Speed of movement (pixels per frame) - increased by 5%
       
       // Get the width of one image set (first child)
       const firstSet = marquee.children[0];
@@ -108,7 +108,7 @@ const HeroNew = () => {
     if (!mobileMarquee) return;
 
     const animate = () => {
-      mobilePositionRef.current -= 0.5; // Speed of movement (pixels per frame) - reduced for slower animation
+      mobilePositionRef.current -= 0.525; // Speed of movement (pixels per frame) - increased by 5%
       
       // Get the width of one image set (first child - the flex-shrink-0 container)
       const firstSet = mobileMarquee.children[0];
@@ -274,6 +274,7 @@ const HeroNew = () => {
                     loop
                     muted
                     playsInline
+                    preload="auto"
                     style={{
                       width: '459px',
                       height: '263px',
@@ -366,6 +367,7 @@ const HeroNew = () => {
                   loop
                   muted
                   playsInline
+                    preload="auto"
                   style={{
                     width: '364px',
                     height: '288px',
@@ -449,6 +451,7 @@ const HeroNew = () => {
                     loop
                     muted
                     playsInline
+                    preload="auto"
                     style={{
                       width: '459px',
                       height: '263px',
@@ -541,6 +544,7 @@ const HeroNew = () => {
                   loop
                   muted
                   playsInline
+                    preload="auto"
                   style={{
                     width: '364px',
                     height: '288px',
@@ -620,6 +624,7 @@ const HeroNew = () => {
                     loop
                     muted
                     playsInline
+                    preload="auto"
                     style={{
                       width: '459px',
                       height: '263px',
@@ -702,6 +707,7 @@ const HeroNew = () => {
                       loop
                       muted
                       playsInline
+                    preload="auto"
                       style={{
                         width: '364px',
                         height: '288px',
@@ -779,6 +785,7 @@ const HeroNew = () => {
                     loop
                     muted
                     playsInline
+                    preload="auto"
                     style={{
                       width: '459px',
                       height: '263px',
@@ -861,6 +868,7 @@ const HeroNew = () => {
                       loop
                       muted
                       playsInline
+                    preload="auto"
                       style={{
                         width: '364px',
                         height: '288px',
@@ -982,6 +990,7 @@ const HeroNew = () => {
                     loop
                     muted
                     playsInline
+                    preload="auto"
                     style={{
                       width: '459px',
                       height: '263px',
@@ -1074,6 +1083,7 @@ const HeroNew = () => {
                   loop
                   muted
                   playsInline
+                    preload="auto"
                   style={{
                     width: '364px',
                     height: '288px',
@@ -1158,6 +1168,7 @@ const HeroNew = () => {
                     loop
                     muted
                     playsInline
+                    preload="auto"
                     style={{
                       width: '459px',
                       height: '263px',
@@ -1250,6 +1261,7 @@ const HeroNew = () => {
                   loop
                   muted
                   playsInline
+                    preload="auto"
                   style={{
                     width: '364px',
                     height: '288px',
@@ -1331,6 +1343,7 @@ const HeroNew = () => {
                     loop
                     muted
                     playsInline
+                    preload="auto"
                     style={{
                       width: '459px',
                       height: '263px',
@@ -1413,6 +1426,7 @@ const HeroNew = () => {
                       loop
                       muted
                       playsInline
+                    preload="auto"
                       style={{
                         width: '364px',
                         height: '288px',
@@ -1492,6 +1506,7 @@ const HeroNew = () => {
                     loop
                     muted
                     playsInline
+                    preload="auto"
                     style={{
                       width: '459px',
                       height: '263px',
@@ -1574,6 +1589,7 @@ const HeroNew = () => {
                       loop
                       muted
                       playsInline
+                    preload="auto"
                       style={{
                         width: '364px',
                         height: '288px',
@@ -1653,6 +1669,7 @@ const HeroNew = () => {
                     loop
                     muted
                     playsInline
+                    preload="auto"
                     style={{
                       width: '459px',
                       height: '263px',
@@ -1735,6 +1752,7 @@ const HeroNew = () => {
                       loop
                       muted
                       playsInline
+                    preload="auto"
                       style={{
                         width: '364px',
                         height: '288px',
@@ -1814,6 +1832,7 @@ const HeroNew = () => {
                     loop
                     muted
                     playsInline
+                    preload="auto"
                     style={{
                       width: '459px',
                       height: '263px',
@@ -1896,6 +1915,7 @@ const HeroNew = () => {
                       loop
                       muted
                       playsInline
+                    preload="auto"
                       style={{
                         width: '364px',
                         height: '288px',
