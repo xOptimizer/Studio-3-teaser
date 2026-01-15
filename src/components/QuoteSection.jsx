@@ -709,11 +709,11 @@ const QuoteSection = () => {
                       <img 
                         src={images.enthusiasts[7].src} 
                         alt={images.enthusiasts[7].placeholder}
-                        className="w-full h-full object-cover"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
+                        className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                        style={{ borderRadius: '20px', willChange: 'transform' }}
+                        loading="lazy"
+                        decoding="async"
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
                         <span>{images.enthusiasts[7]?.placeholder}</span>
