@@ -72,7 +72,7 @@ const HeroNew = () => {
     if (!marquee) return;
 
     const animate = () => {
-      positionRef.current -= 1; // Speed of movement (pixels per frame)
+      positionRef.current -= 0.5; // Speed of movement (pixels per frame) - reduced for slower animation
       
       // Get the width of one image set (first child)
       const firstSet = marquee.children[0];
@@ -108,7 +108,7 @@ const HeroNew = () => {
     if (!mobileMarquee) return;
 
     const animate = () => {
-      mobilePositionRef.current -= 1; // Speed of movement (pixels per frame)
+      mobilePositionRef.current -= 0.5; // Speed of movement (pixels per frame) - reduced for slower animation
       
       // Get the width of one image set (first child - the flex-shrink-0 container)
       const firstSet = mobileMarquee.children[0];
