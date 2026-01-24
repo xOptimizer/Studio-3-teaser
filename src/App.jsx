@@ -4,6 +4,7 @@ import HeroNew from './components/HeroNew';
 import QuoteSection from './components/QuoteSection';
 import MarketplaceSection from './components/MarketplaceSection';
 import StudioSection from './components/StudioSection';
+import Footer from './components/Footer';
 import { heroVideo } from './utils';
 import { preloadAssets } from './utils/cloudinary';
 
@@ -21,6 +22,7 @@ const App = () => {
       <QuoteSection />
       <MarketplaceSection />
       <StudioSection />
+      <Footer />
     </main>
   )
 }
