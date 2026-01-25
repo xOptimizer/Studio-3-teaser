@@ -11,11 +11,10 @@ const Footer = () => {
   return (
     <>
       <footer
-        className="w-full flex flex-col md:flex-row justify-between items-center px-4 sm:px-8 md:px-12 lg:px-20 xl:px-36 py-8"
+        className="w-full flex flex-col md:flex-row justify-between items-center px-4 sm:px-8 md:px-12 lg:px-20 xl:px-36 pt-8 pb-20 md:py-8"
         style={{
           backgroundColor: '#D4D4D4',
           fontFamily: "'Inter', sans-serif",
-          scrollSnapAlign: 'start'
         }}
       >
         <div className="text-black text-sm font-semibold mb-4 md:mb-0">
