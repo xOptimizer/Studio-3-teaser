@@ -24,85 +24,85 @@ const QuoteSection = () => {
   // Images with descriptions for Artists section - using Cloudinary URLs
   const images = {
     artists: [
-      { 
-        id: 1, 
-        src: getCloudinaryImageUrl('artists-image-2.webp', { width: 2400, quality: 90, format: 'auto' }), 
+      {
+        id: 1,
+        src: getCloudinaryImageUrl('artists-image-2.webp', { width: 2400, quality: 90, format: 'auto' }),
         mobileSrc: getCloudinaryImageUrl('artists-image-2-mobile.webp', { width: 1200, quality: 90, format: 'auto' }),
-        description: 'Share Your Art' 
+        description: 'Share Your Art'
       },
-      { 
-        id: 2, 
-        src: getCloudinaryImageUrl('artists-image-1.webp', { width: 2400, quality: 90, format: 'auto' }), 
+      {
+        id: 2,
+        src: getCloudinaryImageUrl('artists-image-1.webp', { width: 2400, quality: 90, format: 'auto' }),
         mobileSrc: getCloudinaryImageUrl('artists-image-1-mobile.webp', { width: 1200, quality: 90, format: 'auto' }),
-        description: 'Find Your Audience' 
+        description: 'Find Your Audience'
       },
-      { 
-        id: 3, 
-        src: getCloudinaryImageUrl('artists-image-4.webp', { width: 2400, quality: 90, format: 'auto' }), 
+      {
+        id: 3,
+        src: getCloudinaryImageUrl('artists-image-4.webp', { width: 2400, quality: 90, format: 'auto' }),
         mobileSrc: getCloudinaryImageUrl('artists-image-4-mobile.webp', { width: 1200, quality: 90, format: 'auto' }),
-        description: 'Focus on Your Art, We\'ll Handle the Rest' 
+        description: 'Focus on Your Art, We\'ll Handle the Rest'
       },
-      { 
-        id: 4, 
-        src: getCloudinaryImageUrl('artists-image-3.webp', { width: 2400, quality: 90, format: 'auto' }), 
+      {
+        id: 4,
+        src: getCloudinaryImageUrl('artists-image-3.webp', { width: 2400, quality: 90, format: 'auto' }),
         mobileSrc: getCloudinaryImageUrl('artists-image-3-mobile.webp', { width: 1200, quality: 90, format: 'auto' }),
-        description: 'Grow Your Practice' 
+        description: 'Grow Your Practice'
       }
     ],
     buyers: [
-      { 
-        id: 4, 
-        src: getCloudinaryImageUrl('buyers-image-1.webp', { width: 2400, quality: 90, format: 'auto' }), 
+      {
+        id: 4,
+        src: getCloudinaryImageUrl('buyers-image-1.webp', { width: 2400, quality: 90, format: 'auto' }),
         mobileSrc: getCloudinaryImageUrl('buyers-image-1-mobile.webp', { width: 1200, quality: 90, format: 'auto', cacheBust: IMAGE_CACHE_VERSION }),
-        description: 'Connect Directly With Artists' 
+        description: 'Connect Directly With Artists'
       },
-      { 
-        id: 5, 
-        src: getCloudinaryImageUrl('buyers-image-2.webp', { width: 2400, quality: 90, format: 'auto' }), 
+      {
+        id: 5,
+        src: getCloudinaryImageUrl('buyers-image-2.webp', { width: 2400, quality: 90, format: 'auto' }),
         mobileSrc: getCloudinaryImageUrl('buyers-image-2-mobile.webp', { width: 1200, quality: 90, format: 'auto', cacheBust: IMAGE_CACHE_VERSION }),
-        description: 'Purchase With Peace of Mind' 
+        description: 'Purchase With Peace of Mind'
       }
     ],
     enthusiasts: [
-      { 
-        id: 7, 
-        src: getCloudinaryImageUrl('AdobeStock_213841942.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
-        placeholder: 'Enthusiasts Image 1' 
+      {
+        id: 7,
+        src: getCloudinaryImageUrl('AdobeStock_213841942.webp', { width: 1200, quality: 'auto', format: 'auto' }),
+        placeholder: 'Enthusiasts Image 1'
       },
-      { 
-        id: 8, 
-        src: getCloudinaryImageUrl('AdobeStock_785220762.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
-        placeholder: 'Enthusiasts Image 2' 
+      {
+        id: 8,
+        src: getCloudinaryImageUrl('AdobeStock_785220762.webp', { width: 1200, quality: 'auto', format: 'auto' }),
+        placeholder: 'Enthusiasts Image 2'
       },
-      { 
-        id: 9, 
-        src: getCloudinaryImageUrl('AdobeStock_469893497.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
-        placeholder: 'Enthusiasts Image 3' 
+      {
+        id: 9,
+        src: getCloudinaryImageUrl('AdobeStock_469893497.webp', { width: 1200, quality: 'auto', format: 'auto' }),
+        placeholder: 'Enthusiasts Image 3'
       },
-      { 
-        id: 10, 
-        src: getCloudinaryImageUrl('AdobeStock_460628886.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
-        placeholder: 'Enthusiasts Image 4' 
+      {
+        id: 10,
+        src: getCloudinaryImageUrl('AdobeStock_460628886.webp', { width: 1200, quality: 'auto', format: 'auto' }),
+        placeholder: 'Enthusiasts Image 4'
       },
-      { 
-        id: 11, 
-        src: getCloudinaryImageUrl('AdobeStock_231517092.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
-        placeholder: 'Enthusiasts Image 5' 
+      {
+        id: 11,
+        src: getCloudinaryImageUrl('AdobeStock_231517092.webp', { width: 1200, quality: 'auto', format: 'auto' }),
+        placeholder: 'Enthusiasts Image 5'
       },
-      { 
-        id: 12, 
-        src: getCloudinaryImageUrl('AdobeStock_135490522.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
-        placeholder: 'Enthusiasts Image 6' 
+      {
+        id: 12,
+        src: getCloudinaryImageUrl('AdobeStock_135490522.webp', { width: 1200, quality: 'auto', format: 'auto' }),
+        placeholder: 'Enthusiasts Image 6'
       },
-      { 
-        id: 13, 
-        src: getCloudinaryImageUrl('AdobeStock_118182508.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
-        placeholder: 'Enthusiasts Image 7' 
+      {
+        id: 13,
+        src: getCloudinaryImageUrl('AdobeStock_118182508.webp', { width: 1200, quality: 'auto', format: 'auto' }),
+        placeholder: 'Enthusiasts Image 7'
       },
-      { 
-        id: 14, 
-        src: getCloudinaryImageUrl('AdobeStock_421538237.webp', { width: 1200, quality: 'auto', format: 'auto' }), 
-        placeholder: 'Enthusiasts Image 8' 
+      {
+        id: 14,
+        src: getCloudinaryImageUrl('AdobeStock_421538237.webp', { width: 1200, quality: 'auto', format: 'auto' }),
+        placeholder: 'Enthusiasts Image 8'
       }
     ]
   };
@@ -131,7 +131,7 @@ const QuoteSection = () => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024); // lg breakpoint
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -267,7 +267,7 @@ const QuoteSection = () => {
 
   const handleTouchEnd = () => {
     if (!touchStartX.current || !touchEndX.current) return;
-    
+
     const distance = touchStartX.current - touchEndX.current;
     const minSwipeDistance = 50;
     const currentImages = images[activeTab];
@@ -289,8 +289,8 @@ const QuoteSection = () => {
     <section
       id="social-discover"
       className="w-full min-h-screen flex flex-col px-4 sm:px-8 md:px-12 lg:px-20 xl:px-36"
-      style={{ 
-        fontFamily: "'Inter', sans-serif", 
+      style={{
+        fontFamily: "'Inter', sans-serif",
         background: '#F7F7F7',
         scrollSnapAlign: 'start',
         paddingTop: 'clamp(60px, 8vw, 80px)',
@@ -301,9 +301,9 @@ const QuoteSection = () => {
         {/* Header Section */}
         <div className="flex flex-col">
           {/* Title */}
-          <h2 
-            className="text-black" 
-            style={{ 
+          <h2
+            className="text-black"
+            style={{
               fontFamily: "'Inter', sans-serif",
               fontWeight: 600,
               fontSize: 'clamp(19pt, 4vw, 25pt)',
@@ -315,9 +315,9 @@ const QuoteSection = () => {
           </h2>
 
           {/* Description */}
-          <p 
-            className="text-gray" 
-            style={{ 
+          <p
+            className="text-gray"
+            style={{
               fontFamily: "'Inter', sans-serif",
               fontWeight: 600,
               fontSize: 'clamp(24pt, 6vw, 40pt)',
@@ -325,7 +325,7 @@ const QuoteSection = () => {
               marginBottom: 'clamp(32px, 6vw, 48px)'
             }}
           >
-            A creator focused social platform where your work isn't buried by algorithms.
+            A curated social platform built to elevate art beyond the noise of social media.
           </p>
         </div>
 
@@ -371,7 +371,7 @@ const QuoteSection = () => {
             <div className="grid grid-cols-2 gap-6">
               {images.artists.map((image) => (
                 <div key={image.id} className="flex flex-col">
-                  <div 
+                  <div
                     className="rounded-lg overflow-hidden w-full cursor-pointer"
                     onClick={() => handleImageClick(image.id)}
                     style={{
@@ -380,8 +380,8 @@ const QuoteSection = () => {
                       borderRadius: '20px'
                     }}
                   >
-                    <img 
-                      src={image.src} 
+                    <img
+                      src={image.src}
                       alt={image.description}
                       className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
                       style={{ borderRadius: '20px', willChange: 'transform' }}
@@ -398,7 +398,7 @@ const QuoteSection = () => {
                       }}
                     />
                   </div>
-                  <p 
+                  <p
                     style={{
                       fontFamily: "'Inter', sans-serif",
                       fontWeight: 400,
@@ -416,7 +416,7 @@ const QuoteSection = () => {
             <div className="grid grid-cols-2 gap-6">
               {images.buyers.map((image) => (
                 <div key={image.id} className="flex flex-col">
-                  <div 
+                  <div
                     className="rounded-lg overflow-hidden w-full cursor-pointer"
                     onClick={() => handleImageClick(image.id)}
                     style={{
@@ -425,8 +425,8 @@ const QuoteSection = () => {
                       borderRadius: '20px'
                     }}
                   >
-                    <img 
-                      src={image.src} 
+                    <img
+                      src={image.src}
                       alt={image.description}
                       className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
                       style={{ borderRadius: '20px', willChange: 'transform' }}
@@ -452,7 +452,7 @@ const QuoteSection = () => {
                       }}
                     />
                   </div>
-                  <p 
+                  <p
                     style={{
                       fontFamily: "'Inter', sans-serif",
                       fontWeight: 400,
@@ -469,7 +469,7 @@ const QuoteSection = () => {
           ) : (
             <div className="flex flex-col">
               {/* Dynamic Grid Layout for Enthusiasts - Reorganized with no gaps between pairs */}
-              <div 
+              <div
                 className="grid mb-6"
                 style={{
                   gridTemplateColumns: 'repeat(4, 1fr)',
@@ -480,7 +480,7 @@ const QuoteSection = () => {
                 {/* Column 1: Image 1 and Image 2 stacked with gap */}
                 <div className="flex flex-col" style={{ gridColumn: '1', gridRow: '1 / 3', gap: '12px' }}>
                   {/* Image 1: 294x168 - Top */}
-                  <div 
+                  <div
                     className="rounded-lg overflow-hidden cursor-pointer"
                     onClick={() => handleImageClick(images.enthusiasts[0]?.id)}
                     style={{
@@ -493,23 +493,23 @@ const QuoteSection = () => {
                     }}
                   >
                     {images.enthusiasts[0]?.src ? (
-                      <img 
-                        src={images.enthusiasts[0].src} 
+                      <img
+                        src={images.enthusiasts[0].src}
                         alt={images.enthusiasts[0].placeholder}
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
+                        className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                        style={{ borderRadius: '20px' }}
+                        loading="lazy"
+                        decoding="async"
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
                         <span>{images.enthusiasts[0]?.placeholder}</span>
                       </div>
                     )}
                   </div>
-                  
+
                   {/* Image 2: 294x428 - Directly below Image 1, no gap */}
-                  <div 
+                  <div
                     className="rounded-lg overflow-hidden cursor-pointer"
                     onClick={() => handleImageClick(images.enthusiasts[1]?.id)}
                     style={{
@@ -522,14 +522,14 @@ const QuoteSection = () => {
                     }}
                   >
                     {images.enthusiasts[1]?.src ? (
-                      <img 
-                        src={images.enthusiasts[1].src} 
+                      <img
+                        src={images.enthusiasts[1].src}
                         alt={images.enthusiasts[1].placeholder}
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
+                        className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                        style={{ borderRadius: '20px' }}
+                        loading="lazy"
+                        decoding="async"
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
                         <span>{images.enthusiasts[1]?.placeholder}</span>
@@ -537,9 +537,9 @@ const QuoteSection = () => {
                     )}
                   </div>
                 </div>
-                
+
                 {/* Column 2: Image 3 - Top */}
-                <div 
+                <div
                   className="rounded-lg overflow-hidden cursor-pointer"
                   onClick={() => handleImageClick(images.enthusiasts[2]?.id)}
                   style={{
@@ -554,8 +554,8 @@ const QuoteSection = () => {
                   }}
                 >
                   {images.enthusiasts[2]?.src ? (
-                    <img 
-                      src={images.enthusiasts[2].src} 
+                    <img
+                      src={images.enthusiasts[2].src}
                       alt={images.enthusiasts[2].placeholder}
                       className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
                       style={{ borderRadius: '20px', willChange: 'transform' }}
@@ -568,9 +568,9 @@ const QuoteSection = () => {
                     </div>
                   )}
                 </div>
-                
+
                 {/* Image 4: 602x168 - Below Image 3, spans columns 2-3, with gap */}
-                <div 
+                <div
                   className="rounded-lg overflow-hidden cursor-pointer"
                   onClick={() => handleImageClick(images.enthusiasts[3]?.id)}
                   style={{
@@ -585,8 +585,8 @@ const QuoteSection = () => {
                   }}
                 >
                   {images.enthusiasts[3]?.src ? (
-                    <img 
-                      src={images.enthusiasts[3].src} 
+                    <img
+                      src={images.enthusiasts[3].src}
                       alt={images.enthusiasts[3].placeholder}
                       className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-110"
                       style={{ borderRadius: '20px', willChange: 'transform' }}
@@ -599,11 +599,11 @@ const QuoteSection = () => {
                     </div>
                   )}
                 </div>
-                
+
                 {/* Column 3: Image 5 and Image 6 stacked with gap */}
                 <div className="flex flex-col" style={{ gridColumn: '3', gridRow: '1 / 3', gap: '12px' }}>
                   {/* Image 5: 294x98 - Top */}
-                  <div 
+                  <div
                     className="rounded-lg overflow-hidden cursor-pointer"
                     onClick={() => handleImageClick(images.enthusiasts[4]?.id)}
                     style={{
@@ -616,23 +616,23 @@ const QuoteSection = () => {
                     }}
                   >
                     {images.enthusiasts[4]?.src ? (
-                      <img 
-                        src={images.enthusiasts[4].src} 
+                      <img
+                        src={images.enthusiasts[4].src}
                         alt={images.enthusiasts[4].placeholder}
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
+                        className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                        style={{ borderRadius: '20px' }}
+                        loading="lazy"
+                        decoding="async"
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
                         <span>{images.enthusiasts[4]?.placeholder}</span>
                       </div>
                     )}
                   </div>
-                  
+
                   {/* Image 6: 294x318 - Aligned with end of Image 3 */}
-                  <div 
+                  <div
                     className="rounded-lg overflow-hidden cursor-pointer"
                     onClick={() => handleImageClick(images.enthusiasts[5]?.id)}
                     style={{
@@ -645,14 +645,14 @@ const QuoteSection = () => {
                     }}
                   >
                     {images.enthusiasts[5]?.src ? (
-                      <img 
-                        src={images.enthusiasts[5].src} 
+                      <img
+                        src={images.enthusiasts[5].src}
                         alt={images.enthusiasts[5].placeholder}
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
+                        className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                        style={{ borderRadius: '20px' }}
+                        loading="lazy"
+                        decoding="async"
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
                         <span>{images.enthusiasts[5]?.placeholder}</span>
@@ -660,11 +660,11 @@ const QuoteSection = () => {
                     )}
                   </div>
                 </div>
-                
+
                 {/* Column 4: Image 7 and Image 8 stacked with gap */}
                 <div className="flex flex-col" style={{ gridColumn: '4', gridRow: '1 / 3', gap: '12px' }}>
                   {/* Image 7: 335x344 */}
-                  <div 
+                  <div
                     className="rounded-lg overflow-hidden cursor-pointer"
                     onClick={() => handleImageClick(images.enthusiasts[6]?.id)}
                     style={{
@@ -677,23 +677,23 @@ const QuoteSection = () => {
                     }}
                   >
                     {images.enthusiasts[6]?.src ? (
-                      <img 
-                        src={images.enthusiasts[6].src} 
+                      <img
+                        src={images.enthusiasts[6].src}
                         alt={images.enthusiasts[6].placeholder}
-                      className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
+                        className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
+                        style={{ borderRadius: '20px' }}
+                        loading="lazy"
+                        decoding="async"
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
                         <span>{images.enthusiasts[6]?.placeholder}</span>
                       </div>
                     )}
                   </div>
-                  
+
                   {/* Image 8: 335x350 - Increased height to match bottom row */}
-                  <div 
+                  <div
                     className="rounded-lg overflow-hidden cursor-pointer"
                     onClick={() => handleImageClick(images.enthusiasts[7]?.id)}
                     style={{
@@ -706,8 +706,8 @@ const QuoteSection = () => {
                     }}
                   >
                     {images.enthusiasts[7]?.src ? (
-                      <img 
-                        src={images.enthusiasts[7].src} 
+                      <img
+                        src={images.enthusiasts[7].src}
                         alt={images.enthusiasts[7].placeholder}
                         className="w-full h-full object-cover transition-transform duration-500 ease-in-out hover:scale-110"
                         style={{ borderRadius: '20px', willChange: 'transform' }}
@@ -722,9 +722,9 @@ const QuoteSection = () => {
                   </div>
                 </div>
               </div>
-              
+
               {/* Bottom Text */}
-              <p 
+              <p
                 style={{
                   fontFamily: "'Inter', sans-serif",
                   fontWeight: 400,
@@ -781,7 +781,7 @@ const QuoteSection = () => {
           {activeTab === 'enthusiasts' ? (
             <div className="mb-6">
               {/* Mobile Enthusiasts Collage - 3 images: Image 5 (wide top), Image 3 and Image 6 (squares bottom) */}
-              <div 
+              <div
                 className="flex flex-col"
                 style={{
                   gap: '8px',
@@ -789,7 +789,7 @@ const QuoteSection = () => {
                 }}
               >
                 {/* Image 5: Top - wide/rectangular */}
-                <div 
+                <div
                   className="rounded-lg overflow-hidden cursor-pointer"
                   onClick={() => handleImageClick(images.enthusiasts[4]?.id)}
                   style={{
@@ -801,8 +801,8 @@ const QuoteSection = () => {
                   }}
                 >
                   {images.enthusiasts[4]?.src ? (
-                    <img 
-                      src={images.enthusiasts[4].src} 
+                    <img
+                      src={images.enthusiasts[4].src}
                       alt={images.enthusiasts[4].placeholder}
                       className="w-full h-full object-cover"
                       style={{ borderRadius: '20px' }}
@@ -815,9 +815,9 @@ const QuoteSection = () => {
                     </div>
                   )}
                 </div>
-                
+
                 {/* Bottom row: Image 3 and Image 6 side by side */}
-                <div 
+                <div
                   className="grid"
                   style={{
                     gridTemplateColumns: 'repeat(2, 1fr)',
@@ -825,65 +825,65 @@ const QuoteSection = () => {
                   }}
                 >
                   {/* Image 3: Bottom left */}
-                <div 
-                  className="rounded-lg overflow-hidden cursor-pointer"
-                  onClick={() => handleImageClick(images.enthusiasts[2]?.id)}
-                  style={{
-                    width: '100%',
+                  <div
+                    className="rounded-lg overflow-hidden cursor-pointer"
+                    onClick={() => handleImageClick(images.enthusiasts[2]?.id)}
+                    style={{
+                      width: '100%',
                       aspectRatio: '172/228',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                      backgroundColor: '#D1D5DB',
+                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
                       borderRadius: '20px'
-                  }}
-                >
-                  {images.enthusiasts[2]?.src ? (
-                    <img 
-                      src={images.enthusiasts[2].src} 
-                      alt={images.enthusiasts[2].placeholder}
+                    }}
+                  >
+                    {images.enthusiasts[2]?.src ? (
+                      <img
+                        src={images.enthusiasts[2].src}
+                        alt={images.enthusiasts[2].placeholder}
                         className="w-full h-full object-cover"
                         style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                      <span>{images.enthusiasts[2]?.placeholder}</span>
-                    </div>
-                  )}
-                </div>
-                
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                        <span>{images.enthusiasts[2]?.placeholder}</span>
+                      </div>
+                    )}
+                  </div>
+
                   {/* Image 6: Bottom right */}
-                <div 
-                  className="rounded-lg overflow-hidden cursor-pointer"
+                  <div
+                    className="rounded-lg overflow-hidden cursor-pointer"
                     onClick={() => handleImageClick(images.enthusiasts[5]?.id)}
-                  style={{
-                    width: '100%',
+                    style={{
+                      width: '100%',
                       aspectRatio: '172/228',
-                    backgroundColor: '#D1D5DB',
-                    background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
+                      backgroundColor: '#D1D5DB',
+                      background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)',
                       borderRadius: '20px'
-                  }}
-                >
+                    }}
+                  >
                     {images.enthusiasts[5]?.src ? (
-                    <img 
-                        src={images.enthusiasts[5].src} 
+                      <img
+                        src={images.enthusiasts[5].src}
                         alt={images.enthusiasts[5].placeholder}
                         className="w-full h-full object-cover"
                         style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
                         <span>{images.enthusiasts[5]?.placeholder}</span>
-                    </div>
-                  )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
-              
+
               {/* Bottom Text */}
-              <p 
+              <p
                 style={{
                   fontFamily: "'Inter', sans-serif",
                   fontWeight: 400,
@@ -898,9 +898,9 @@ const QuoteSection = () => {
               >
                 Experience Art Uninterrupted
               </p>
-              
+
               {/* Feature Description */}
-              <p 
+              <p
                 style={{
                   fontFamily: "'Inter', sans-serif",
                   fontWeight: 400,
@@ -915,7 +915,7 @@ const QuoteSection = () => {
               </p>
             </div>
           ) : (
-            <div 
+            <div
               ref={carouselRef}
               className="relative overflow-hidden mb-6"
               onTouchStart={handleTouchStart}
@@ -923,7 +923,7 @@ const QuoteSection = () => {
               onTouchEnd={handleTouchEnd}
             >
 
-              <div 
+              <div
                 className="flex transition-transform duration-300 ease-out"
                 style={{
                   transform: `translateX(-${currentImageIndex * 100}%)`
@@ -933,7 +933,7 @@ const QuoteSection = () => {
                   <div key={image.id} className="flex-shrink-0 w-full flex flex-col">
                     {image.src ? (
                       <>
-                        <div 
+                        <div
                           className="rounded-lg overflow-hidden w-full"
                           style={{
                             height: activeTab === 'artists' || activeTab === 'buyers' ? 'clamp(400px, 50vh, 500px)' : 'clamp(400px, 50vh, 500px)',
@@ -943,33 +943,33 @@ const QuoteSection = () => {
                             background: 'linear-gradient(to bottom, #E5E7EB, #D1D5DB)'
                           }}
                         >
-                          <img 
-                            src={isMobile && image.mobileSrc ? image.mobileSrc : image.src} 
+                          <img
+                            src={isMobile && image.mobileSrc ? image.mobileSrc : image.src}
                             alt={image.description || image.placeholder}
                             className="w-full h-full object-cover"
-                      style={{ borderRadius: '20px' }}
-                      loading="lazy"
-                      decoding="async"
-                    />
+                            style={{ borderRadius: '20px' }}
+                            loading="lazy"
+                            decoding="async"
+                          />
                         </div>
                         {image.description && (
                           <>
-                          <p 
-                            style={{
-                              fontFamily: "'Inter', sans-serif",
-                              fontWeight: 400,
+                            <p
+                              style={{
+                                fontFamily: "'Inter', sans-serif",
+                                fontWeight: 400,
                                 fontSize: '14pt',
-                              color: '#000',
-                              lineHeight: '1.4',
+                                color: '#000',
+                                lineHeight: '1.4',
                                 textAlign: 'left',
                                 width: '100%',
                                 marginBottom: (activeTab === 'artists' || activeTab === 'buyers') ? '12px' : '0'
-                            }}
-                          >
-                            {image.description}
-                          </p>
+                              }}
+                            >
+                              {image.description}
+                            </p>
                             {activeTab === 'artists' && artistFeatureDescriptions[image.id] && (
-                              <p 
+                              <p
                                 style={{
                                   fontFamily: "'Inter', sans-serif",
                                   fontWeight: 400,
@@ -984,7 +984,7 @@ const QuoteSection = () => {
                               </p>
                             )}
                             {activeTab === 'buyers' && buyerFeatureDescriptions[image.id] && (
-                              <p 
+                              <p
                                 style={{
                                   fontFamily: "'Inter', sans-serif",
                                   fontWeight: 400,
@@ -1002,7 +1002,7 @@ const QuoteSection = () => {
                         )}
                       </>
                     ) : (
-                      <div 
+                      <div
                         className="rounded-lg overflow-hidden w-full mx-auto"
                         style={{
                           aspectRatio: '400/580',
@@ -1043,25 +1043,25 @@ const QuoteSection = () => {
                   <span style={{ fontSize: '24px', color: '#000', lineHeight: '1', fontWeight: 300 }}>‹</span>
                 </button>
               )}
-              
+
               {/* Pagination Dots */}
               <div className="flex gap-2 items-center">
-              {images[activeTab].map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentImageIndex(index)}
+                {images[activeTab].map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentImageIndex(index)}
                     className="rounded-full transition-all"
-                  style={{
+                    style={{
                       width: index === currentImageIndex ? '10px' : '8px',
                       height: index === currentImageIndex ? '10px' : '8px',
                       backgroundColor: index === currentImageIndex ? '#000' : '#D1D5DB',
                       opacity: index === currentImageIndex ? 1 : 0.5
-                  }}
-                  aria-label={`Go to image ${index + 1}`}
-                />
-              ))}
-            </div>
-              
+                    }}
+                    aria-label={`Go to image ${index + 1}`}
+                  />
+                ))}
+              </div>
+
               {/* Right Arrow */}
               {currentImageIndex < images[activeTab].length - 1 && (
                 <button
@@ -1104,20 +1104,19 @@ const QuoteSection = () => {
       {isModalOpen && typeof document !== 'undefined' && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           {/* Overlay with white glass effect */}
-          <div 
+          <div
             className="fixed inset-0 bg-white bg-opacity-10 backdrop-blur-md"
             style={{
               boxShadow: 'inset 0 0 100px rgba(255, 255, 255, 0.1), 0 0 200px rgba(0, 0, 0, 0.1)'
             }}
             onClick={() => setIsModalOpen(false)}
           />
-          
+
           {/* Modal Content - White Glass with transparency */}
-          <div 
-            className={`relative z-10 rounded-2xl w-full border border-white border-opacity-20 shadow-2xl overflow-y-auto flex flex-col group ${
-              (activeTab === 'artists' || activeTab === 'buyers') ? 'pl-16 pr-16 py-8 md:py-10 lg:py-12' : 'p-8 md:p-10 lg:p-12'
-            }`}
-            style={{ 
+          <div
+            className={`relative z-10 rounded-2xl w-full border border-white border-opacity-20 shadow-2xl overflow-y-auto flex flex-col group ${(activeTab === 'artists' || activeTab === 'buyers') ? 'pl-16 pr-16 py-8 md:py-10 lg:py-12' : 'p-8 md:p-10 lg:p-12'
+              }`}
+            style={{
               maxWidth: '90vw',
               width: '90vw',
               maxHeight: '90vh',
@@ -1165,7 +1164,7 @@ const QuoteSection = () => {
                 {activeTab === 'artists' && selectedImage?.id === 1 ? (
                   <>
                     {/* Header */}
-                    <p 
+                    <p
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
@@ -1178,7 +1177,7 @@ const QuoteSection = () => {
                     </p>
 
                     {/* Main Title */}
-                    <h2 
+                    <h2
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 600,
@@ -1192,7 +1191,7 @@ const QuoteSection = () => {
                     </h2>
 
                     {/* Description */}
-                    <p 
+                    <p
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
@@ -1209,7 +1208,7 @@ const QuoteSection = () => {
                     <div className="space-y-4">
                       {/* Feature 1 */}
                       <div>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
@@ -1220,7 +1219,7 @@ const QuoteSection = () => {
                         >
                           • Gallery style presentation
                         </p>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
@@ -1235,7 +1234,7 @@ const QuoteSection = () => {
 
                       {/* Feature 2 */}
                       <div>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
@@ -1246,7 +1245,7 @@ const QuoteSection = () => {
                         >
                           • Context rich profile
                         </p>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
@@ -1263,7 +1262,7 @@ const QuoteSection = () => {
                 ) : activeTab === 'artists' && selectedImage?.id === 2 ? (
                   <>
                     {/* Header */}
-                    <p 
+                    <p
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
@@ -1276,7 +1275,7 @@ const QuoteSection = () => {
                     </p>
 
                     {/* Main Title */}
-                    <h2 
+                    <h2
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 600,
@@ -1290,7 +1289,7 @@ const QuoteSection = () => {
                     </h2>
 
                     {/* Description */}
-                    <p 
+                    <p
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
@@ -1307,7 +1306,7 @@ const QuoteSection = () => {
                     <div className="space-y-4">
                       {/* Feature 1 */}
                       <div>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
@@ -1318,7 +1317,7 @@ const QuoteSection = () => {
                         >
                           • Aligned Visibility
                         </p>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
@@ -1333,7 +1332,7 @@ const QuoteSection = () => {
 
                       {/* Feature 2 */}
                       <div>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
@@ -1344,7 +1343,7 @@ const QuoteSection = () => {
                         >
                           • Curated discovery, not popularity metrics
                         </p>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
@@ -1361,7 +1360,7 @@ const QuoteSection = () => {
                 ) : activeTab === 'artists' && selectedImage?.id === 3 ? (
                   <>
                     {/* Header */}
-                    <p 
+                    <p
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
@@ -1374,7 +1373,7 @@ const QuoteSection = () => {
                     </p>
 
                     {/* Main Title */}
-                    <h2 
+                    <h2
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 600,
@@ -1388,7 +1387,7 @@ const QuoteSection = () => {
                     </h2>
 
                     {/* Description */}
-                    <p 
+                    <p
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
@@ -1405,7 +1404,7 @@ const QuoteSection = () => {
                     <div className="space-y-4">
                       {/* Feature 1 */}
                       <div>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
@@ -1416,7 +1415,7 @@ const QuoteSection = () => {
                         >
                           • Total Creative Autonomy
                         </p>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
@@ -1431,7 +1430,7 @@ const QuoteSection = () => {
 
                       {/* Feature 2 */}
                       <div>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
@@ -1442,7 +1441,7 @@ const QuoteSection = () => {
                         >
                           • End-to-End Fulfillment
                         </p>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
@@ -1459,7 +1458,7 @@ const QuoteSection = () => {
                 ) : activeTab === 'artists' && selectedImage?.id === 4 ? (
                   <>
                     {/* Header */}
-                    <p 
+                    <p
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
@@ -1472,7 +1471,7 @@ const QuoteSection = () => {
                     </p>
 
                     {/* Main Title */}
-                    <h2 
+                    <h2
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 600,
@@ -1486,7 +1485,7 @@ const QuoteSection = () => {
                     </h2>
 
                     {/* Description */}
-                    <p 
+                    <p
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
@@ -1503,7 +1502,7 @@ const QuoteSection = () => {
                     <div className="space-y-4">
                       {/* Feature 1 */}
                       <div>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
@@ -1514,7 +1513,7 @@ const QuoteSection = () => {
                         >
                           • Set Your Own Value
                         </p>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
@@ -1529,7 +1528,7 @@ const QuoteSection = () => {
 
                       {/* Feature 2 */}
                       <div>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
@@ -1540,7 +1539,7 @@ const QuoteSection = () => {
                         >
                           • Understand your Audience with Real Insights
                         </p>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
@@ -1557,7 +1556,7 @@ const QuoteSection = () => {
                 ) : activeTab === 'buyers' && selectedImage?.id === 4 ? (
                   <>
                     {/* Header */}
-                    <p 
+                    <p
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
@@ -1570,7 +1569,7 @@ const QuoteSection = () => {
                     </p>
 
                     {/* Main Title */}
-                    <h2 
+                    <h2
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 600,
@@ -1584,7 +1583,7 @@ const QuoteSection = () => {
                     </h2>
 
                     {/* Description */}
-                    <p 
+                    <p
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
@@ -1601,7 +1600,7 @@ const QuoteSection = () => {
                     <div className="space-y-4">
                       {/* Feature 1 */}
                       <div>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
@@ -1612,7 +1611,7 @@ const QuoteSection = () => {
                         >
                           • Message artists instantly
                         </p>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
@@ -1627,7 +1626,7 @@ const QuoteSection = () => {
 
                       {/* Feature 2 */}
                       <div>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
@@ -1638,7 +1637,7 @@ const QuoteSection = () => {
                         >
                           • Build relationships that deepen your collection
                         </p>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
@@ -1655,7 +1654,7 @@ const QuoteSection = () => {
                 ) : activeTab === 'buyers' && selectedImage?.id === 5 ? (
                   <>
                     {/* Header */}
-                    <p 
+                    <p
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
@@ -1668,7 +1667,7 @@ const QuoteSection = () => {
                     </p>
 
                     {/* Main Title */}
-                    <h2 
+                    <h2
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 600,
@@ -1682,7 +1681,7 @@ const QuoteSection = () => {
                     </h2>
 
                     {/* Description */}
-                    <p 
+                    <p
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
@@ -1699,7 +1698,7 @@ const QuoteSection = () => {
                     <div className="space-y-4">
                       {/* Feature 1 */}
                       <div>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
@@ -1710,7 +1709,7 @@ const QuoteSection = () => {
                         >
                           • Verified authenticity
                         </p>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
@@ -1725,7 +1724,7 @@ const QuoteSection = () => {
 
                       {/* Feature 2 */}
                       <div>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
@@ -1736,7 +1735,7 @@ const QuoteSection = () => {
                         >
                           • Secure payments, safe delivery
                         </p>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
@@ -1753,7 +1752,7 @@ const QuoteSection = () => {
                 ) : activeTab === 'enthusiasts' ? (
                   <>
                     {/* Header */}
-                    <p 
+                    <p
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
@@ -1766,7 +1765,7 @@ const QuoteSection = () => {
                     </p>
 
                     {/* Main Title */}
-                    <h2 
+                    <h2
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 600,
@@ -1780,7 +1779,7 @@ const QuoteSection = () => {
                     </h2>
 
                     {/* Description */}
-                    <p 
+                    <p
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
@@ -1797,7 +1796,7 @@ const QuoteSection = () => {
                     <div className="space-y-4">
                       {/* Feature 1 */}
                       <div>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
@@ -1808,7 +1807,7 @@ const QuoteSection = () => {
                         >
                           • Art first browsing
                         </p>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
@@ -1823,7 +1822,7 @@ const QuoteSection = () => {
 
                       {/* Feature 2 */}
                       <div>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 600,
@@ -1834,7 +1833,7 @@ const QuoteSection = () => {
                         >
                           • Explore deeply & intentionally
                         </p>
-                        <p 
+                        <p
                           style={{
                             fontFamily: "'Inter', sans-serif",
                             fontWeight: 400,
@@ -1851,7 +1850,7 @@ const QuoteSection = () => {
                 ) : (
                   <>
                     {/* Default content for other images */}
-                    <p 
+                    <p
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
@@ -1863,7 +1862,7 @@ const QuoteSection = () => {
                       Built for artists, not influencers
                     </p>
 
-                    <h2 
+                    <h2
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 600,
@@ -1876,7 +1875,7 @@ const QuoteSection = () => {
                       {selectedImage?.description || 'Share Your Art'}
                     </h2>
 
-                    <p 
+                    <p
                       style={{
                         fontFamily: "'Inter', sans-serif",
                         fontWeight: 400,
@@ -1897,7 +1896,7 @@ const QuoteSection = () => {
                 // Enthusiasts Collage - 4 images on desktop, 2 images on mobile
                 <div className="flex items-center justify-center w-full order-2 md:order-2">
                   {/* Desktop: 4-image collage */}
-                  <div 
+                  <div
                     className="hidden md:grid w-full"
                     style={{
                       gridTemplateColumns: 'repeat(2, 1fr)',
@@ -1908,7 +1907,7 @@ const QuoteSection = () => {
                     }}
                   >
                     {/* Image 1: Top left - 306x202 */}
-                    <div 
+                    <div
                       className="rounded-lg overflow-hidden"
                       style={{
                         gridColumn: '1',
@@ -1919,19 +1918,19 @@ const QuoteSection = () => {
                       }}
                     >
                       {images.enthusiasts[0]?.src ? (
-                        <img 
-                          src={images.enthusiasts[0].src} 
+                        <img
+                          src={images.enthusiasts[0].src}
                           alt={images.enthusiasts[0].placeholder}
-                         className="w-full h-full object-cover"
-                         style={{ borderRadius: '12px' }}
-                         loading="eager"
-                         decoding="async"
-                       />
+                          className="w-full h-full object-cover"
+                          style={{ borderRadius: '12px' }}
+                          loading="eager"
+                          decoding="async"
+                        />
                       ) : null}
                     </div>
-                    
+
                     {/* Image 2: Top right - 306x431 */}
-                    <div 
+                    <div
                       className="rounded-lg overflow-hidden"
                       style={{
                         gridColumn: '2',
@@ -1942,19 +1941,19 @@ const QuoteSection = () => {
                       }}
                     >
                       {images.enthusiasts[3]?.src ? (
-                        <img 
-                          src={images.enthusiasts[3].src} 
+                        <img
+                          src={images.enthusiasts[3].src}
                           alt={images.enthusiasts[3].placeholder}
-                         className="w-full h-full object-cover"
-                         style={{ borderRadius: '12px' }}
-                         loading="eager"
-                         decoding="async"
-                       />
+                          className="w-full h-full object-cover"
+                          style={{ borderRadius: '12px' }}
+                          loading="eager"
+                          decoding="async"
+                        />
                       ) : null}
                     </div>
-                    
+
                     {/* Image 3: Second row left - 306x431 */}
-                    <div 
+                    <div
                       className="rounded-lg overflow-hidden"
                       style={{
                         gridColumn: '1',
@@ -1965,19 +1964,19 @@ const QuoteSection = () => {
                       }}
                     >
                       {images.enthusiasts[1]?.src ? (
-                        <img 
-                          src={images.enthusiasts[1].src} 
+                        <img
+                          src={images.enthusiasts[1].src}
                           alt={images.enthusiasts[1].placeholder}
-                         className="w-full h-full object-cover"
-                         style={{ borderRadius: '12px' }}
-                         loading="eager"
-                         decoding="async"
-                       />
+                          className="w-full h-full object-cover"
+                          style={{ borderRadius: '12px' }}
+                          loading="eager"
+                          decoding="async"
+                        />
                       ) : null}
                     </div>
-                    
+
                     {/* Image 4: Third row right - 306x202 */}
-                    <div 
+                    <div
                       className="rounded-lg overflow-hidden"
                       style={{
                         gridColumn: '2',
@@ -1988,27 +1987,27 @@ const QuoteSection = () => {
                       }}
                     >
                       {images.enthusiasts[7]?.src ? (
-                        <img 
-                          src={images.enthusiasts[7].src} 
+                        <img
+                          src={images.enthusiasts[7].src}
                           alt={images.enthusiasts[7].placeholder}
-                         className="w-full h-full object-cover"
-                         style={{ borderRadius: '12px' }}
-                         loading="eager"
-                         decoding="async"
-                       />
+                          className="w-full h-full object-cover"
+                          style={{ borderRadius: '12px' }}
+                          loading="eager"
+                          decoding="async"
+                        />
                       ) : null}
                     </div>
                   </div>
-                  
+
                   {/* Mobile: 4 images in 2x2 grid */}
-                  <div 
+                  <div
                     className="grid grid-cols-2 gap-2 w-full md:hidden"
                     style={{
                       maxWidth: '100%'
                     }}
                   >
                     {/* Image 1 */}
-                    <div 
+                    <div
                       className="rounded-lg overflow-hidden w-full"
                       style={{
                         aspectRatio: '1/1',
@@ -2016,19 +2015,19 @@ const QuoteSection = () => {
                       }}
                     >
                       {images.enthusiasts[0]?.src ? (
-                        <img 
-                          src={images.enthusiasts[0].src} 
+                        <img
+                          src={images.enthusiasts[0].src}
                           alt={images.enthusiasts[0].placeholder}
-                         className="w-full h-full object-cover"
-                         style={{ borderRadius: '12px' }}
-                         loading="eager"
-                         decoding="async"
-                       />
+                          className="w-full h-full object-cover"
+                          style={{ borderRadius: '12px' }}
+                          loading="eager"
+                          decoding="async"
+                        />
                       ) : null}
                     </div>
-                    
+
                     {/* Image 2 */}
-                    <div 
+                    <div
                       className="rounded-lg overflow-hidden w-full"
                       style={{
                         aspectRatio: '1/1',
@@ -2036,19 +2035,19 @@ const QuoteSection = () => {
                       }}
                     >
                       {images.enthusiasts[3]?.src ? (
-                        <img 
-                          src={images.enthusiasts[3].src} 
+                        <img
+                          src={images.enthusiasts[3].src}
                           alt={images.enthusiasts[3].placeholder}
-                         className="w-full h-full object-cover"
-                         style={{ borderRadius: '12px' }}
-                         loading="eager"
-                         decoding="async"
-                       />
+                          className="w-full h-full object-cover"
+                          style={{ borderRadius: '12px' }}
+                          loading="eager"
+                          decoding="async"
+                        />
                       ) : null}
                     </div>
-                    
+
                     {/* Image 3 */}
-                    <div 
+                    <div
                       className="rounded-lg overflow-hidden w-full"
                       style={{
                         aspectRatio: '1/1',
@@ -2056,19 +2055,19 @@ const QuoteSection = () => {
                       }}
                     >
                       {images.enthusiasts[1]?.src ? (
-                        <img 
-                          src={images.enthusiasts[1].src} 
+                        <img
+                          src={images.enthusiasts[1].src}
                           alt={images.enthusiasts[1].placeholder}
-                         className="w-full h-full object-cover"
-                         style={{ borderRadius: '12px' }}
-                         loading="eager"
-                         decoding="async"
-                       />
+                          className="w-full h-full object-cover"
+                          style={{ borderRadius: '12px' }}
+                          loading="eager"
+                          decoding="async"
+                        />
                       ) : null}
                     </div>
-                    
+
                     {/* Image 4 */}
-                    <div 
+                    <div
                       className="rounded-lg overflow-hidden w-full"
                       style={{
                         aspectRatio: '1/1',
@@ -2076,69 +2075,69 @@ const QuoteSection = () => {
                       }}
                     >
                       {images.enthusiasts[7]?.src ? (
-                        <img 
-                          src={images.enthusiasts[7].src} 
+                        <img
+                          src={images.enthusiasts[7].src}
                           alt={images.enthusiasts[7].placeholder}
-                         className="w-full h-full object-cover"
-                         style={{ borderRadius: '12px' }}
-                         loading="eager"
-                         decoding="async"
-                       />
+                          className="w-full h-full object-cover"
+                          style={{ borderRadius: '12px' }}
+                          loading="eager"
+                          decoding="async"
+                        />
                       ) : null}
                     </div>
                   </div>
                 </div>
-                ) : selectedImage ? (
-                 // Single image for Artists/Buyers - Bottom on mobile, right on desktop
-                 <div className="flex items-center justify-center w-full order-2 md:order-2">
-                   {/* Desktop: Single centered image - Consistent size */}
-                   <div className="hidden md:flex items-center justify-center relative w-full">
-                     <div 
-                       className="rounded-lg overflow-hidden"
-                       style={{
-                         aspectRatio: '1/1',
-                         borderRadius: '12px',
-                         width: '100%',
-                         maxWidth: '850px',
-                       }}
-                     >
-                       <img 
-                         src={selectedImage.src} 
-                         alt={selectedImage.description || selectedImage.placeholder}
-                         className="w-full h-full object-cover"
-                         style={{ borderRadius: '12px' }}
-                         loading="eager"
-                         decoding="async"
-                       />
-                     </div>
-                   </div>
-                   
-                   {/* Mobile: Single image in similar container to enthusiasts */}
-                   <div 
-                     className="w-full md:hidden"
-                     style={{
-                       maxWidth: '100%'
-                     }}
-                   >
-                     <div 
-                       className="rounded-lg overflow-hidden w-full"
-                       style={{
-                         aspectRatio: '1/1',
-                         borderRadius: '12px',
-                       }}
-                     >
-                       <img 
-                         src={selectedImage.src} 
-                         alt={selectedImage.description || selectedImage.placeholder}
-                         className="w-full h-full object-cover"
-                         style={{ borderRadius: '12px' }}
-                         loading="eager"
-                         decoding="async"
-                       />
-                     </div>
-                   </div>
-                 </div>
-               ) : null}
+              ) : selectedImage ? (
+                // Single image for Artists/Buyers - Bottom on mobile, right on desktop
+                <div className="flex items-center justify-center w-full order-2 md:order-2">
+                  {/* Desktop: Single centered image - Consistent size */}
+                  <div className="hidden md:flex items-center justify-center relative w-full">
+                    <div
+                      className="rounded-lg overflow-hidden"
+                      style={{
+                        aspectRatio: '1/1',
+                        borderRadius: '12px',
+                        width: '100%',
+                        maxWidth: '850px',
+                      }}
+                    >
+                      <img
+                        src={selectedImage.src}
+                        alt={selectedImage.description || selectedImage.placeholder}
+                        className="w-full h-full object-cover"
+                        style={{ borderRadius: '12px' }}
+                        loading="eager"
+                        decoding="async"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Mobile: Single image in similar container to enthusiasts */}
+                  <div
+                    className="w-full md:hidden"
+                    style={{
+                      maxWidth: '100%'
+                    }}
+                  >
+                    <div
+                      className="rounded-lg overflow-hidden w-full"
+                      style={{
+                        aspectRatio: '1/1',
+                        borderRadius: '12px',
+                      }}
+                    >
+                      <img
+                        src={selectedImage.src}
+                        alt={selectedImage.description || selectedImage.placeholder}
+                        className="w-full h-full object-cover"
+                        style={{ borderRadius: '12px' }}
+                        loading="eager"
+                        decoding="async"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : null}
             </div>
 
             {/* Pagination - For Artists and Buyers */}
@@ -2150,11 +2149,10 @@ const QuoteSection = () => {
                     <button
                       key={image.id}
                       onClick={() => setSelectedImage(image)}
-                      className={`transition-all rounded-full ${
-                        index === currentIndex
+                      className={`transition-all rounded-full ${index === currentIndex
                           ? 'bg-gray-800 w-3 h-3'
                           : 'bg-gray-400 bg-opacity-60 w-2 h-2 hover:bg-opacity-80'
-                      }`}
+                        }`}
                       aria-label={`Go to image ${index + 1}`}
                     />
                   );
@@ -2169,11 +2167,10 @@ const QuoteSection = () => {
                     <button
                       key={image.id}
                       onClick={() => setSelectedImage(image)}
-                      className={`transition-all rounded-full ${
-                        index === currentIndex
+                      className={`transition-all rounded-full ${index === currentIndex
                           ? 'bg-gray-800 w-3 h-3'
                           : 'bg-gray-400 bg-opacity-60 w-2 h-2 hover:bg-opacity-80'
-                      }`}
+                        }`}
                       aria-label={`Go to image ${index + 1}`}
                     />
                   );
