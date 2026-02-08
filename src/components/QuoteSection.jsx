@@ -1080,23 +1080,7 @@ const QuoteSection = () => {
                 </button>
               )}
             </div>
-          ) : (
-            <div className="flex justify-center gap-2 items-center">
-              {/* Show 3 dots for the 3 images displayed (Image 5, Image 3, Image 6) */}
-              {[0, 1, 2].map((index) => (
-                <div
-                  key={index}
-                  className="rounded-full transition-all"
-                  style={{
-                    width: index === 0 ? '10px' : '8px',
-                    height: index === 0 ? '10px' : '8px',
-                    backgroundColor: index === 0 ? '#000' : '#D1D5DB',
-                    opacity: index === 0 ? 1 : 0.5
-                  }}
-                />
-              ))}
-            </div>
-          )}
+          ) : null}
         </div>
       </div>
 

@@ -295,7 +295,8 @@ const RegistrationModal = ({ isOpen, onClose }) => {
 
           {/* Conditional: Show creative practice if Artist OR Both */}
           {(formData.role === 'artist' || formData.role === 'both') && (
-            <div>
+            <div className="space-y-2">
+              <p className="text-black text-xs font-medium">How would you describe your creative practice?</p>
               <input
                 type="text"
                 id="creativePractice"
@@ -309,14 +310,15 @@ const RegistrationModal = ({ isOpen, onClose }) => {
                   backdropFilter: 'blur(10px)',
                   border: '1px solid rgba(0, 0, 0, 0.3)'
                 }}
-                placeholder="How would you describe your creative practice? (e.g. painting, sculpture, photography, fashion design, pottery, mixed media, etc.)"
+                placeholder="e.g. painting, sculpture, photography, fashion design, pottery, mixed media, etc."
               />
             </div>
           )}
 
           {/* Conditional: Show collector interests if Collector OR Both */}
           {(formData.role === 'collector' || formData.role === 'both') && (
-            <div>
+            <div className="space-y-2">
+              <p className="text-black text-xs font-medium">What types of work are you most interested in collecting?</p>
               <input
                 type="text"
                 id="collectorInterests"
@@ -330,7 +332,7 @@ const RegistrationModal = ({ isOpen, onClose }) => {
                   backdropFilter: 'blur(10px)',
                   border: '1px solid rgba(0, 0, 0, 0.3)'
                 }}
-                placeholder="What types of work are you most interested in collecting? (i.e. Painting, Sculpture, Photography, etc.)"
+                placeholder="e.g. Painting, Sculpture, Photography, etc."
               />
             </div>
           )}
