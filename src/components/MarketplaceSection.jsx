@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getCloudinaryImageUrl } from '../utils/cloudinary';
+import PartnerModal from './PartnerModal';
 
 // Cache busting version - update this when images are refreshed in Cloudinary
 const IMAGE_CACHE_VERSION = Date.now();
@@ -7,6 +8,7 @@ const IMAGE_CACHE_VERSION = Date.now();
 const MarketplaceSection = () => {
   const [expandedFeature, setExpandedFeature] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
+  const [isPartnerModalOpen, setIsPartnerModalOpen] = useState(false);
 
   const features = [
     {
@@ -57,6 +59,22 @@ const MarketplaceSection = () => {
         cacheBust: IMAGE_CACHE_VERSION
       }),
       description: "You'll always know exactly what to buy and why it fits your needs."
+    },
+    {
+      id: 4,
+      title: 'Support Independent Art Stores',
+      placeholder: 'Support Independent Art Stores Image',
+      src: getCloudinaryImageUrl('marketplace-image-4.webp', {
+        width: 2800,
+        quality: 90,
+        format: 'auto'
+      }),
+      mobileSrc: getCloudinaryImageUrl('marketplace-image-4-mobile.webp', {
+        width: 1200,
+        quality: 90,
+        format: 'auto'
+      }),
+      description: 'Studio 3 partners with independent art supply stores to power the marketplace. When artists purchase materials, orders are fulfilled directly by trusted local retailers.'
     }
   ];
 
@@ -376,7 +394,59 @@ const MarketplaceSection = () => {
             )}
           </div>
         </div>
+
+        {/* Partner Store CTA */}
+        <div
+          className="w-full"
+          style={{
+            marginTop: '112px'
+          }}
+        >
+          <h3
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 600,
+              fontSize: 'clamp(19pt, 4vw, 25pt)',
+              color: '#374151',
+              lineHeight: '1.2',
+              marginBottom: '8px'
+            }}
+          >
+            Own an art supply store?
+          </h3>
+          <p
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 400,
+              fontSize: 'clamp(14pt, 2.5vw, 16pt)',
+              color: '#4B5563',
+              lineHeight: '1.5',
+              marginBottom: '12px'
+            }}
+          >
+            Partner with Studio 3 and reach a new generation of artists.
+          </p>
+          <button
+            type="button"
+            onClick={() => setIsPartnerModalOpen(true)}
+            className="inline-flex items-center gap-1 transition-opacity hover:opacity-80 text-left bg-transparent border-none cursor-pointer p-0"
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 500,
+              fontSize: 'clamp(14pt, 2.5vw, 16pt)',
+              color: '#2563EB'
+            }}
+          >
+            Become a Partner Store
+            <span style={{ marginLeft: '4px' }}>→</span>
+          </button>
+        </div>
       </div>
+
+      <PartnerModal
+        isOpen={isPartnerModalOpen}
+        onClose={() => setIsPartnerModalOpen(false)}
+      />
 
       <style>{`
         @keyframes fadeIn {
