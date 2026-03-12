@@ -57,15 +57,16 @@ const PartnerModal = ({ isOpen, onClose }) => {
     setSubmitStatus(null);
 
     try {
-      // Use same Google Apps Script endpoint; extend script to accept formType: 'partner' and write to a Partner sheet
-      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymzzAV-kE29HFAEMJMn6sLLfEqDJRHvaRgfskvP56MhlW3qi416XrGGpNjBxkNVGO7iQ/exec';
+      // Partner form → dedicated Google Sheet (separate from Registration)
+      const GOOGLE_SCRIPT_URL_PARTNER = 'https://script.google.com/macros/s/AKfycbwF-33EOQOAaZwgRMBMGPNuhP3CQ2L2kvaJBd4PY0ff9DoD4UmaubnJAkNc9kQruA/exec';
 
-      await fetch(GOOGLE_SCRIPT_URL, {
+      await fetch(GOOGLE_SCRIPT_URL_PARTNER, {
         method: 'POST',
         mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
-          formType: 'partner',
           storeName: formData.storeName,
           cityLocation: formData.cityLocation,
           websiteOrInstagram: formData.websiteOrInstagram,
@@ -84,6 +85,11 @@ const PartnerModal = ({ isOpen, onClose }) => {
         email: '',
         brandsOrMaterials: ''
       });
+
+      setTimeout(() => {
+        onClose();
+        setSubmitStatus(null);
+      }, 2000);
     } catch (error) {
       console.error('Error submitting partner form:', error);
       setSubmitStatus('error');
@@ -114,18 +120,10 @@ const PartnerModal = ({ isOpen, onClose }) => {
           maxHeight: '90vh',
           maxWidth: '600px',
           width: '100%',
-          ...(submitStatus === 'success'
-            ? {
-                backgroundColor: '#F3F4F6',
-                border: '1px solid #2563EB',
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.1)'
-              }
-            : {
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                backdropFilter: 'blur(20px)',
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.3)'
-              })
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          backgroundColor: 'rgba(255, 255, 255, 0.7)',
+          backdropFilter: 'blur(20px)',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.3)'
         }}
       >
         <button
@@ -136,42 +134,16 @@ const PartnerModal = ({ isOpen, onClose }) => {
           ×
         </button>
 
-        {submitStatus === 'success' ? (
-          <div className="text-center py-6 px-2">
-            <h2
-              className="font-bold text-black mb-4"
-              style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: 'clamp(22pt, 4vw, 28pt)',
-                lineHeight: '1.2'
-              }}
-            >
-              Thanks! We'll be in touch soon.
-            </h2>
-            <p
-              className="text-black max-w-md mx-auto"
-              style={{
-                fontFamily: "'Inter', sans-serif",
-                fontWeight: 400,
-                fontSize: 'clamp(14pt, 2.5vw, 16pt)',
-                lineHeight: '1.5'
-              }}
-            >
-              Studio 3 is currently onboarding founding retail partners. Our team will review your store and reach out with next steps.
-            </p>
-          </div>
-        ) : (
-          <>
-            <div className="mb-6">
-              <h2 className="text-2xl md:text-3xl font-bold mb-2 text-black">
-                Partner With Studio 3
-              </h2>
-              <p className="text-gray-600 text-sm">
-                Studio 3 partners with independent art supply stores to power the marketplace. Tell us a little about your store and we'll reach out with next steps.
-              </p>
-            </div>
+        <div className="mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold mb-2 text-black">
+            Partner With Studio 3
+          </h2>
+          <p className="text-gray-600 text-sm">
+            Studio 3 partners with independent art supply stores to power the marketplace. Tell us a little about your store and we'll reach out with next steps.
+          </p>
+        </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <input
                   type="text"
@@ -254,22 +226,26 @@ const PartnerModal = ({ isOpen, onClose }) => {
                 />
               </div>
 
-              {submitStatus === 'error' && (
-                <div className="p-4 bg-red-500 bg-opacity-20 border border-red-500 rounded-2xl text-red-600 text-sm text-center">
-                  Something went wrong. Please try again.
-                </div>
-              )}
+          {submitStatus === 'success' && (
+            <div className="p-4 bg-blue bg-opacity-20 border border-blue rounded-2xl text-blue text-sm text-center">
+              Thanks! We'll be in touch soon.
+            </div>
+          )}
 
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-black text-white py-2.5 px-4 rounded-xl text-sm font-medium hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-3"
-              >
-                {isSubmitting ? 'Submitting...' : 'Submit'}
-              </button>
-            </form>
-          </>
-        )}
+          {submitStatus === 'error' && (
+            <div className="p-4 bg-red-500 bg-opacity-20 border border-red-500 rounded-2xl text-red-400 text-sm text-center">
+              Something went wrong. Please try again.
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-black text-white py-2.5 px-4 rounded-xl text-sm font-medium hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-3"
+          >
+            {isSubmitting ? 'Submitting...' : 'Submit'}
+          </button>
+        </form>
       </div>
       <style>{`
         input::placeholder,
