@@ -29,22 +29,6 @@ const MarketplaceSection = () => {
     },
     {
       id: 2,
-      title: 'Quality Supplies, No Markups',
-      placeholder: 'Quality supplies Image',
-      src: getCloudinaryImageUrl('marketplace-image-3.webp', {
-        width: 2800, 
-        quality: 90, 
-        format: 'auto' 
-      }),
-      mobileSrc: getCloudinaryImageUrl('marketplace-image-3-mobile.webp', {
-        width: 1200, 
-        quality: 90, 
-        format: 'auto' 
-      }),
-      description: 'Professional materials priced fairly, with no additional Studio 3 margin.'
-    },
-    {
-      id: 3,
       title: 'Purchase With Confidence',
       placeholder: 'Purchase with confidence Image',
       src: getCloudinaryImageUrl('marketplace-image-2.webp', { 
@@ -61,7 +45,7 @@ const MarketplaceSection = () => {
       description: "You'll always know exactly what to buy and why it fits your needs."
     },
     {
-      id: 4,
+      id: 3,
       title: 'Support Independent Art Stores',
       placeholder: 'Support Independent Art Stores Image',
       src: getCloudinaryImageUrl('marketplace-image-4.webp', {
@@ -69,7 +53,7 @@ const MarketplaceSection = () => {
         quality: 90,
         format: 'auto'
       }),
-      mobileSrc: getCloudinaryImageUrl('marketplace-image-4-mobile.webp', {
+      mobileSrc: getCloudinaryImageUrl('marketplace-image-4.webp', {
         width: 1200,
         quality: 90,
         format: 'auto'
@@ -133,7 +117,7 @@ const MarketplaceSection = () => {
               marginBottom: 'clamp(32px, 6vw, 48px)'
             }}
           >
-            A curated creative supply marketplace offering the best prices with no hidden markups.
+            A curated creative supply marketplace powered by independent art supply stores.
           </p>
         </div>
 
