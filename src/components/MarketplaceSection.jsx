@@ -61,7 +61,7 @@ const MarketplaceSection = () => {
       description: "You'll always know exactly what to buy and why it fits your needs."
     },
     {
-      id: 3,
+      id: 4,
       title: 'Support Independent Art Stores',
       placeholder: 'Support Independent Art Stores Image',
       src: getCloudinaryImageUrl('marketplace-image-4.webp', {
