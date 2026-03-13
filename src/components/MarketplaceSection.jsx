@@ -27,8 +27,24 @@ const MarketplaceSection = () => {
       }),
       description: 'AI powered insights that identify the best tools for your style, build project ready supply lists, and make choosing materials feel effortless.'
     },
+    // {
+    //   id: 2,
+    //   title: 'Quality Supplies, No Markups',
+    //   placeholder: 'Quality supplies Image',
+    //   src: getCloudinaryImageUrl('marketplace-image-3.webp', {
+    //     width: 2800, 
+    //     quality: 90, 
+    //     format: 'auto' 
+    //   }),
+    //   mobileSrc: getCloudinaryImageUrl('marketplace-image-3-mobile.webp', {
+    //     width: 1200, 
+    //     quality: 90, 
+    //     format: 'auto' 
+    //   }),
+    //   description: 'Professional materials priced fairly, with no additional Studio 3 margin.'
+    // },
     {
-      id: 2,
+      id: 3,
       title: 'Purchase With Confidence',
       placeholder: 'Purchase with confidence Image',
       src: getCloudinaryImageUrl('marketplace-image-2.webp', { 
@@ -117,6 +133,7 @@ const MarketplaceSection = () => {
               marginBottom: 'clamp(32px, 6vw, 48px)'
             }}
           >
+            A curated creative supply marketplace powered by independent art supply stores.
             A curated creative supply marketplace powered by independent art supply stores.
           </p>
         </div>
