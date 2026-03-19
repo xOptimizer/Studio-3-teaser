@@ -134,7 +134,6 @@ const MarketplaceSection = () => {
             }}
           >
             A curated creative supply marketplace powered by independent art supply stores.
-            A curated creative supply marketplace powered by independent art supply stores.
           </p>
         </div>
 
