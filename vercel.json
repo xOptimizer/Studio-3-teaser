@@ -17,6 +17,9 @@
         }
       ]
     }
+  ],
+  "rewrites": [
+    { "source": "/((?!assets/|models/|favicon.ico|vite.svg).*)", "destination": "/index.html" }
   ]
 }
 
