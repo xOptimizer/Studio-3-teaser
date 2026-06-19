@@ -2,18 +2,20 @@ import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+import { useAuth } from '../context/AuthContext';
 
 const LoginModal = ({ isOpen, onClose }) => {
   const overlayRef = useRef(null);
   const contentRef = useRef(null);
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null); // null | 'success' | 'error'
+  const [submitStatus, setSubmitStatus] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  // Lock body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -45,20 +47,21 @@ const LoginModal = ({ isOpen, onClose }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus(null);
+    setErrorMessage('');
 
-    // Simulate authentication
-    setTimeout(() => {
+    try {
+      await login(formData.email, formData.password);
+      setSubmitStatus('success');
+    } catch (err) {
+      setSubmitStatus('error');
+      setErrorMessage(err.message || 'Authentication failed');
+    } finally {
       setIsSubmitting(false);
-      if (formData.email && formData.password) {
-        setSubmitStatus('success');
-      } else {
-        setSubmitStatus('error');
-      }
-    }, 1200);
+    }
   };
 
   if (!isOpen) return null;
@@ -87,7 +90,6 @@ const LoginModal = ({ isOpen, onClose }) => {
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.3)'
         }}
       >
-        {/* Close Button */}
         <button
           onClick={onClose}
           className="absolute top-6 right-6 text-gray-400 hover:text-black transition-colors text-3xl leading-none w-8 h-8 flex items-center justify-center"
@@ -117,7 +119,7 @@ const LoginModal = ({ isOpen, onClose }) => {
               Log In
             </h2>
             <p className="text-gray-500 text-sm mb-6">
-              Enter your credentials to access your account.
+              Use the email and password sent when you purchased your ticket.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -161,7 +163,7 @@ const LoginModal = ({ isOpen, onClose }) => {
 
               {submitStatus === 'error' && (
                 <div className="p-3 bg-red-500 bg-opacity-20 border border-red-500 rounded-2xl text-red-600 text-xs text-center">
-                  Authentication failed. Please try again.
+                  {errorMessage || 'Authentication failed. Please try again.'}
                 </div>
               )}
 

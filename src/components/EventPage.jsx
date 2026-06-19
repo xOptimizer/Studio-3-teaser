@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { checkout } from '../lib/api';
 
 const EVENT_START_ISO = '2026-07-25T20:00:00-05:00';
 
@@ -151,7 +152,95 @@ const EventPage = ({ onNavigate }) => {
   const [checkoutStep, setCheckoutStep] = useState('form'); // 'form' | 'success'
   const [buyerInfo, setBuyerInfo] = useState({ name: '', email: '', phone: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [checkoutError, setCheckoutError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [activeFaq, setActiveFaq] = useState(null);
+
+  const buyerInfoRef = useRef(buyerInfo);
+  const ticketQuantityRef = useRef(ticketQuantity);
+
+  useEffect(() => {
+    buyerInfoRef.current = buyerInfo;
+  }, [buyerInfo]);
+
+  useEffect(() => {
+    ticketQuantityRef.current = ticketQuantity;
+  }, [ticketQuantity]);
+
+  useEffect(() => {
+    if (!isCheckoutOpen || checkoutStep !== 'form') return undefined;
+
+    const appId = import.meta.env.VITE_FINIX_APPLICATION_ID;
+    const merchantId = import.meta.env.VITE_FINIX_MERCHANT_ID;
+    const finixEnv = import.meta.env.VITE_FINIX_ENV || 'sandbox';
+
+    if (!window.Finix || !appId) {
+      setCheckoutError('Payment form is not configured. Set VITE_FINIX_APPLICATION_ID.');
+      return undefined;
+    }
+
+    let finixAuth;
+    if (merchantId) {
+      try {
+        finixAuth = window.Finix.Auth(finixEnv, merchantId);
+      } catch (err) {
+        console.error('[Finix.Auth]', err);
+      }
+    }
+
+    const container = document.getElementById('finix-payment-form');
+    if (container) {
+      container.innerHTML = '';
+    }
+
+    const timer = setTimeout(() => {
+      window.Finix.PaymentForm('finix-payment-form', finixEnv, appId, {
+        showAddress: false,
+        onSubmit: async (error, response) => {
+          if (error) {
+            setCheckoutError('Card validation failed. Please check your card details.');
+            return;
+          }
+
+          const { name, email, phone } = buyerInfoRef.current;
+          const quantity = ticketQuantityRef.current;
+
+          if (!name?.trim() || !email?.trim() || !phone?.trim()) {
+            setCheckoutError('Please complete name, email, and phone before paying.');
+            return;
+          }
+
+          setIsSubmitting(true);
+          setCheckoutError('');
+
+          try {
+            const token = response?.data?.id;
+            if (!token) {
+              throw new Error('No payment token received from Finix');
+            }
+
+            const data = await checkout({
+              token,
+              fraudSessionId: finixAuth?.getSessionKey?.(),
+              quantity,
+              name: name.trim(),
+              email: email.trim(),
+              phone: phone.trim(),
+            });
+
+            setSuccessMessage(data.message || 'Check your email for your ticket and login details.');
+            setCheckoutStep('success');
+          } catch (err) {
+            setCheckoutError(err.message || 'Checkout failed');
+          } finally {
+            setIsSubmitting(false);
+          }
+        },
+      });
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, [isCheckoutOpen, checkoutStep]);
 
   const totalAttendees = 239;
 
@@ -204,23 +293,14 @@ const EventPage = ({ onNavigate }) => {
     }
   ];
 
-  const handleCheckoutSubmit = (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    // Simulate API request
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setCheckoutStep('success');
-    }, 1200);
-  };
-
   const closeCheckout = () => {
     setIsCheckoutOpen(false);
-    // Reset state after transition
     setTimeout(() => {
       setCheckoutStep('form');
       setTicketQuantity(1);
       setBuyerInfo({ name: '', email: '', phone: '' });
+      setCheckoutError('');
+      setSuccessMessage('');
     }, 300);
   };
 
@@ -571,7 +651,7 @@ const EventPage = ({ onNavigate }) => {
                   <p className="text-gray-500 text-xs mt-1">Inside the Mind of an Artist · Dec on Dragon</p>
                 </div>
 
-                <form onSubmit={handleCheckoutSubmit} className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4">
                   {/* Select Tickets Quantity */}
                   <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 flex justify-between items-center">
                     <div className="flex flex-col">
@@ -648,15 +728,23 @@ const EventPage = ({ onNavigate }) => {
                     <span className="text-lg text-emerald-600">${(49.95 * ticketQuantity).toFixed(2)}</span>
                   </div>
 
-                  {/* Submit checkout */}
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full py-4 px-6 mt-4 rounded-2xl text-white font-bold text-sm sm:text-base flex items-center justify-center bg-[#2997FF] hover:bg-[#2563EB] disabled:opacity-50 transition-all shadow-md active:scale-98"
-                  >
-                    {isSubmitting ? 'Registering...' : 'Complete Registration'}
-                  </button>
-                </form>
+                  {/* Finix card form */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-black font-bold text-xs">Payment Details</label>
+                    <div
+                      id="finix-payment-form"
+                      className="min-h-[120px] rounded-2xl border border-gray-200 bg-white p-2"
+                    />
+                  </div>
+
+                  {checkoutError && (
+                    <div className="p-3 rounded-2xl bg-red-50 text-red-600 text-xs">{checkoutError}</div>
+                  )}
+
+                  {isSubmitting && (
+                    <p className="text-center text-sm text-gray-500">Processing payment...</p>
+                  )}
+                </div>
               </div>
             ) : (
               // SUCCESS STEP
@@ -670,10 +758,10 @@ const EventPage = ({ onNavigate }) => {
 
                 <h3 className="text-black font-extrabold text-2xl">You're Going!</h3>
                 <p className="text-gray-500 text-xs mt-2 max-w-[300px] mx-auto leading-relaxed">
-                  A confirmation email with your digital {ticketQuantity > 1 ? `${ticketQuantity} tickets` : 'ticket'} and order receipt of ${(49.95 * ticketQuantity).toFixed(2)} USD has been sent to <strong className="text-gray-700">{buyerInfo.email}</strong>.
+                  {successMessage || `A confirmation email with your ${ticketQuantity > 1 ? `${ticketQuantity} tickets` : 'ticket'} has been sent to`}{' '}
+                  <strong className="text-gray-700">{buyerInfo.email}</strong>.
                 </p>
 
-                {/* Simulated Ticket Details Box */}
                 <div className="w-full border border-dashed border-gray-200 bg-gray-50 rounded-2xl p-4 my-6 flex flex-col gap-2 items-center text-left">
                   <div className="flex justify-between w-full text-xs text-gray-400 font-semibold uppercase tracking-wider">
                     <span>Ticket Type</span>
@@ -684,8 +772,8 @@ const EventPage = ({ onNavigate }) => {
                     <span>{ticketQuantity}x</span>
                   </div>
                   <div className="flex justify-between w-full text-xs text-gray-500 mt-2">
-                    <span>Confirmation</span>
-                    <span className="font-mono text-black font-bold uppercase">SSC-{Math.floor(100000 + Math.random() * 900000)}</span>
+                    <span>Total</span>
+                    <span className="font-mono text-black font-bold">${(49.95 * ticketQuantity).toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between w-full text-xs text-gray-500">
                     <span>Attendee</span>

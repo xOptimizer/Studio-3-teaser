@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import RegistrationModal from './RegistrationModal';
 import LoginModal from './LoginModal';
+import { useAuth } from '../context/AuthContext';
 
-// top bar
 const TopBar = ({ onNavigate, currentPath }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   return (
     <header
@@ -23,7 +24,6 @@ const TopBar = ({ onNavigate, currentPath }) => {
           pointerEvents: 'auto'
         }}
       >
-        {/* Left: Studio 3 Logo */}
         <div
           onClick={() => onNavigate && onNavigate('/')}
           className="flex items-center flex-shrink-0 cursor-pointer hover:opacity-75 transition-opacity"
@@ -40,9 +40,7 @@ const TopBar = ({ onNavigate, currentPath }) => {
           />
         </div>
 
-        {/* Right: Navigation options & Join Launch List Button */}
         <div className="flex items-center gap-2 sm:gap-3 md:gap-4 min-w-0">
-          {/* Events Link */}
           <button
             onClick={() => onNavigate && onNavigate('/event')}
             className="text-xs sm:text-sm font-semibold transition-all duration-200 hover:opacity-80 whitespace-nowrap flex-shrink-0"
@@ -54,7 +52,26 @@ const TopBar = ({ onNavigate, currentPath }) => {
             Events
           </button>
 
-          {/* Join Launch List Button */}
+          {user && (
+            <button
+              onClick={() => onNavigate && onNavigate('/tickets')}
+              className="text-xs sm:text-sm font-semibold transition-all duration-200 hover:opacity-80 whitespace-nowrap flex-shrink-0"
+              style={{ fontFamily: "'Inter', sans-serif", color: '#000000' }}
+            >
+              My Tickets
+            </button>
+          )}
+
+          {user?.role === 'admin' && (
+            <button
+              onClick={() => onNavigate && onNavigate('/admin')}
+              className="text-xs sm:text-sm font-semibold transition-all duration-200 hover:opacity-80 whitespace-nowrap flex-shrink-0"
+              style={{ fontFamily: "'Inter', sans-serif", color: '#000000' }}
+            >
+              Admin
+            </button>
+          )}
+
           <button
             onClick={() => setIsModalOpen(true)}
             className="h-11 px-5 rounded-full text-black text-sm font-medium transition-all duration-200 hover:opacity-80 whitespace-nowrap flex-shrink-0 flex items-center justify-center"
@@ -69,31 +86,43 @@ const TopBar = ({ onNavigate, currentPath }) => {
             <span className="min-[400px]:hidden">Join</span>
           </button>
 
-          {/* Profile Icon for Login */}
-          <button
-            onClick={() => setIsLoginOpen(true)}
-            className="h-11 w-11 rounded-full text-black transition-all duration-200 hover:opacity-80 flex items-center justify-center flex-shrink-0"
-            style={{
-              backgroundColor: '#B8C5D6',
-              boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.1)'
-            }}
-            aria-label="Profile Login"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+          {user ? (
+            <button
+              onClick={() => logout()}
+              className="h-11 px-4 rounded-full text-black text-xs sm:text-sm font-medium transition-all duration-200 hover:opacity-80 flex-shrink-0"
+              style={{
+                backgroundColor: '#B8C5D6',
+                boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.1)'
+              }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
-              />
-            </svg>
-          </button>
+              Log out
+            </button>
+          ) : (
+            <button
+              onClick={() => setIsLoginOpen(true)}
+              className="h-11 w-11 rounded-full text-black transition-all duration-200 hover:opacity-80 flex items-center justify-center flex-shrink-0"
+              style={{
+                backgroundColor: '#B8C5D6',
+                boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.1)'
+              }}
+              aria-label="Profile Login"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+            </button>
+          )}
         </div>
       </div>
 

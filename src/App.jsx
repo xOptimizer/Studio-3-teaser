@@ -6,19 +6,20 @@ import MarketplaceSection from './components/MarketplaceSection';
 import StudioSection from './components/StudioSection';
 import Footer from './components/Footer';
 import EventPage from './components/EventPage';
+import MyTicketsPage from './pages/MyTicketsPage';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminScanner from './pages/AdminScanner';
+import AdminVerifyPage from './pages/AdminVerifyPage';
 import { heroVideo } from './utils';
 import { preloadAssets } from './utils/cloudinary';
 
 const App = () => {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
-  // Preload critical assets for faster initial load
   useEffect(() => {
-    // Preload hero video for instant playback
     preloadAssets([heroVideo]);
   }, []);
 
-  // Listen to browser navigation changes
   useEffect(() => {
     const handlePopState = () => {
       setCurrentPath(window.location.pathname);
@@ -33,27 +34,36 @@ const App = () => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
+  let pageContent;
+
+  if (currentPath === '/tickets') {
+    pageContent = <MyTicketsPage onNavigate={navigate} />;
+  } else if (currentPath === '/admin') {
+    pageContent = <AdminDashboard onNavigate={navigate} />;
+  } else if (currentPath === '/admin/scanner') {
+    pageContent = <AdminScanner onNavigate={navigate} />;
+  } else if (currentPath.startsWith('/admin/verify')) {
+    pageContent = <AdminVerifyPage onNavigate={navigate} />;
+  } else if (currentPath === '/event') {
+    pageContent = <EventPage onNavigate={navigate} />;
+  } else {
+    pageContent = (
+      <>
+        <HeroNew onNavigate={navigate} />
+        <QuoteSection onNavigate={navigate} />
+        <MarketplaceSection onNavigate={navigate} />
+        <StudioSection onNavigate={navigate} />
+      </>
+    );
+  }
+
   return (
     <main style={{ background: '#F7F7F7' }}>
-      {currentPath === '/event' ? (
-        <>
-          <TopBar onNavigate={navigate} currentPath={currentPath} />
-          <EventPage onNavigate={navigate} />
-          <Footer onNavigate={navigate} />
-        </>
-      ) : (
-        <>
-          <TopBar onNavigate={navigate} currentPath={currentPath} />
-          <HeroNew onNavigate={navigate} />
-          <QuoteSection onNavigate={navigate} />
-          <MarketplaceSection onNavigate={navigate} />
-          <StudioSection onNavigate={navigate} />
-          <Footer onNavigate={navigate} />
-        </>
-      )}
+      <TopBar onNavigate={navigate} currentPath={currentPath} />
+      {pageContent}
+      <Footer onNavigate={navigate} />
     </main>
   );
 };
 
 export default App;
-
