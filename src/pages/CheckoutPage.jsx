@@ -108,8 +108,8 @@ const CheckoutPage = ({ onNavigate }) => {
 
   return (
     <div
-      className="relative w-full h-dvh overflow-hidden box-border flex flex-col"
-      style={{ background: '#F7F7F7', fontFamily: "'Inter', sans-serif", paddingTop: '6.75rem' }}
+      className="relative w-full min-h-screen"
+      style={{ background: '#F7F7F7', fontFamily: "'Inter', sans-serif" }}
     >
       <div
         className="absolute top-0 right-0 w-[30vw] h-[30vw] rounded-full blur-[100px] pointer-events-none opacity-10"
@@ -118,8 +118,8 @@ const CheckoutPage = ({ onNavigate }) => {
         }}
       />
 
-      <div className="relative z-10 flex flex-col flex-1 min-h-0 max-w-7xl w-full mx-auto px-4 sm:px-6 pb-4">
-        <div className="shrink-0 flex items-center justify-between gap-3 mb-3">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 pt-[120px] pb-24">
+        <div className="flex items-center justify-between gap-3 mb-6 sm:mb-8">
           <button
             type="button"
             onClick={() => onNavigate(checkoutStep === 'success' ? '/tickets' : '/event')}
@@ -162,7 +162,7 @@ const CheckoutPage = ({ onNavigate }) => {
                 <span className="font-mono text-black font-bold">${(TICKET_PRICE * ticketQuantity).toFixed(2)}</span>
               </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button type="button" onClick={() => onNavigate('/tickets')} className={btnCompact} style={checkoutButtonStyle}>
                 My Tickets
               </button>
@@ -172,16 +172,16 @@ const CheckoutPage = ({ onNavigate }) => {
             </div>
           </div>
         ) : (
-          <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8 items-start">
             {/* Form column */}
-            <div className={`${glassCardClass} p-4 sm:p-5 flex flex-col min-h-0 ${checkoutStep === 3 ? 'lg:col-span-6' : 'lg:col-span-7'}`}>
+            <div className={`${glassCardClass} p-4 sm:p-6 lg:p-8 ${checkoutStep === 3 ? 'lg:col-span-6' : 'lg:col-span-7'}`}>
               <CheckoutStepIndicator currentStep={checkoutStep} compact />
 
               {checkoutError && checkoutStep !== 3 && (
-                <div className="shrink-0 p-2.5 rounded-xl bg-red-50 text-red-600 text-xs mb-3">{checkoutError}</div>
+                <div className="p-2.5 rounded-xl bg-red-50 text-red-600 text-xs mb-4">{checkoutError}</div>
               )}
 
-              <div className="flex-1 min-h-0 overflow-y-auto">
+              <div className="mb-4 sm:mb-6">
                 {checkoutStep === 1 && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="flex flex-col gap-1 sm:col-span-2">
@@ -306,7 +306,7 @@ const CheckoutPage = ({ onNavigate }) => {
                 )}
               </div>
 
-              <div className="shrink-0 pt-3 flex gap-2">
+              <div className="pt-2 flex flex-col sm:flex-row gap-2 sm:gap-3">
                 {checkoutStep === 1 && (
                   <button type="button" onClick={() => validateStep1() && setCheckoutStep(2)} className={btnCompact} style={checkoutButtonStyle}>
                     Next
@@ -325,32 +325,30 @@ const CheckoutPage = ({ onNavigate }) => {
             </div>
 
             {/* Side column — poster or payment */}
-            <div className={`min-h-0 flex flex-col ${checkoutStep === 3 ? 'lg:col-span-6' : 'lg:col-span-5'}`}>
+            <div className={`w-full ${checkoutStep === 3 ? 'lg:col-span-6' : 'lg:col-span-5'} lg:sticky lg:top-[120px]`}>
               {checkoutStep === 3 ? (
-                <div className={`${glassCardClass} p-4 sm:p-5 flex flex-col h-full min-h-0`}>
-                  <div className="shrink-0 mb-3">
-                    <h2 className="text-black font-extrabold text-lg">Payment</h2>
-                    <p className="text-gray-500 text-xs mt-0.5">Enter your card details below.</p>
+                <div className={`${glassCardClass} p-4 sm:p-6 lg:p-8`}>
+                  <div className="mb-4">
+                    <h2 className="text-black font-extrabold text-lg sm:text-xl">Payment</h2>
+                    <p className="text-gray-500 text-xs sm:text-sm mt-1">Enter your card details below.</p>
                   </div>
-                  <div className="shrink-0">
-                    <FinixPaymentForm onPaymentSubmit={handleFinixSubmit} onConfigError={handleFinixConfigError} />
-                  </div>
+                  <FinixPaymentForm onPaymentSubmit={handleFinixSubmit} onConfigError={handleFinixConfigError} />
                   {checkoutError && (
-                    <div className="shrink-0 p-2.5 rounded-xl bg-red-50 text-red-600 text-xs mt-3">{checkoutError}</div>
+                    <div className="p-2.5 rounded-xl bg-red-50 text-red-600 text-xs mt-4">{checkoutError}</div>
                   )}
                   {isSubmitting && (
-                    <p className="shrink-0 text-center text-xs text-gray-500 mt-2">Processing payment...</p>
+                    <p className="text-center text-xs sm:text-sm text-gray-500 mt-4">Processing payment...</p>
                   )}
                 </div>
               ) : (
-                <div className="h-full min-h-[200px] lg:min-h-0 rounded-3xl overflow-hidden shadow-lg border border-white border-opacity-40 flex flex-col">
-                  <div className="relative flex-1 min-h-0 bg-gray-200">
+                <div className="rounded-3xl overflow-hidden shadow-lg border border-white border-opacity-40">
+                  <div className="relative aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] bg-gray-200">
                     <img src={EVENT_CHECKOUT.poster} alt={EVENT_CHECKOUT.title} className="absolute inset-0 w-full h-full object-cover" />
-                    <div className="absolute top-3 right-3 bg-black/70 backdrop-blur text-white text-[9px] font-extrabold uppercase px-2.5 py-1 rounded-full">
+                    <div className="absolute top-3 right-3 bg-black/70 backdrop-blur text-white text-[9px] sm:text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full">
                       ${TICKET_PRICE.toFixed(2)}
                     </div>
                   </div>
-                  <div className="shrink-0 px-4 py-2.5 bg-black/95 text-white flex justify-between items-center text-[7px] sm:text-[8px] uppercase tracking-widest font-semibold">
+                  <div className="px-4 py-3 bg-black/95 text-white flex justify-between items-center text-[7px] sm:text-[8px] uppercase tracking-widest font-semibold">
                     <div className="flex gap-2"><span>TikTok</span><span>Insta</span></div>
                     <span>studio3.dallas</span>
                     <span>Connection</span>
