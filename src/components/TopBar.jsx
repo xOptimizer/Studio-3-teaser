@@ -1,12 +1,59 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import RegistrationModal from './RegistrationModal';
 import LoginModal from './LoginModal';
 import { useAuth } from '../context/AuthContext';
+import { resolveProfilePhotoUrl } from '../lib/api';
+
+const navLinkClass =
+  'text-xs sm:text-sm font-semibold transition-all duration-200 hover:opacity-80 whitespace-nowrap flex-shrink-0';
+
+const pillButtonClass =
+  'h-11 px-5 rounded-full text-black text-sm font-medium transition-all duration-200 hover:opacity-80 whitespace-nowrap flex-shrink-0 flex items-center justify-center';
+
+const pillButtonStyle = {
+  fontFamily: "'Space Grotesk', sans-serif",
+  backgroundColor: '#B8C5D6',
+  borderRadius: '9999px',
+  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.1)',
+};
+
+const getUserInitial = (user) => {
+  const source = user?.name?.trim() || user?.email?.trim() || '';
+  return source ? source.charAt(0).toUpperCase() : '?';
+};
 
 const TopBar = ({ onNavigate, currentPath }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef(null);
   const { user, logout } = useAuth();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    if (isUserMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isUserMenuOpen]);
+
+  useEffect(() => {
+    setIsUserMenuOpen(false);
+  }, [currentPath, user]);
+
+  const handleLogout = () => {
+    setIsUserMenuOpen(false);
+    logout();
+    onNavigate?.('/');
+  };
+
+  const profilePhotoUrl = user ? resolveProfilePhotoUrl(user.profilePhotoUrl) : null;
 
   return (
     <header
@@ -21,7 +68,7 @@ const TopBar = ({ onNavigate, currentPath }) => {
           WebkitBackdropFilter: 'blur(20px) saturate(180%)',
           border: '1px solid rgba(255, 255, 255, 0.3)',
           boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
-          pointerEvents: 'auto'
+          pointerEvents: 'auto',
         }}
       >
         <div
@@ -43,19 +90,16 @@ const TopBar = ({ onNavigate, currentPath }) => {
         <div className="flex items-center gap-2 sm:gap-3 md:gap-4 min-w-0">
           <button
             onClick={() => onNavigate && onNavigate('/event')}
-            className="text-xs sm:text-sm font-semibold transition-all duration-200 hover:opacity-80 whitespace-nowrap flex-shrink-0"
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              color: '#000000'
-            }}
+            className={navLinkClass}
+            style={{ fontFamily: "'Inter', sans-serif", color: '#000000' }}
           >
-            Events
+            Event
           </button>
 
           {user && (
             <button
               onClick={() => onNavigate && onNavigate('/tickets')}
-              className="text-xs sm:text-sm font-semibold transition-all duration-200 hover:opacity-80 whitespace-nowrap flex-shrink-0"
+              className={navLinkClass}
               style={{ fontFamily: "'Inter', sans-serif", color: '#000000' }}
             >
               My Tickets
@@ -65,13 +109,14 @@ const TopBar = ({ onNavigate, currentPath }) => {
           {user?.role === 'admin' && (
             <button
               onClick={() => onNavigate && onNavigate('/admin')}
-              className="text-xs sm:text-sm font-semibold transition-all duration-200 hover:opacity-80 whitespace-nowrap flex-shrink-0"
+              className={navLinkClass}
               style={{ fontFamily: "'Inter', sans-serif", color: '#000000' }}
             >
               Admin
             </button>
           )}
 
+          {/* Join Launch List — temporarily hidden
           <button
             onClick={() => setIsModalOpen(true)}
             className="h-11 px-5 rounded-full text-black text-sm font-medium transition-all duration-200 hover:opacity-80 whitespace-nowrap flex-shrink-0 flex items-center justify-center"
@@ -85,42 +130,62 @@ const TopBar = ({ onNavigate, currentPath }) => {
             <span className="hidden min-[400px]:inline">Join Launch List</span>
             <span className="min-[400px]:hidden">Join</span>
           </button>
+          */}
 
           {user ? (
-            <button
-              onClick={() => logout()}
-              className="h-11 px-4 rounded-full text-black text-xs sm:text-sm font-medium transition-all duration-200 hover:opacity-80 flex-shrink-0"
-              style={{
-                backgroundColor: '#B8C5D6',
-                boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.1)'
-              }}
-            >
-              Log out
-            </button>
+            <div className="relative flex-shrink-0" ref={userMenuRef}>
+              <button
+                type="button"
+                onClick={() => setIsUserMenuOpen((prev) => !prev)}
+                className="h-9 w-9 sm:h-10 sm:w-10 rounded-full flex items-center justify-center text-sm font-bold text-black transition-all duration-200 hover:opacity-80 overflow-hidden"
+                style={{
+                  backgroundColor: profilePhotoUrl ? 'transparent' : '#B8C5D6',
+                  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.1)',
+                }}
+                aria-label="Account menu"
+                aria-expanded={isUserMenuOpen}
+              >
+                {profilePhotoUrl ? (
+                  <img src={profilePhotoUrl} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  getUserInitial(user)
+                )}
+              </button>
+
+              {isUserMenuOpen && (
+                <div
+                  className="absolute right-0 top-full mt-2 min-w-[160px] rounded-2xl border border-white/60 bg-white/95 backdrop-blur py-1.5 shadow-lg"
+                  style={{ boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.12)' }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsUserMenuOpen(false);
+                      onNavigate?.('/profile');
+                    }}
+                    className="w-full px-4 py-2.5 text-left text-sm font-semibold text-black hover:bg-gray-50 transition-colors"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    Profile
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="w-full px-4 py-2.5 text-left text-sm font-semibold text-black hover:bg-gray-50 transition-colors"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    Log out
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <button
               onClick={() => setIsLoginOpen(true)}
-              className="h-11 w-11 rounded-full text-black transition-all duration-200 hover:opacity-80 flex items-center justify-center flex-shrink-0"
-              style={{
-                backgroundColor: '#B8C5D6',
-                boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.1)'
-              }}
-              aria-label="Profile Login"
+              className={pillButtonClass}
+              style={pillButtonStyle}
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
+              Login
             </button>
           )}
         </div>

@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { checkout } from '../lib/api';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 
 const EVENT_START_ISO = '2026-07-25T20:00:00-05:00';
+const BRAND_ACCENT = '#B8C5D6';
+const BRAND_ACCENT_SOFT = 'rgba(184, 197, 214, 0.35)';
+const BRAND_ACCENT_MUTED = '#7A8FA8';
 
 const getTimeRemaining = (targetDate) => {
   const total = targetDate.getTime() - Date.now();
@@ -18,6 +20,8 @@ const getTimeRemaining = (targetDate) => {
     isLive: false,
   };
 };
+
+const TICKET_PRICE = 49.95;
 
 const padTime = (value) => String(value).padStart(2, '0');
 
@@ -43,11 +47,15 @@ const EventCountdown = ({ compact = false }) => {
   if (remaining.isLive) {
     return (
       <div
-        className={`rounded-2xl border border-orange-100 bg-orange-50 text-center ${
+        className={`rounded-2xl text-center ${
           compact ? 'px-4 py-3' : 'px-5 py-4'
         }`}
+        style={{
+          border: `1px solid ${BRAND_ACCENT}`,
+          backgroundColor: BRAND_ACCENT_SOFT,
+        }}
       >
-        <span className="text-orange-600 text-sm font-bold uppercase tracking-wider">
+        <span className="text-sm font-bold uppercase tracking-wider" style={{ color: BRAND_ACCENT_MUTED }}>
           Event is live now
         </span>
       </div>
@@ -138,109 +146,16 @@ const VenueMap = () => {
       
       {/* Glow Pulse Pin at Kirby Ice House location */}
       <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
-        <span className="absolute w-8 h-8 rounded-full bg-orange-500 opacity-40 animate-ping" />
-        <span className="absolute w-12 h-12 rounded-full bg-orange-500 opacity-20 animate-pulse" />
-        <span className="w-4.5 h-4.5 rounded-full bg-orange-600 border-2 border-white shadow-md relative z-10" />
+        <span className="absolute w-8 h-8 rounded-full opacity-40 animate-ping" style={{ backgroundColor: BRAND_ACCENT }} />
+        <span className="absolute w-12 h-12 rounded-full opacity-20 animate-pulse" style={{ backgroundColor: BRAND_ACCENT }} />
+        <span className="w-4.5 h-4.5 rounded-full border-2 border-white shadow-md relative z-10" style={{ backgroundColor: BRAND_ACCENT }} />
       </div>
     </div>
   );
 };
 
 const EventPage = ({ onNavigate }) => {
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const [ticketQuantity, setTicketQuantity] = useState(1);
-  const [checkoutStep, setCheckoutStep] = useState('form'); // 'form' | 'success'
-  const [buyerInfo, setBuyerInfo] = useState({ name: '', email: '', phone: '' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [checkoutError, setCheckoutError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const [activeFaq, setActiveFaq] = useState(null);
-
-  const buyerInfoRef = useRef(buyerInfo);
-  const ticketQuantityRef = useRef(ticketQuantity);
-
-  useEffect(() => {
-    buyerInfoRef.current = buyerInfo;
-  }, [buyerInfo]);
-
-  useEffect(() => {
-    ticketQuantityRef.current = ticketQuantity;
-  }, [ticketQuantity]);
-
-  useEffect(() => {
-    if (!isCheckoutOpen || checkoutStep !== 'form') return undefined;
-
-    const appId = import.meta.env.VITE_FINIX_APPLICATION_ID;
-    const merchantId = import.meta.env.VITE_FINIX_MERCHANT_ID;
-    const finixEnv = import.meta.env.VITE_FINIX_ENV || 'sandbox';
-
-    if (!window.Finix || !appId) {
-      setCheckoutError('Payment form is not configured. Set VITE_FINIX_APPLICATION_ID.');
-      return undefined;
-    }
-
-    let finixAuth;
-    if (merchantId) {
-      try {
-        finixAuth = window.Finix.Auth(finixEnv, merchantId);
-      } catch (err) {
-        console.error('[Finix.Auth]', err);
-      }
-    }
-
-    const container = document.getElementById('finix-payment-form');
-    if (container) {
-      container.innerHTML = '';
-    }
-
-    const timer = setTimeout(() => {
-      window.Finix.PaymentForm('finix-payment-form', finixEnv, appId, {
-        showAddress: false,
-        onSubmit: async (error, response) => {
-          if (error) {
-            setCheckoutError('Card validation failed. Please check your card details.');
-            return;
-          }
-
-          const { name, email, phone } = buyerInfoRef.current;
-          const quantity = ticketQuantityRef.current;
-
-          if (!name?.trim() || !email?.trim() || !phone?.trim()) {
-            setCheckoutError('Please complete name, email, and phone before paying.');
-            return;
-          }
-
-          setIsSubmitting(true);
-          setCheckoutError('');
-
-          try {
-            const token = response?.data?.id;
-            if (!token) {
-              throw new Error('No payment token received from Finix');
-            }
-
-            const data = await checkout({
-              token,
-              fraudSessionId: finixAuth?.getSessionKey?.(),
-              quantity,
-              name: name.trim(),
-              email: email.trim(),
-              phone: phone.trim(),
-            });
-
-            setSuccessMessage(data.message || 'Check your email for your ticket and login details.');
-            setCheckoutStep('success');
-          } catch (err) {
-            setCheckoutError(err.message || 'Checkout failed');
-          } finally {
-            setIsSubmitting(false);
-          }
-        },
-      });
-    }, 150);
-
-    return () => clearTimeout(timer);
-  }, [isCheckoutOpen, checkoutStep]);
 
   const totalAttendees = 239;
 
@@ -255,6 +170,7 @@ const EventPage = ({ onNavigate }) => {
     { name: 'Elena', avatar: 'https://i.pravatar.cc/150?img=9' },
   ];
 
+  /*
   const eventAgenda = [
     {
       time: '8:00 PM – 9:00 PM',
@@ -272,6 +188,7 @@ const EventPage = ({ onNavigate }) => {
       desc: 'The room stays alive — music, conversation, and the installations run all night until close.'
     }
   ];
+  */
 
   // FAQs data
   const faqs = [
@@ -293,17 +210,6 @@ const EventPage = ({ onNavigate }) => {
     }
   ];
 
-  const closeCheckout = () => {
-    setIsCheckoutOpen(false);
-    setTimeout(() => {
-      setCheckoutStep('form');
-      setTicketQuantity(1);
-      setBuyerInfo({ name: '', email: '', phone: '' });
-      setCheckoutError('');
-      setSuccessMessage('');
-    }, 300);
-  };
-
   return (
     <div 
       className="min-h-screen relative w-full" 
@@ -316,7 +222,7 @@ const EventPage = ({ onNavigate }) => {
       <div 
         className="absolute top-0 right-0 w-[40vw] h-[40vw] rounded-full blur-[120px] pointer-events-none opacity-10"
         style={{
-          background: 'radial-gradient(circle, rgba(249,115,22,0.4) 0%, rgba(253,186,116,0) 70%)',
+          background: `radial-gradient(circle, ${BRAND_ACCENT_SOFT} 0%, rgba(255,255,255,0) 70%)`,
           zIndex: 1
         }}
       />
@@ -362,7 +268,7 @@ const EventPage = ({ onNavigate }) => {
               <div className="flex flex-col gap-4 mb-6 border-t border-b border-gray-100 py-6">
                 {/* Location */}
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-500 flex-shrink-0">
+                  <div className="w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: BRAND_ACCENT_SOFT, color: BRAND_ACCENT_MUTED }}>
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -451,7 +357,7 @@ const EventPage = ({ onNavigate }) => {
               </p>
             </div>
 
-            {/* Event Agenda */}
+            {/* Event Agenda — temporarily hidden
             <div className="bg-white bg-opacity-60 border border-white rounded-3xl p-6 sm:p-8 backdrop-blur shadow-sm">
               <h2 className="text-black font-extrabold text-[16pt] sm:text-[18pt] mb-6" style={{ fontFamily: "'Inter', sans-serif" }}>
                 Event Agenda
@@ -460,13 +366,16 @@ const EventPage = ({ onNavigate }) => {
                 {eventAgenda.map((item, index) => (
                   <div key={item.title} className="flex gap-4">
                     <div className="flex flex-col items-center">
-                      <div className="w-4 h-4 rounded-full bg-orange-500 border-4 border-orange-100 flex-shrink-0" />
+                      <div
+                        className="w-4 h-4 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: BRAND_ACCENT, border: `4px solid ${BRAND_ACCENT_SOFT}` }}
+                      />
                       {index < eventAgenda.length - 1 && (
                         <div className="w-0.5 h-full bg-gray-200 mt-2" />
                       )}
                     </div>
                     <div className="flex flex-col pb-2">
-                      <span className="text-xs font-bold text-orange-600 tracking-wider uppercase">{item.time}</span>
+                      <span className="text-xs font-bold tracking-wider uppercase" style={{ color: BRAND_ACCENT_MUTED }}>{item.time}</span>
                       <h4 className="text-black font-bold text-sm sm:text-base mt-0.5">{item.title}</h4>
                       <p className="text-gray-500 text-xs sm:text-sm mt-1 leading-relaxed">{item.desc}</p>
                     </div>
@@ -474,6 +383,7 @@ const EventPage = ({ onNavigate }) => {
                 ))}
               </div>
             </div>
+            */}
 
             {/* NEW: Map Showing Venue Location (added below About This Event) */}
             <div className="bg-white bg-opacity-60 border border-white rounded-3xl p-6 sm:p-8 backdrop-blur shadow-sm">
@@ -599,12 +509,12 @@ const EventPage = ({ onNavigate }) => {
         }}
       >
         <button
-          onClick={() => setIsCheckoutOpen(true)}
-          className="pointer-events-auto w-full max-w-[340px] py-4 px-6 rounded-full text-white font-extrabold text-sm sm:text-base tracking-wide flex items-center justify-center gap-2 shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95"
+          onClick={() => onNavigate && onNavigate('/event/checkout')}
+          className="pointer-events-auto w-full max-w-[340px] py-4 px-6 rounded-full text-black font-extrabold text-sm sm:text-base tracking-wide flex items-center justify-center gap-2 shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 hover:opacity-90"
           style={{
             fontFamily: "'Space Grotesk', sans-serif",
-            backgroundColor: '#C25910', // Posh style dark-bronze color
-            boxShadow: '0 20px 40px rgba(194, 89, 16, 0.4)'
+            backgroundColor: '#B8C5D6',
+            boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.1)'
           }}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -613,187 +523,6 @@ const EventPage = ({ onNavigate }) => {
           Buy tickets from $49.95
         </button>
       </div>
-
-      {/* TICKET CHECKOUT / BOOKING MODAL */}
-      {isCheckoutOpen && (
-        <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
-          
-          {/* Backdrop Blur Overlay */}
-          <div 
-            onClick={closeCheckout}
-            className="fixed inset-0 bg-white bg-opacity-20 backdrop-blur-lg transition-opacity duration-300"
-            style={{ 
-              boxShadow: 'inset 0 0 100px rgba(255, 255, 255, 0.15), 0 0 200px rgba(0, 0, 0, 0.1)'
-            }}
-          />
-          
-          {/* Checkout Card Container */}
-          <div 
-            className="relative z-10 w-full max-w-[500px] bg-white bg-opacity-75 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 border border-white border-opacity-30 shadow-2xl overflow-y-auto max-h-[90vh] transition-all duration-300 scale-100"
-            style={{
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.4)'
-            }}
-          >
-            {/* Close Cross */}
-            <button
-              onClick={closeCheckout}
-              className="absolute top-6 right-6 text-gray-500 hover:text-black transition-colors text-3xl leading-none w-8 h-8 flex items-center justify-center"
-              aria-label="Close checkout"
-            >
-              ×
-            </button>
-
-            {checkoutStep === 'form' ? (
-              <div className="animate-fadeIn">
-                <div className="mb-6">
-                  <span className="text-[10pt] uppercase tracking-wider text-orange-600 font-extrabold">Checkout</span>
-                  <h3 className="text-black font-extrabold text-2xl mt-1">Get Tickets</h3>
-                  <p className="text-gray-500 text-xs mt-1">Inside the Mind of an Artist · Dec on Dragon</p>
-                </div>
-
-                <div className="flex flex-col gap-4">
-                  {/* Select Tickets Quantity */}
-                  <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 flex justify-between items-center">
-                    <div className="flex flex-col">
-                      <span className="text-black font-bold text-sm">General Admission</span>
-                      <span className="text-gray-500 text-xs mt-0.5">$49.95 each</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-1.5">
-                      <button
-                        type="button"
-                        onClick={() => setTicketQuantity(Math.max(1, ticketQuantity - 1))}
-                        className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-100 font-bold transition-colors"
-                      >
-                        −
-                      </button>
-                      <span className="text-black font-bold text-sm w-4 text-center">
-                        {ticketQuantity}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setTicketQuantity(Math.min(5, ticketQuantity + 1))}
-                        className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-100 font-bold transition-colors"
-                      >
-                        +
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Buyer Name */}
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="checkout-name" className="text-black font-bold text-xs">Full Name</label>
-                    <input
-                      type="text"
-                      id="checkout-name"
-                      required
-                      value={buyerInfo.name}
-                      onChange={(e) => setBuyerInfo({ ...buyerInfo, name: e.target.value })}
-                      placeholder="Your Name"
-                      className="w-full px-4 py-3 rounded-2xl text-black focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all text-xs border border-gray-300 bg-white bg-opacity-50"
-                    />
-                  </div>
-
-                  {/* Buyer Email */}
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="checkout-email" className="text-black font-bold text-xs">Email Address</label>
-                    <input
-                      type="email"
-                      id="checkout-email"
-                      required
-                      value={buyerInfo.email}
-                      onChange={(e) => setBuyerInfo({ ...buyerInfo, email: e.target.value })}
-                      placeholder="name@example.com"
-                      className="w-full px-4 py-3 rounded-2xl text-black focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all text-xs border border-gray-300 bg-white bg-opacity-50"
-                    />
-                  </div>
-
-                  {/* Buyer Phone */}
-                  <div className="flex flex-col gap-1.5">
-                    <label htmlFor="checkout-phone" className="text-black font-bold text-xs">Phone Number</label>
-                    <input
-                      type="tel"
-                      id="checkout-phone"
-                      required
-                      value={buyerInfo.phone}
-                      onChange={(e) => setBuyerInfo({ ...buyerInfo, phone: e.target.value })}
-                      placeholder="(123) 456-7890"
-                      className="w-full px-4 py-3 rounded-2xl text-black focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all text-xs border border-gray-300 bg-white bg-opacity-50"
-                    />
-                  </div>
-
-                  {/* Order Summary Box */}
-                  <div className="border-t border-gray-100 pt-4 mt-2 flex justify-between items-center text-black font-bold text-sm">
-                    <span>Total Amount</span>
-                    <span className="text-lg text-emerald-600">${(49.95 * ticketQuantity).toFixed(2)}</span>
-                  </div>
-
-                  {/* Finix card form */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-black font-bold text-xs">Payment Details</label>
-                    <div
-                      id="finix-payment-form"
-                      className="min-h-[120px] rounded-2xl border border-gray-200 bg-white p-2"
-                    />
-                  </div>
-
-                  {checkoutError && (
-                    <div className="p-3 rounded-2xl bg-red-50 text-red-600 text-xs">{checkoutError}</div>
-                  )}
-
-                  {isSubmitting && (
-                    <p className="text-center text-sm text-gray-500">Processing payment...</p>
-                  )}
-                </div>
-              </div>
-            ) : (
-              // SUCCESS STEP
-              <div className="text-center py-6 animate-fadeIn flex flex-col items-center">
-                {/* Success Checkmark Ring */}
-                <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-500 mb-6 shadow-inner animate-pulse">
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-
-                <h3 className="text-black font-extrabold text-2xl">You're Going!</h3>
-                <p className="text-gray-500 text-xs mt-2 max-w-[300px] mx-auto leading-relaxed">
-                  {successMessage || `A confirmation email with your ${ticketQuantity > 1 ? `${ticketQuantity} tickets` : 'ticket'} has been sent to`}{' '}
-                  <strong className="text-gray-700">{buyerInfo.email}</strong>.
-                </p>
-
-                <div className="w-full border border-dashed border-gray-200 bg-gray-50 rounded-2xl p-4 my-6 flex flex-col gap-2 items-center text-left">
-                  <div className="flex justify-between w-full text-xs text-gray-400 font-semibold uppercase tracking-wider">
-                    <span>Ticket Type</span>
-                    <span>Quantity</span>
-                  </div>
-                  <div className="flex justify-between w-full text-sm font-bold text-black border-b border-gray-100 pb-2">
-                    <span>General Admission</span>
-                    <span>{ticketQuantity}x</span>
-                  </div>
-                  <div className="flex justify-between w-full text-xs text-gray-500 mt-2">
-                    <span>Total</span>
-                    <span className="font-mono text-black font-bold">${(49.95 * ticketQuantity).toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between w-full text-xs text-gray-500">
-                    <span>Attendee</span>
-                    <span className="text-black font-bold">{buyerInfo.name}</span>
-                  </div>
-                </div>
-
-                <button
-                  onClick={closeCheckout}
-                  className="w-full py-3.5 px-6 rounded-2xl text-black border border-gray-300 bg-white hover:bg-gray-50 font-bold text-sm transition-all"
-                >
-                  Close Window
-                </button>
-              </div>
-            )}
-
-          </div>
-
-        </div>
-      )}
 
       {/* Styled scrollbar & details */}
       <style>{`

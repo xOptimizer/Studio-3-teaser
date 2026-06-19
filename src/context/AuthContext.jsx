@@ -36,10 +36,11 @@ export function AuthProvider({ children }) {
     return data.user;
   };
 
-  const logout = () => {
+  const logout = useCallback(() => {
     clearToken();
     setUser(null);
-  };
+    setLoading(false);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, loading, login, logout, refreshUser }}>

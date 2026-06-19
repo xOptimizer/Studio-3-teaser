@@ -93,6 +93,10 @@ const AdminScanner = ({ onNavigate }) => {
     );
   }
 
+  if (!user || user.role !== 'admin') {
+    return null;
+  }
+
   return (
     <div className="min-h-screen pt-[120px] pb-24 px-4" style={{ background: '#F7F7F7' }}>
       <div className="max-w-lg mx-auto">
