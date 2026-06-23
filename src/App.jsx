@@ -10,6 +10,7 @@ import EventPage from './components/EventPage';
 import CheckoutPage from './pages/CheckoutPage';
 import MyTicketsPage from './pages/MyTicketsPage';
 import ProfilePage from './pages/ProfilePage';
+import SetPasswordPage from './pages/SetPasswordPage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminScanner from './pages/AdminScanner';
 import AdminVerifyPage from './pages/AdminVerifyPage';
@@ -57,6 +58,23 @@ const App = () => {
     const isAdminRoute = currentPath.startsWith('/admin');
     const isTicketsRoute = currentPath === '/tickets';
     const isProfileRoute = currentPath === '/profile';
+    const isSetPasswordRoute = currentPath === '/set-password';
+    const needsPasswordChange = user?.mustChangePassword && user?.role !== 'admin';
+
+    if (needsPasswordChange && !isSetPasswordRoute) {
+      navigate('/set-password');
+      return;
+    }
+
+    if (isSetPasswordRoute && !user) {
+      navigate('/');
+      return;
+    }
+
+    if (isSetPasswordRoute && user && !needsPasswordChange) {
+      navigate('/tickets');
+      return;
+    }
 
     if ((isTicketsRoute || isProfileRoute) && !user) {
       navigate('/');
@@ -72,6 +90,8 @@ const App = () => {
 
   if (currentPath === '/tickets') {
     pageContent = <MyTicketsPage onNavigate={navigate} />;
+  } else if (currentPath === '/set-password') {
+    pageContent = <SetPasswordPage onNavigate={navigate} />;
   } else if (currentPath === '/profile') {
     pageContent = <ProfilePage onNavigate={navigate} />;
   } else if (currentPath === '/admin') {

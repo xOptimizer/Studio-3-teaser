@@ -101,6 +101,13 @@ export async function resetPassword(email, otp, newPassword) {
   });
 }
 
+export async function setInitialPassword(newPassword) {
+  return apiFetch('/auth/set-password', {
+    method: 'POST',
+    body: JSON.stringify({ newPassword }),
+  });
+}
+
 export function resolveProfilePhotoUrl(path) {
   if (!path) return null;
   if (path.startsWith('http')) return path;
@@ -109,6 +116,17 @@ export function resolveProfilePhotoUrl(path) {
 
 export async function checkout(payload) {
   return apiFetch('/checkout', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function fetchCheckoutConfig() {
+  return apiFetch('/checkout/config');
+}
+
+export async function createApplePaySession(payload) {
+  return apiFetch('/checkout/apple-pay-session', {
     method: 'POST',
     body: JSON.stringify(payload),
   });

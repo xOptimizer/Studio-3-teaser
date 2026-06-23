@@ -10,6 +10,7 @@ import {
   checkoutButtonStyle,
   glassCardClass,
 } from '../components/checkout/shared';
+import WalletPayments from '../components/checkout/WalletPayments';
 
 import { formatUSPhone, toE164US } from '../lib/phone';
 
@@ -33,9 +34,45 @@ const CheckoutPage = ({ onNavigate }) => {
     ticketQuantityRef.current = ticketQuantity;
   }, [ticketQuantity]);
 
+  const handleWalletPay = useCallback(async (walletPayload) => {
+    const { name, email, phone } = buyerInfoRef.current;
+    const quantity = ticketQuantityRef.current;
+
+    if (!name?.trim() || !email?.trim() || !phone?.trim()) {
+      throw new Error('Please complete name, email, and phone before paying.');
+    }
+
+    setIsSubmitting(true);
+    setCheckoutError('');
+
+    try {
+      const data = await checkout({
+        ...walletPayload,
+        quantity,
+        name: name.trim(),
+        email: email.trim(),
+        phone: toE164US(phone),
+      });
+
+      setSuccessMessage(data.message || 'Check your email for your ticket and login details.');
+      setCheckoutStep('success');
+    } catch (err) {
+      setCheckoutError(err.message || 'Checkout failed');
+      throw err;
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, []);
+
   const handleFinixConfigError = useCallback((message) => {
     setCheckoutError(message);
   }, []);
+
+  const handleWalletError = useCallback((message) => {
+    setCheckoutError(message);
+  }, []);
+
+  const checkoutAmountCents = Math.round(TICKET_PRICE * 100 * ticketQuantity);
 
   const handleFinixSubmit = useCallback(async (error, response, finixAuth) => {
     if (error) {
@@ -330,12 +367,21 @@ const CheckoutPage = ({ onNavigate }) => {
                 <div className={`${glassCardClass} p-4 sm:p-6 lg:p-8`}>
                   <div className="mb-4">
                     <h2 className="text-black font-extrabold text-lg sm:text-xl">Payment</h2>
-                    <p className="text-gray-500 text-xs sm:text-sm mt-1">Enter your card details below.</p>
+                    <p className="text-gray-500 text-xs sm:text-sm mt-1">
+                      Choose Apple Pay, Google Pay, or enter your card below.
+                    </p>
                   </div>
-                  <FinixPaymentForm onPaymentSubmit={handleFinixSubmit} onConfigError={handleFinixConfigError} />
+                  <WalletPayments
+                    amountCents={checkoutAmountCents}
+                    buyerName={buyerInfo.name}
+                    disabled={isSubmitting}
+                    onPay={handleWalletPay}
+                    onError={handleWalletError}
+                  />
                   {checkoutError && (
                     <div className="p-2.5 rounded-xl bg-red-50 text-red-600 text-xs mt-4">{checkoutError}</div>
                   )}
+                  <FinixPaymentForm onPaymentSubmit={handleFinixSubmit} onConfigError={handleFinixConfigError} />
                   {isSubmitting && (
                     <p className="text-center text-xs sm:text-sm text-gray-500 mt-4">Processing payment...</p>
                   )}

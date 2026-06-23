@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { fetchMe, login as apiLogin, clearToken, getToken, setToken } from '../lib/api';
+import { fetchMe, login as apiLogin, setInitialPassword as apiSetInitialPassword, clearToken, getToken, setToken } from '../lib/api';
 
 const AuthContext = createContext(null);
 
@@ -36,6 +36,12 @@ export function AuthProvider({ children }) {
     return data.user;
   };
 
+  const setInitialPassword = async (newPassword) => {
+    const data = await apiSetInitialPassword(newPassword);
+    setUser(data.user);
+    return data.user;
+  };
+
   const logout = useCallback(() => {
     clearToken();
     setUser(null);
@@ -43,7 +49,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser, setInitialPassword }}>
       {children}
     </AuthContext.Provider>
   );

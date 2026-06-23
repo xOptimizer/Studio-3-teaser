@@ -29,6 +29,7 @@ const TopBar = ({ onNavigate, currentPath }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
   const { user, logout } = useAuth();
+  const needsPasswordChange = user?.mustChangePassword && user?.role !== 'admin';
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -100,7 +101,7 @@ const TopBar = ({ onNavigate, currentPath }) => {
             Launch Event
           </button>
 
-          {user && (
+          {user && !needsPasswordChange && (
             <button
               onClick={() => onNavigate && onNavigate('/tickets')}
               className={navLinkClass}
@@ -161,17 +162,19 @@ const TopBar = ({ onNavigate, currentPath }) => {
                   className="absolute right-0 top-full mt-2 min-w-[160px] rounded-2xl border border-white/60 bg-white/95 backdrop-blur py-1.5 shadow-lg"
                   style={{ boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.12)' }}
                 >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsUserMenuOpen(false);
-                      onNavigate?.('/profile');
-                    }}
-                    className="w-full px-4 py-2.5 text-left text-sm font-semibold text-black hover:bg-gray-50 transition-colors"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
-                    Profile
-                  </button>
+                  {!needsPasswordChange && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsUserMenuOpen(false);
+                        onNavigate?.('/profile');
+                      }}
+                      className="w-full px-4 py-2.5 text-left text-sm font-semibold text-black hover:bg-gray-50 transition-colors"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
+                      Profile
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={handleLogout}
@@ -203,6 +206,7 @@ const TopBar = ({ onNavigate, currentPath }) => {
       <LoginModal
         isOpen={isLoginOpen}
         onClose={() => setIsLoginOpen(false)}
+        onNavigate={onNavigate}
       />
     </header>
   );

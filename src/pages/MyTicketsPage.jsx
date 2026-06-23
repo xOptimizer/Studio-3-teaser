@@ -245,6 +245,11 @@ const MyTicketsPage = ({ onNavigate }) => {
       return;
     }
 
+    if (user.mustChangePassword) {
+      onNavigate('/set-password');
+      return;
+    }
+
     fetchTickets()
       .then((data) => setTickets(data.tickets || []))
       .catch((err) => setError(err.message))

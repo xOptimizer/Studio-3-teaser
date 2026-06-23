@@ -55,6 +55,11 @@ const ProfilePage = ({ onNavigate }) => {
     if (authLoading) return;
     if (!user) return;
 
+    if (user.mustChangePassword) {
+      onNavigate('/set-password');
+      return;
+    }
+
     setLoading(true);
     fetchProfile()
       .then((data) => {
@@ -63,7 +68,7 @@ const ProfilePage = ({ onNavigate }) => {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [user, authLoading]);
+  }, [user, authLoading, onNavigate]);
 
   const showMessage = (message) => {
     setSuccess(message);

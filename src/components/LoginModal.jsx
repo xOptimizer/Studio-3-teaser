@@ -11,7 +11,7 @@ const inputStyle = {
   border: '1px solid rgba(0, 0, 0, 0.3)',
 };
 
-const LoginModal = ({ isOpen, onClose }) => {
+const LoginModal = ({ isOpen, onClose, onNavigate }) => {
   const overlayRef = useRef(null);
   const contentRef = useRef(null);
   const { login } = useAuth();
@@ -69,7 +69,12 @@ const LoginModal = ({ isOpen, onClose }) => {
     setErrorMessage('');
 
     try {
-      await login(formData.email, formData.password);
+      const loggedInUser = await login(formData.email, formData.password);
+      if (loggedInUser?.mustChangePassword) {
+        onClose();
+        onNavigate?.('/set-password');
+        return;
+      }
       setSubmitStatus('success');
     } catch (err) {
       setSubmitStatus('error');

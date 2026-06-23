@@ -15,6 +15,7 @@ Copy `.env.example` to `.env` for local dev, or set the same keys on Vercel for 
 | `VITE_API_URL` | Base URL of the ticketing API (no trailing slash) |
 | `VITE_FINIX_APPLICATION_ID` | Finix Application ID (public — used by Finix.js in the browser) |
 | `VITE_FINIX_ENV` | `sandbox` or `prod` |
+| `VITE_GOOGLE_PAY_MERCHANT_ID` | Google Pay merchant ID (production only) |
 
 **Local example:**
 
@@ -78,7 +79,8 @@ Ticket PDF QR codes also use `FRONTEND_URL` for verify links (`/admin/verify?t=.
 
 | Path | Purpose |
 |------|---------|
-| `/event` | Event page + Finix checkout modal |
+| `/event` | Event page |
+| `/event/checkout` | Checkout — card, Apple Pay, Google Pay |
 | `/tickets` | Logged-in user’s tickets + PDF download |
 | `/admin` | Admin orders dashboard |
 | `/admin/scanner` | QR scanner + check-in |
