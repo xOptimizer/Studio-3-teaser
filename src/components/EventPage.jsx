@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect, useMemo } from 'react';
+import SocialLinks from './SocialLinks';
 
 const EVENT_START_ISO = '2026-07-25T20:00:00-05:00';
 const BRAND_ACCENT = '#B8C5D6';
@@ -486,10 +487,7 @@ const EventPage = ({ onNavigate }) => {
 
               {/* Social Medias / Footer links inside the poster just like the posh mockup */}
               <div className="px-5 py-4 bg-black bg-opacity-95 text-white flex justify-between items-center text-[8pt] uppercase tracking-widest font-semibold border-t border-gray-800">
-                <div className="flex gap-3">
-                  <span>TikTok</span>
-                  <span>Insta</span>
-                </div>
+                <SocialLinks variant="dark" />
                 <span>studio3.dallas</span>
                 <span>Connection</span>
               </div>

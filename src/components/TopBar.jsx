@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import RegistrationModal from './RegistrationModal';
 import LoginModal from './LoginModal';
+import SocialLinks from './SocialLinks';
 import { useAuth } from '../context/AuthContext';
 import { resolveProfilePhotoUrl } from '../lib/api';
 
@@ -8,7 +9,7 @@ const navLinkClass =
   'text-xs sm:text-sm font-semibold transition-all duration-200 hover:opacity-80 whitespace-nowrap flex-shrink-0';
 
 const pillButtonClass =
-  'h-11 px-5 rounded-full text-black text-sm font-medium transition-all duration-200 hover:opacity-80 whitespace-nowrap flex-shrink-0 flex items-center justify-center';
+  'h-8 sm:h-9 px-3.5 sm:px-4 rounded-full text-black text-xs sm:text-sm font-medium transition-all duration-200 hover:opacity-80 whitespace-nowrap flex-shrink-0 flex items-center justify-center';
 
 const pillButtonStyle = {
   fontFamily: "'Space Grotesk', sans-serif",
@@ -87,13 +88,16 @@ const TopBar = ({ onNavigate, currentPath }) => {
           />
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3 md:gap-4 min-w-0">
+        <div className="flex flex-col items-end gap-1 sm:gap-1.5 min-w-0">
+          <SocialLinks variant="navbar" />
+
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-wrap justify-end">
           <button
             onClick={() => onNavigate && onNavigate('/event')}
             className={navLinkClass}
             style={{ fontFamily: "'Inter', sans-serif", color: '#000000' }}
           >
-            Event
+            Launch Event
           </button>
 
           {user && (
@@ -137,7 +141,7 @@ const TopBar = ({ onNavigate, currentPath }) => {
               <button
                 type="button"
                 onClick={() => setIsUserMenuOpen((prev) => !prev)}
-                className="h-9 w-9 sm:h-10 sm:w-10 rounded-full flex items-center justify-center text-sm font-bold text-black transition-all duration-200 hover:opacity-80 overflow-hidden"
+                className="h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold text-black transition-all duration-200 hover:opacity-80 overflow-hidden"
                 style={{
                   backgroundColor: profilePhotoUrl ? 'transparent' : '#B8C5D6',
                   boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.1)',
@@ -188,6 +192,7 @@ const TopBar = ({ onNavigate, currentPath }) => {
               Login
             </button>
           )}
+          </div>
         </div>
       </div>
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PrivacyPolicyModal from './PrivacyPolicyModal';
 import TermsModal from './TermsModal';
 import ContactModal from './ContactModal';
+import SocialLinks from './SocialLinks';
 
 const Footer = ({ onNavigate }) => {
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
@@ -36,6 +37,7 @@ const Footer = ({ onNavigate }) => {
               className="hidden sm:block h-12 w-auto"
             />
           </button>
+          <SocialLinks variant="footer" showLabels />
           <div className="text-black text-sm font-semibold">
             © 2026 Studio 3. All rights reserved.
           </div>

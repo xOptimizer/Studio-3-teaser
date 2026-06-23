@@ -16,6 +16,12 @@ import AdminVerifyPage from './pages/AdminVerifyPage';
 import { heroVideo } from './utils';
 import { preloadAssets } from './utils/cloudinary';
 
+const scrollToTop = () => {
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+};
+
 const App = () => {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const { user, loading: authLoading } = useAuth();
@@ -32,10 +38,17 @@ const App = () => {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  useEffect(() => {
+    scrollToTop();
+  }, [currentPath]);
+
   const navigate = useCallback((path) => {
+    if (window.location.pathname === path) {
+      scrollToTop();
+      return;
+    }
     window.history.pushState({}, '', path);
     window.dispatchEvent(new PopStateEvent('popstate'));
-    window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
   useEffect(() => {
