@@ -179,3 +179,20 @@ export async function adminCheckInTicket(qrToken) {
 export async function adminFetchOrders() {
   return apiFetch('/admin/orders');
 }
+
+export async function adminResendOrderTickets(orderId) {
+  return apiFetch(`/admin/orders/${orderId}/resend`, { method: 'POST' });
+}
+
+export async function adminFetchTicketQrBlob(ticketId) {
+  const token = getToken();
+  const response = await fetch(`${API_URL}/admin/tickets/${ticketId}/qr`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to load ticket QR code');
+  }
+
+  return response.blob();
+}
