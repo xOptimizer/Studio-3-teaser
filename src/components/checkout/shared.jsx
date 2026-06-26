@@ -1,18 +1,14 @@
 import React, { useEffect, useRef, memo } from 'react';
+import { STUDIO_EVENT_DISPLAY, STUDIO_EVENT } from '../../constants/event';
 
-export const TICKET_PRICE = 49.95;
+export const TICKET_PRICE = STUDIO_EVENT.ticketPrice;
 export const BRAND_ACCENT = '#B8C5D6';
 export const BRAND_ACCENT_SOFT = 'rgba(184, 197, 214, 0.35)';
 export const BRAND_ACCENT_MUTED = '#7A8FA8';
 export const FINIX_FORM_ID = 'finix-payment-form';
 
 export const EVENT_CHECKOUT = {
-  title: 'Inside the Mind of an Artist',
-  venue: 'Dec on Dragon',
-  address: '1414 Dragon St, Dallas, TX 75207',
-  date: 'Saturday, July 25, 2026',
-  time: '8:00 PM – 2:00 AM CDT',
-  poster: '/assets/images/art_gallery_poster.png',
+  ...STUDIO_EVENT_DISPLAY,
 };
 
 export const CHECKOUT_STEPS = [

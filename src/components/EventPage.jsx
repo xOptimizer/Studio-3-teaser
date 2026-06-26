@@ -1,10 +1,16 @@
 ﻿import React, { useState, useEffect, useMemo } from 'react';
 import SocialLinks from './SocialLinks';
+import { STUDIO_EVENT } from '../constants/event';
 
-const EVENT_START_ISO = '2026-07-25T20:00:00-05:00';
+const EVENT_START_ISO = STUDIO_EVENT.startsAtIso;
 const BRAND_ACCENT = '#B8C5D6';
 const BRAND_ACCENT_SOFT = 'rgba(184, 197, 214, 0.35)';
 const BRAND_ACCENT_MUTED = '#7A8FA8';
+
+const TICKET_PRICE = STUDIO_EVENT.ticketPrice;
+
+/** Matches the Final Flyer poster orange tones */
+const EVENT_BANNER_GRADIENT = STUDIO_EVENT.bannerGradient;
 
 const getTimeRemaining = (targetDate) => {
   const total = targetDate.getTime() - Date.now();
@@ -21,8 +27,6 @@ const getTimeRemaining = (targetDate) => {
     isLive: false,
   };
 };
-
-const TICKET_PRICE = 49.95;
 
 const padTime = (value) => String(value).padStart(2, '0');
 
@@ -276,8 +280,8 @@ const EventPage = ({ onNavigate }) => {
                     </svg>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-black font-bold text-sm">Dec on Dragon</span>
-                    <span className="text-gray-500 text-xs mt-0.5">1414 Dragon St, Dallas, TX 75207</span>
+                    <span className="text-black font-bold text-sm">{STUDIO_EVENT.venue}</span>
+                    <span className="text-gray-500 text-xs mt-0.5">{STUDIO_EVENT.address}</span>
                   </div>
                 </div>
 
@@ -289,8 +293,8 @@ const EventPage = ({ onNavigate }) => {
                     </svg>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-black font-bold text-sm">Saturday, July 25, 2026</span>
-                    <span className="text-gray-500 text-xs mt-0.5">8:00 PM – 2:00 AM CDT</span>
+                    <span className="text-black font-bold text-sm">{STUDIO_EVENT.dateLabel}</span>
+                    <span className="text-gray-500 text-xs mt-0.5">{STUDIO_EVENT.timeLabel}</span>
                   </div>
                 </div>
               </div>
@@ -467,7 +471,7 @@ const EventPage = ({ onNavigate }) => {
               {/* Event Poster Image */}
               <div className="relative aspect-[4/5] bg-gray-200">
                 <img 
-                  src="/assets/images/art_gallery_poster.png" 
+                  src={STUDIO_EVENT.poster} 
                   alt="Inside the Mind of an Artist event poster" 
                   className="w-full h-full object-cover"
                 />
@@ -508,11 +512,11 @@ const EventPage = ({ onNavigate }) => {
       >
         <button
           onClick={() => onNavigate && onNavigate('/event/checkout')}
-          className="pointer-events-auto w-full max-w-[340px] py-4 px-6 rounded-full text-black font-extrabold text-sm sm:text-base tracking-wide flex items-center justify-center gap-2 shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 hover:opacity-90"
+          className="pointer-events-auto w-full max-w-[340px] py-4 px-6 rounded-full text-white font-extrabold text-sm sm:text-base tracking-wide flex items-center justify-center gap-2 shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 hover:opacity-95"
           style={{
             fontFamily: "'Space Grotesk', sans-serif",
-            backgroundColor: '#B8C5D6',
-            boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.1)'
+            background: EVENT_BANNER_GRADIENT,
+            boxShadow: '0 8px 24px rgba(230, 81, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.12)',
           }}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

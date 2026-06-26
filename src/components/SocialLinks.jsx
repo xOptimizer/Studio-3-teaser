@@ -30,13 +30,13 @@ const variantStyles = {
     showLabel: true,
   },
   header: {
-    wrapper: 'flex items-center gap-2 flex-shrink-0',
-    link: 'h-9 w-9 sm:h-10 sm:w-10 rounded-full flex items-center justify-center text-black transition-all duration-200 hover:opacity-80 hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:ring-offset-2',
+    wrapper: 'flex items-center gap-1.5 sm:gap-2 flex-shrink-0',
+    link: 'h-8 w-8 sm:h-9 sm:w-9 rounded-full flex items-center justify-center text-black transition-all duration-200 hover:opacity-80 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/30 focus-visible:ring-offset-2',
     linkStyle: {
       backgroundColor: '#B8C5D6',
       boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.1)',
     },
-    icon: 'w-4 h-4 sm:w-[18px] sm:h-[18px]',
+    icon: 'w-3.5 h-3.5 sm:w-4 sm:h-4',
     showLabel: false,
   },
   footer: {

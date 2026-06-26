@@ -4,6 +4,7 @@ import { fetchTickets, downloadTicketPdf, fetchTicketQrBlob } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import TicketCard from '../components/TicketCard';
 import { captureElementAsPng } from '../utils/ticketDownload';
+import { STUDIO_EVENT } from '../constants/event';
 
 const BRAND_ACCENT = '#B8C5D6';
 const PAGE_BG = '#F7F7F7';
@@ -23,13 +24,8 @@ const primaryBtnStyle = {
 const outlineBtnClass =
   'flex-1 py-3 rounded-full text-black text-sm font-bold border border-gray-300 bg-white hover:bg-gray-50 transition-all disabled:opacity-50';
 
-function formatListDate(iso) {
-  return new Date(iso).toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
+function formatListDate() {
+  return STUDIO_EVENT.dateLabel;
 }
 
 function useTicketQr(ticketId) {
@@ -122,11 +118,11 @@ function DownloadFormatModal({ ticket, onClose, onError }) {
   const handleDownloadPng = async () => {
     setDownloading('png');
     try {
-      await new Promise((r) => setTimeout(r, 100));
-      await captureElementAsPng(
-        captureRef.current,
-        `ticket-${ticket.confirmationCode}.png`
-      );
+      const el = captureRef.current;
+      if (!el) throw new Error('Nothing to capture');
+
+      await new Promise((r) => setTimeout(r, 150));
+      await captureElementAsPng(el, `ticket-${ticket.confirmationCode}.png`);
       onClose();
     } catch (err) {
       onError(err.message);
@@ -171,14 +167,14 @@ function DownloadFormatModal({ ticket, onClose, onError }) {
           </button>
         </div>
 
-        {/* Off-screen ticket for PNG capture */}
-        <div className="fixed -left-[9999px] top-0 pointer-events-none" aria-hidden>
-          <div ref={captureRef} className="p-4" style={{ background: PAGE_BG }}>
-            <TicketCard
-              ticket={ticket}
-              qrImageUrl={qrImageUrl}
-              perforationColor={PAGE_BG}
-            />
+        {/* In-viewport capture target (hidden) — off-screen positioning clips html2canvas */}
+        <div
+          aria-hidden
+          className="fixed left-0 top-0 -z-[9999] opacity-0 pointer-events-none overflow-visible"
+          style={{ width: '360px' }}
+        >
+          <div ref={captureRef} className="p-4 inline-block" style={{ background: PAGE_BG }}>
+            <TicketCard ticket={ticket} qrImageUrl={qrImageUrl} perforationColor={PAGE_BG} />
           </div>
         </div>
       </div>
@@ -298,14 +294,15 @@ const MyTicketsPage = ({ onNavigate }) => {
               <div key={ticket.id} className={`${glassCardClass} p-5 sm:p-6`}>
                 <div className="flex gap-4">
                   <img
-                    src="/assets/images/art_gallery_poster.png"
+                    src={STUDIO_EVENT.poster}
                     alt=""
                     className="w-14 h-14 rounded-xl object-cover flex-shrink-0 bg-gray-100"
                   />
                   <div className="min-w-0 flex-1">
-                    <h2 className="font-bold text-black leading-tight">{ticket.event.title}</h2>
-                    <p className="text-gray-500 text-xs mt-1">{formatListDate(ticket.event.startsAt)}</p>
-                    <p className="text-gray-400 text-xs mt-0.5 truncate">{ticket.event.venue}</p>
+                    <h2 className="font-bold text-black leading-tight">{STUDIO_EVENT.title}</h2>
+                    <p className="text-gray-500 text-xs mt-1">{formatListDate()}</p>
+                    <p className="text-gray-400 text-xs mt-0.5">{STUDIO_EVENT.timeLabel}</p>
+                    <p className="text-gray-400 text-xs truncate">{STUDIO_EVENT.venue}</p>
                     <p className="text-xs mt-2">
                       <span className="text-gray-400">Booking ID:</span>{' '}
                       <span className="font-mono font-semibold text-black">{ticket.confirmationCode}</span>

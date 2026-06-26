@@ -78,21 +78,13 @@ const TopBar = ({ onNavigate, currentPath }) => {
           className="flex items-center flex-shrink-0 cursor-pointer hover:opacity-75 transition-opacity"
         >
           <img
-            src="/assets/Logo_Without_Text.svg"
+            src="/assets/header.jpg"
             alt="Studio 3"
-            className="h-10 w-10 sm:hidden"
-          />
-          <img
-            src="/assets/Logo_With_Text.svg"
-            alt="Studio 3"
-            className="hidden sm:block h-12 md:h-[3.25rem] w-auto"
+            className="h-8 sm:h-9 md:h-10 w-auto object-contain"
           />
         </div>
 
-        <div className="flex flex-col items-end gap-1 sm:gap-1.5 min-w-0">
-          <SocialLinks variant="navbar" />
-
-          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-wrap justify-end">
+        <div className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-wrap justify-end min-w-0">
           <button
             onClick={() => onNavigate && onNavigate('/event')}
             className={navLinkClass}
@@ -136,6 +128,8 @@ const TopBar = ({ onNavigate, currentPath }) => {
             <span className="min-[400px]:hidden">Join</span>
           </button>
           */}
+
+          <SocialLinks variant="header" />
 
           {user ? (
             <div className="relative flex-shrink-0" ref={userMenuRef}>
@@ -195,7 +189,6 @@ const TopBar = ({ onNavigate, currentPath }) => {
               Login
             </button>
           )}
-          </div>
         </div>
       </div>
 
