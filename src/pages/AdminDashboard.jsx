@@ -7,6 +7,7 @@ import {
 } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 import TicketCard from '../components/TicketCard';
+import AdminFreePassPanel from '../components/AdminFreePassPanel';
 
 const BRAND_ACCENT = '#B8C5D6';
 const PAGE_BG = '#F7F7F7';
@@ -510,6 +511,12 @@ const AdminDashboard = ({ onNavigate }) => {
   const [viewingOrder, setViewingOrder] = useState(null);
   const [resendingId, setResendingId] = useState(null);
 
+  const loadOrders = useCallback(() => {
+    return adminFetchOrders()
+      .then((data) => setOrders(data.orders || []))
+      .catch((err) => setError(err.message));
+  }, []);
+
   useEffect(() => {
     if (authLoading) return;
 
@@ -518,11 +525,9 @@ const AdminDashboard = ({ onNavigate }) => {
       return;
     }
 
-    adminFetchOrders()
-      .then((data) => setOrders(data.orders || []))
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, [user, authLoading, onNavigate]);
+    setLoading(true);
+    loadOrders().finally(() => setLoading(false));
+  }, [user, authLoading, onNavigate, loadOrders]);
 
   const stats = useMemo(() => {
     const paidOrders = orders.filter((o) => isPaidOrder(o.status));
@@ -631,6 +636,18 @@ const AdminDashboard = ({ onNavigate }) => {
           <StatCard label="Tickets sold" value={stats.ticketsSold} />
           <StatCard label="Revenue" value={formatMoney(stats.revenueCents)} sub="Paid orders only" />
         </div>
+
+        <AdminFreePassPanel
+          onIssued={() => {
+            setError(null);
+            loadOrders();
+          }}
+          onError={(msg) => setError(msg || null)}
+          onSuccess={(msg) => {
+            setError(null);
+            setSuccess(msg);
+          }}
+        />
 
         <div className={`${glassCardClass} overflow-hidden text-gray-900`}>
           <div className="p-4 sm:p-6 border-b border-gray-100/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">

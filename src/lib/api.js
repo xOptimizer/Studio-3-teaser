@@ -180,6 +180,17 @@ export async function adminFetchOrders() {
   return apiFetch('/admin/orders');
 }
 
+export async function adminFetchEvents() {
+  return apiFetch('/admin/events');
+}
+
+export async function adminIssueFreePasses({ eventId, guests }) {
+  return apiFetch('/admin/free-passes', {
+    method: 'POST',
+    body: JSON.stringify({ eventId, guests }),
+  });
+}
+
 export async function adminResendOrderTickets(orderId) {
   return apiFetch(`/admin/orders/${orderId}/resend`, { method: 'POST' });
 }

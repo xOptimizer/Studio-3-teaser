@@ -14,6 +14,9 @@ import SetPasswordPage from './pages/SetPasswordPage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminScanner from './pages/AdminScanner';
 import AdminVerifyPage from './pages/AdminVerifyPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsPage from './pages/TermsPage';
+import ContactPage from './pages/ContactPage';
 import { heroVideo } from './utils';
 import { preloadAssets } from './utils/cloudinary';
 
@@ -104,6 +107,12 @@ const App = () => {
     pageContent = <CheckoutPage onNavigate={navigate} />;
   } else if (currentPath === '/event') {
     pageContent = <EventPage onNavigate={navigate} />;
+  } else if (currentPath === '/privacy') {
+    pageContent = <PrivacyPolicyPage onNavigate={navigate} />;
+  } else if (currentPath === '/terms') {
+    pageContent = <TermsPage onNavigate={navigate} />;
+  } else if (currentPath === '/contact') {
+    pageContent = <ContactPage onNavigate={navigate} />;
   } else {
     pageContent = (
       <>
