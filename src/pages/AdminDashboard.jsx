@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import {
   adminFetchOrders,
+  adminFetchStats,
   adminFetchTicketQrBlob,
   adminResendOrderTickets,
 } from '../lib/api';
@@ -375,14 +376,79 @@ function OrderTicketsModal({ order, onClose }) {
   );
 }
 
-function StatCard({ label, value, sub }) {
+function EarlyBirdStatsCard({ stats }) {
+  if (!stats) return null;
+
+  const { earlyBirdSold, earlyBirdRemaining, earlyBirdLimit, event } = stats;
+  const earlyBirdPrice = ((event?.earlyBirdPriceCents ?? 4995) / 100).toFixed(2);
+  const regularPrice = ((event?.regularPriceCents ?? 9995) / 100).toFixed(2);
+  const soldPct = earlyBirdLimit > 0 ? Math.min(100, (earlyBirdSold / earlyBirdLimit) * 100) : 0;
+  const soldOut = earlyBirdRemaining === 0;
+
   return (
-    <div className={`${glassCardClass} p-4 sm:p-5 text-gray-900`}>
+    <div className={`${glassCardClass} p-4 sm:p-5 mb-6 sm:mb-8 text-gray-900`}>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <p className="text-[10px] uppercase tracking-wider text-gray-600 font-bold">Early bird</p>
+          <p className="text-sm text-gray-700 mt-1">
+            ${earlyBirdPrice} tickets · first {earlyBirdLimit} sold
+            {soldOut ? ' · sold out' : ''}
+          </p>
+        </div>
+        <div className="flex gap-3 sm:gap-4">
+          <div className="flex-1 sm:flex-none min-w-[120px] rounded-2xl bg-white/80 border border-gray-100 px-4 py-3">
+            <p className="text-[10px] uppercase tracking-wide text-gray-500 font-bold">Sold</p>
+            <p className="text-2xl font-extrabold text-gray-900 tabular-nums mt-0.5">
+              {earlyBirdSold}
+              <span className="text-sm font-semibold text-gray-500"> / {earlyBirdLimit}</span>
+            </p>
+          </div>
+          <div className="flex-1 sm:flex-none min-w-[120px] rounded-2xl bg-white/80 border border-gray-100 px-4 py-3">
+            <p className="text-[10px] uppercase tracking-wide text-gray-500 font-bold">Left</p>
+            <p className={`text-2xl font-extrabold tabular-nums mt-0.5 ${soldOut ? 'text-gray-400' : 'text-emerald-700'}`}>
+              {earlyBirdRemaining}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="mt-4 h-2 rounded-full bg-gray-200 overflow-hidden">
+        <div
+          className={`h-full rounded-full transition-all ${soldOut ? 'bg-gray-400' : 'bg-emerald-500'}`}
+          style={{ width: `${soldPct}%` }}
+        />
+      </div>
+      <p className="text-xs text-gray-500 mt-2">
+        {soldOut
+          ? `Early bird is full — new sales are at $${regularPrice}.`
+          : `${earlyBirdRemaining} early bird seat${earlyBirdRemaining === 1 ? '' : 's'} remaining before price increases to $${regularPrice}.`}
+      </p>
+    </div>
+  );
+}
+
+function StatCard({ label, value, sub, onClick }) {
+  const className = `${glassCardClass} p-4 sm:p-5 text-gray-900 text-left w-full ${
+    onClick ? 'cursor-pointer transition-all hover:shadow-md hover:border-gray-200 active:scale-[0.99]' : ''
+  }`;
+
+  const content = (
+    <>
       <p className="text-[10px] uppercase tracking-wider text-gray-600 font-bold">{label}</p>
       <p className="text-xl sm:text-2xl font-extrabold text-gray-900 mt-1 tabular-nums">{value}</p>
       {sub && <p className="text-xs text-gray-600 mt-1">{sub}</p>}
-    </div>
+      {onClick && <p className="text-[10px] text-gray-500 mt-2 font-semibold">Tap to view →</p>}
+    </>
   );
+
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} className={className}>
+        {content}
+      </button>
+    );
+  }
+
+  return <div className={className}>{content}</div>;
 }
 
 function StatusBadge({ status }) {
@@ -510,11 +576,13 @@ const AdminDashboard = ({ onNavigate }) => {
   const [detailOrder, setDetailOrder] = useState(null);
   const [viewingOrder, setViewingOrder] = useState(null);
   const [resendingId, setResendingId] = useState(null);
+  const [ticketStats, setTicketStats] = useState(null);
 
-  const loadOrders = useCallback(() => {
-    return adminFetchOrders()
-      .then((data) => setOrders(data.orders || []))
-      .catch((err) => setError(err.message));
+  const loadDashboard = useCallback(() => {
+    return Promise.all([
+      adminFetchOrders().then((data) => setOrders(data.orders || [])),
+      adminFetchStats().then((data) => setTicketStats(data)).catch(() => setTicketStats(null)),
+    ]).catch((err) => setError(err.message));
   }, []);
 
   useEffect(() => {
@@ -526,8 +594,8 @@ const AdminDashboard = ({ onNavigate }) => {
     }
 
     setLoading(true);
-    loadOrders().finally(() => setLoading(false));
-  }, [user, authLoading, onNavigate, loadOrders]);
+    loadDashboard().finally(() => setLoading(false));
+  }, [user, authLoading, onNavigate, loadDashboard]);
 
   const stats = useMemo(() => {
     const paidOrders = orders.filter((o) => isPaidOrder(o.status));
@@ -539,6 +607,10 @@ const AdminDashboard = ({ onNavigate }) => {
       paidOrders: paidOrders.length,
       revenueCents,
       ticketsSold,
+      checkedInCount: orders.reduce(
+        (sum, o) => sum + (o.tickets?.filter((t) => t.status === 'used').length || 0),
+        0
+      ),
     };
   }, [orders]);
 
@@ -630,17 +702,25 @@ const AdminDashboard = ({ onNavigate }) => {
           </div>
         )}
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
           <StatCard label="Total orders" value={stats.totalOrders} />
           <StatCard label="Paid orders" value={stats.paidOrders} />
           <StatCard label="Tickets sold" value={stats.ticketsSold} />
+          <StatCard
+            label="Checked in"
+            value={stats.checkedInCount}
+            sub="At the door"
+            onClick={() => onNavigate('/admin/check-ins')}
+          />
           <StatCard label="Revenue" value={formatMoney(stats.revenueCents)} sub="Paid orders only" />
         </div>
+
+        <EarlyBirdStatsCard stats={ticketStats} />
 
         <AdminFreePassPanel
           onIssued={() => {
             setError(null);
-            loadOrders();
+            loadDashboard();
           }}
           onError={(msg) => setError(msg || null)}
           onSuccess={(msg) => {

@@ -1,0 +1,42 @@
+/* Override global body { color: white } for admin check-in pages */
+.admin-scanner-page {
+  color: #111827;
+}
+
+.qr-camera-shell {
+  position: relative;
+  width: 100%;
+}
+
+.qr-camera-viewfinder {
+  width: 100%;
+  min-height: 300px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #0f172a;
+}
+
+.qr-camera-viewfinder video {
+  border-radius: 16px;
+  object-fit: cover;
+}
+
+.qr-camera-status,
+.qr-camera-error {
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.qr-camera-status {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.qr-camera-error {
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 12px;
+  padding: 12px;
+}

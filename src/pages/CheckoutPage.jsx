@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { checkout } from '../lib/api';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { checkout, fetchCheckoutConfig } from '../lib/api';
 import {
-  TICKET_PRICE,
   BRAND_ACCENT_SOFT,
   EVENT_CHECKOUT,
   CheckoutStepIndicator,
@@ -11,8 +10,64 @@ import {
   glassCardClass,
 } from '../components/checkout/shared';
 import WalletPayments from '../components/checkout/WalletPayments';
+import { calculateTieredOrderPricing, formatCents, formatRate, formatCentsAsDollars } from '../lib/pricing';
+import { STUDIO_EVENT } from '../constants/event';
 
 import { formatUSPhone, toE164US } from '../lib/phone';
+
+const DEFAULT_TIERS = {
+  soldCount: 0,
+  earlyBirdLimit: STUDIO_EVENT.earlyBirdLimit,
+  earlyBirdPriceCents: Math.round(STUDIO_EVENT.ticketPrice * 100),
+  regularPriceCents: Math.round(STUDIO_EVENT.regularTicketPrice * 100),
+};
+
+function OrderPricingBreakdown({ pricing, compact = false }) {
+  const textClass = compact ? 'text-xs' : 'text-sm';
+
+  return (
+    <div className={`space-y-2 ${textClass}`}>
+      {pricing.earlyBirdQty > 0 && (
+        <div className="flex justify-between text-gray-600">
+          <span>
+            Early bird ({pricing.earlyBirdQty}x @ {formatCents(pricing.earlyBirdPriceCents)})
+          </span>
+          <span className="tabular-nums text-gray-900">
+            {formatCents(pricing.earlyBirdQty * pricing.earlyBirdPriceCents)}
+          </span>
+        </div>
+      )}
+      {pricing.regularQty > 0 && (
+        <div className="flex justify-between text-gray-600">
+          <span>
+            Regular ({pricing.regularQty}x @ {formatCents(pricing.regularPriceCents)})
+          </span>
+          <span className="tabular-nums text-gray-900">
+            {formatCents(pricing.regularQty * pricing.regularPriceCents)}
+          </span>
+        </div>
+      )}
+      {pricing.earlyBirdQty === 0 && pricing.regularQty === 0 && (
+        <div className="flex justify-between text-gray-600">
+          <span>Tickets ({pricing.quantity}x)</span>
+          <span className="tabular-nums text-gray-900">{formatCents(pricing.ticketSubtotalCents)}</span>
+        </div>
+      )}
+      <div className="flex justify-between text-gray-600">
+        <span>Service fee ({formatRate(pricing.rates.serviceFee)})</span>
+        <span className="tabular-nums text-gray-900">{formatCents(pricing.serviceFeeCents)}</span>
+      </div>
+      <div className="flex justify-between text-gray-600">
+        <span>Sales tax ({formatRate(pricing.rates.salesTax)})</span>
+        <span className="tabular-nums text-gray-900">{formatCents(pricing.salesTaxCents)}</span>
+      </div>
+      <div className={`flex justify-between items-center pt-2 border-t border-gray-200 ${compact ? '' : 'text-base'}`}>
+        <span className="font-bold text-gray-900">Total</span>
+        <span className="font-extrabold text-gray-900 tabular-nums">{formatCents(pricing.totalCents)}</span>
+      </div>
+    </div>
+  );
+}
 
 const CheckoutPage = ({ onNavigate }) => {
   const [checkoutStep, setCheckoutStep] = useState(1);
@@ -22,6 +77,23 @@ const CheckoutPage = ({ onNavigate }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkoutError, setCheckoutError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [tierConfig, setTierConfig] = useState(DEFAULT_TIERS);
+
+  useEffect(() => {
+    fetchCheckoutConfig()
+      .then((data) => {
+        const p = data.pricing || {};
+        setTierConfig({
+          soldCount: p.soldCount ?? 0,
+          earlyBirdLimit: p.earlyBirdLimit ?? DEFAULT_TIERS.earlyBirdLimit,
+          earlyBirdPriceCents: p.earlyBirdPriceCents ?? DEFAULT_TIERS.earlyBirdPriceCents,
+          regularPriceCents: p.regularPriceCents ?? DEFAULT_TIERS.regularPriceCents,
+        });
+      })
+      .catch(() => {
+        setCheckoutError('Could not load ticket pricing. Please refresh and try again.');
+      });
+  }, []);
 
   const buyerInfoRef = useRef(buyerInfo);
   const ticketQuantityRef = useRef(ticketQuantity);
@@ -72,7 +144,19 @@ const CheckoutPage = ({ onNavigate }) => {
     setCheckoutError(message);
   }, []);
 
-  const checkoutAmountCents = Math.round(TICKET_PRICE * 100 * ticketQuantity);
+  const orderPricing = useMemo(
+    () =>
+      calculateTieredOrderPricing({
+        ...tierConfig,
+        quantity: ticketQuantity,
+      }),
+    [tierConfig, ticketQuantity]
+  );
+  const checkoutAmountCents = orderPricing.totalCents;
+
+  const currentUnitPrice = orderPricing.currentTier === 'regular'
+    ? formatCentsAsDollars(orderPricing.regularPriceCents)
+    : formatCentsAsDollars(orderPricing.earlyBirdPriceCents);
 
   const handleFinixSubmit = useCallback(async (error, response, finixAuth) => {
     if (error) {
@@ -190,14 +274,11 @@ const CheckoutPage = ({ onNavigate }) => {
               <strong className="text-gray-800">{buyerInfo.email}</strong>.
             </p>
             <div className="w-full border border-gray-200 bg-gray-50 rounded-2xl p-4 my-5 text-left text-sm">
-              <div className="flex justify-between font-bold text-black border-b border-gray-200 pb-2 mb-2">
+              <div className="flex justify-between font-bold text-black border-b border-gray-200 pb-2 mb-3">
                 <span>General Admission</span>
                 <span>{ticketQuantity}x</span>
               </div>
-              <div className="flex justify-between text-xs text-gray-500">
-                <span>Total</span>
-                <span className="font-mono text-black font-bold">${(TICKET_PRICE * ticketQuantity).toFixed(2)}</span>
-              </div>
+              <OrderPricingBreakdown pricing={orderPricing} compact />
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
               <button type="button" onClick={() => onNavigate('/tickets')} className={btnCompact} style={checkoutButtonStyle}>
@@ -305,10 +386,26 @@ const CheckoutPage = ({ onNavigate }) => {
 
                 {checkoutStep === 2 && (
                   <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
+                    {orderPricing.currentTier === 'early_bird' && orderPricing.earlyBirdRemaining > 0 && (
+                      <p className="text-xs text-amber-800 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2 mb-3">
+                        Early bird pricing — {orderPricing.earlyBirdRemaining} of {orderPricing.earlyBirdLimit} left at{' '}
+                        {formatCents(orderPricing.earlyBirdPriceCents)}
+                      </p>
+                    )}
+                    {orderPricing.currentTier === 'regular' && (
+                      <p className="text-xs text-gray-700 bg-gray-100 border border-gray-200 rounded-xl px-3 py-2 mb-3">
+                        Early bird sold out. Tickets are {formatCents(orderPricing.regularPriceCents)} each.
+                      </p>
+                    )}
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <span className="text-black font-bold text-sm">General Admission</span>
-                        <p className="text-gray-500 text-xs mt-0.5">${TICKET_PRICE.toFixed(2)} each</p>
+                        <p className="text-gray-500 text-xs mt-0.5">
+                          ${currentUnitPrice.toFixed(2)} each
+                          {orderPricing.regularQty > 0 && orderPricing.earlyBirdQty > 0
+                            ? ' (mixed tiers)'
+                            : ''}
+                        </p>
                       </div>
                       <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-xl p-1">
                         <button type="button" onClick={() => setTicketQuantity(Math.max(1, ticketQuantity - 1))} className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-100 font-bold" aria-label="Decrease tickets">−</button>
@@ -316,9 +413,8 @@ const CheckoutPage = ({ onNavigate }) => {
                         <button type="button" onClick={() => setTicketQuantity(Math.min(5, ticketQuantity + 1))} className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-100 font-bold" aria-label="Increase tickets">+</button>
                       </div>
                     </div>
-                    <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-200">
-                      <span className="text-gray-500 text-sm">Subtotal</span>
-                      <span className="text-black font-extrabold text-lg tabular-nums">${(TICKET_PRICE * ticketQuantity).toFixed(2)}</span>
+                    <div className="mt-3 pt-3 border-t border-gray-200">
+                      <OrderPricingBreakdown pricing={orderPricing} />
                     </div>
                   </div>
                 )}
@@ -336,8 +432,9 @@ const CheckoutPage = ({ onNavigate }) => {
                       <span className="text-black font-semibold text-right truncate">+1 {buyerInfo.phone}</span>
                       <span className="text-gray-500">Tickets</span>
                       <span className="text-black font-semibold text-right">{ticketQuantity}x</span>
-                      <span className="text-gray-500 col-span-2 pt-2 border-t border-gray-200">Total</span>
-                      <span className="text-black font-extrabold text-right col-span-2 text-lg tabular-nums">${(TICKET_PRICE * ticketQuantity).toFixed(2)}</span>
+                    </div>
+                    <div className="pt-2 border-t border-gray-200">
+                      <OrderPricingBreakdown pricing={orderPricing} compact />
                     </div>
                   </div>
                 )}
@@ -390,8 +487,9 @@ const CheckoutPage = ({ onNavigate }) => {
                 <div className="rounded-3xl overflow-hidden shadow-lg border border-white border-opacity-40">
                   <div className="relative aspect-[4/5] sm:aspect-[3/4] lg:aspect-[4/5] bg-gray-200">
                     <img src={EVENT_CHECKOUT.poster} alt={EVENT_CHECKOUT.title} className="absolute inset-0 w-full h-full object-cover" />
-                    <div className="absolute top-3 right-3 bg-black/70 backdrop-blur text-white text-[9px] sm:text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full">
-                      ${TICKET_PRICE.toFixed(2)}
+                    <div className="absolute top-3 right-3 bg-black/70 backdrop-blur text-white text-[9px] sm:text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full text-center leading-tight">
+                      <span className="block">${currentUnitPrice.toFixed(2)}</span>
+                      <span className="block font-semibold normal-case opacity-90">+ tax &amp; fees</span>
                     </div>
                   </div>
                   <div className="px-4 py-3 bg-black/95 text-white flex justify-between items-center text-[7px] sm:text-[8px] uppercase tracking-widest font-semibold">

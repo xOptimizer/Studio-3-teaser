@@ -358,7 +358,7 @@ const EventPage = ({ onNavigate }) => {
                 Come to see the work. Stay for the night.
               </p>
               <p className="text-gray-600 text-sm sm:text-base leading-relaxed font-semibold text-black">
-                Early bird tickets start at $49.95 · first 50 only.
+                Early bird ${STUDIO_EVENT.ticketPrice.toFixed(2)} for the first {STUDIO_EVENT.earlyBirdLimit} tickets · then ${STUDIO_EVENT.regularTicketPrice.toFixed(2)}.
               </p>
             </div>
 
@@ -485,7 +485,7 @@ const EventPage = ({ onNavigate }) => {
                 
                 {/* Floating Badge */}
                 <div className="absolute top-4 right-4 bg-black bg-opacity-70 backdrop-blur text-white text-[9pt] font-extrabold uppercase px-3 py-1.5 rounded-full tracking-wider shadow">
-                  $49.95 Ticket
+                  ${STUDIO_EVENT.ticketPrice.toFixed(2)} · first {STUDIO_EVENT.earlyBirdLimit}
                 </div>
               </div>
 
@@ -522,7 +522,7 @@ const EventPage = ({ onNavigate }) => {
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
           </svg>
-          Buy tickets from $49.95
+          Buy tickets · $49.95 early bird
         </button>
       </div>
 

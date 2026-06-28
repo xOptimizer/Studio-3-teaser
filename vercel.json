@@ -1,6 +1,32 @@
 {
   "headers": [
     {
+      "source": "/.well-known/apple-developer-merchantid-domain-association",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/.well-known/apple-developer-merchantid-domain-association/",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
       "source": "/assets/videos/(.*)",
       "headers": [
         {
@@ -19,7 +45,7 @@
     }
   ],
   "rewrites": [
-    { "source": "/((?!assets/|models/|favicon.ico|vite.svg).*)", "destination": "/index.html" }
+    { "source": "/((?!assets/|models/|favicon.ico|vite.svg|\\.well-known/).*)", "destination": "/index.html" }
   ]
 }
 

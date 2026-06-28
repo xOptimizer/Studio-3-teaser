@@ -13,6 +13,7 @@ import ProfilePage from './pages/ProfilePage';
 import SetPasswordPage from './pages/SetPasswordPage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminScanner from './pages/AdminScanner';
+import AdminCheckInsPage from './pages/AdminCheckInsPage';
 import AdminVerifyPage from './pages/AdminVerifyPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
@@ -101,6 +102,8 @@ const App = () => {
     pageContent = <AdminDashboard onNavigate={navigate} />;
   } else if (currentPath === '/admin/scanner') {
     pageContent = <AdminScanner onNavigate={navigate} />;
+  } else if (currentPath === '/admin/check-ins') {
+    pageContent = <AdminCheckInsPage onNavigate={navigate} />;
   } else if (currentPath.startsWith('/admin/verify')) {
     pageContent = <AdminVerifyPage onNavigate={navigate} />;
   } else if (currentPath === '/event/checkout') {

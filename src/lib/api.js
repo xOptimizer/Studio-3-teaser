@@ -1,4 +1,12 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+/** In dev, default to Vite proxy (/api → localhost:3001) so ngrok HTTPS can reach the API without mixed-content blocks. */
+function getApiBaseUrl() {
+  const configured = import.meta.env.VITE_API_URL?.trim();
+  if (configured) return configured.replace(/\/$/, '');
+  if (import.meta.env.DEV) return '/api';
+  return 'http://localhost:3001';
+}
+
+const API_URL = getApiBaseUrl();
 
 const TOKEN_KEY = 'studio3_token';
 
@@ -162,18 +170,26 @@ export async function fetchTicketQrBlob(ticketId) {
   return response.blob();
 }
 
-export async function adminVerifyTicket(qrToken) {
+export async function adminVerifyTicket(lookup) {
   return apiFetch('/admin/tickets/verify', {
     method: 'POST',
-    body: JSON.stringify({ qrToken }),
+    body: JSON.stringify(lookup),
   });
 }
 
-export async function adminCheckInTicket(qrToken) {
+export async function adminCheckInTicket(lookup) {
   return apiFetch('/admin/tickets/check-in', {
     method: 'POST',
-    body: JSON.stringify({ qrToken }),
+    body: JSON.stringify(lookup),
   });
+}
+
+export async function adminFetchStats() {
+  return apiFetch('/admin/stats');
+}
+
+export async function adminFetchCheckIns() {
+  return apiFetch('/admin/check-ins');
 }
 
 export async function adminFetchOrders() {

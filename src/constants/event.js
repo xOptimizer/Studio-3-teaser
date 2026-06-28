@@ -8,6 +8,8 @@ export const STUDIO_EVENT = {
   poster: '/assets/Final%20Flyer.jpg',
   headerLogo: '/assets/header.jpg',
   ticketPrice: 49.95,
+  regularTicketPrice: 99.95,
+  earlyBirdLimit: 55,
   bannerGradient:
     'linear-gradient(135deg, #FFD54F 0%, #FF9800 32%, #FF6D00 68%, #E65100 100%)',
 };
