@@ -14,6 +14,7 @@ const inputStyle = {
 const LoginModal = ({ isOpen, onClose, onNavigate }) => {
   const overlayRef = useRef(null);
   const contentRef = useRef(null);
+  const pointerDownOnOverlay = useRef(false);
   const { login } = useAuth();
   const [view, setView] = useState('login');
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -124,6 +125,17 @@ const LoginModal = ({ isOpen, onClose, onNavigate }) => {
     }
   };
 
+  const handleOverlayMouseDown = (e) => {
+    pointerDownOnOverlay.current = e.target === overlayRef.current;
+  };
+
+  const handleOverlayClick = (e) => {
+    if (e.target !== overlayRef.current || !pointerDownOnOverlay.current) return;
+    const selection = window.getSelection?.();
+    if (selection?.toString()) return;
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   return createPortal(
@@ -136,13 +148,15 @@ const LoginModal = ({ isOpen, onClose, onNavigate }) => {
         WebkitBackdropFilter: 'blur(12px)',
         boxShadow: 'inset 0 0 100px rgba(255,255,255,0.1), 0 0 200px rgba(0,0,0,0.1)',
       }}
-      onClick={(e) => {
-        if (e.target === overlayRef.current) onClose();
-      }}
+      onMouseDown={handleOverlayMouseDown}
+      onClick={handleOverlayClick}
     >
       <div
         ref={contentRef}
         className="relative z-10 w-full max-w-[440px] rounded-3xl p-8 md:p-10 overflow-y-auto transform scale-95 opacity-0 border border-white border-opacity-20 shadow-2xl"
+        onMouseDown={() => {
+          pointerDownOnOverlay.current = false;
+        }}
         style={{
           background: 'rgba(255, 255, 255, 0.75)',
           backdropFilter: 'blur(20px)',
