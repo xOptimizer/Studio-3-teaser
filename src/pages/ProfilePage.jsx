@@ -8,6 +8,7 @@ import {
 } from '../lib/api';
 import { formatPhoneDisplay, formatUSPhone, parseUSPhoneForInput, toE164US } from '../lib/phone';
 import { useAuth } from '../context/AuthContext';
+import { ProfileSkeleton } from '../components/loading/PageLoaders';
 
 const BRAND_ACCENT = '#B8C5D6';
 const BRAND_ACCENT_SOFT = 'rgba(184, 197, 214, 0.35)';
@@ -140,11 +141,7 @@ const ProfilePage = ({ onNavigate }) => {
   };
 
   if (authLoading || loading) {
-    return (
-      <div className="min-h-screen pt-[120px] px-4 flex items-center justify-center" style={{ background: '#F7F7F7' }}>
-        <p className="text-gray-500 text-sm">Loading profile...</p>
-      </div>
-    );
+    return <ProfileSkeleton />;
   }
 
   if (!user || !profile) {

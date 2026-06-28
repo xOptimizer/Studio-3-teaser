@@ -1,15 +1,148 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { useAuth } from '../context/AuthContext';
-import { forgotPassword, resetPassword } from '../lib/api';
+import { forgotPassword, resetPassword, resolveProfilePhotoUrl } from '../lib/api';
+
+const BRAND_ACCENT = '#B8C5D6';
 
 const inputStyle = {
   backgroundColor: 'rgba(255, 255, 255, 0.3)',
   backdropFilter: 'blur(10px)',
   border: '1px solid rgba(0, 0, 0, 0.3)',
 };
+
+const primaryBtnStyle = {
+  fontFamily: "'Space Grotesk', sans-serif",
+  backgroundColor: BRAND_ACCENT,
+  boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.1)',
+};
+
+function getFirstName(user) {
+  const name = user?.name?.trim();
+  if (name) return name.split(/\s+/).filter(Boolean)[0];
+  const email = user?.email?.trim();
+  if (email) return email.split('@')[0];
+  return 'there';
+}
+
+function getUserInitials(user) {
+  const name = user?.name?.trim();
+  if (name) {
+    const parts = name.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return parts[0].slice(0, 2).toUpperCase();
+  }
+  const email = user?.email?.trim();
+  return email ? email.charAt(0).toUpperCase() : '?';
+}
+
+function LoginWelcomeSuccess({ user, onClose, onNavigate }) {
+  const successRef = useRef(null);
+  const isAdmin = user?.role === 'admin';
+  const firstName = getFirstName(user);
+  const photoUrl = resolveProfilePhotoUrl(user?.profilePhotoUrl);
+  const initials = getUserInitials(user);
+
+  const { headline, message, primaryLabel, primaryPath } = useMemo(() => {
+    if (isAdmin) {
+      return {
+        headline: `Welcome back, ${firstName}`,
+        message: 'Your dashboard is ready — manage orders, issue passes, and check in guests at the door.',
+        primaryLabel: 'Open dashboard',
+        primaryPath: '/admin',
+      };
+    }
+    return {
+      headline: `Good to see you, ${firstName}`,
+      message: 'You’re signed in. View your tickets, download passes, or update your profile anytime.',
+      primaryLabel: 'View my tickets',
+      primaryPath: '/tickets',
+    };
+  }, [firstName, isAdmin]);
+
+  useGSAP(() => {
+    if (!successRef.current) return;
+
+    gsap.fromTo(
+      successRef.current.querySelector('.welcome-check'),
+      { scale: 0.5, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(1.8)' }
+    );
+    gsap.fromTo(
+      successRef.current.querySelectorAll('.welcome-animate'),
+      { y: 14, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.45, stagger: 0.07, ease: 'power2.out', delay: 0.12 }
+    );
+  }, []);
+
+  const handlePrimary = () => {
+    onClose();
+    onNavigate?.(primaryPath);
+  };
+
+  return (
+    <div ref={successRef} className="py-2">
+      <div className="welcome-check mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15 ring-4 ring-emerald-500/10">
+        <svg className="h-8 w-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+
+      <p className="welcome-animate text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold text-center">
+        Signed in successfully
+      </p>
+      <h2
+        className="welcome-animate text-black font-extrabold text-2xl mt-2 mb-3 text-center leading-tight"
+        style={{ fontFamily: "'Inter', sans-serif" }}
+      >
+        {headline}
+      </h2>
+
+      <div className="welcome-animate mx-auto mb-5 flex max-w-xs items-center gap-3 rounded-2xl border border-gray-200/80 bg-white/50 px-3 py-2.5">
+        {photoUrl ? (
+          <img src={photoUrl} alt="" className="h-10 w-10 rounded-full object-cover shrink-0 bg-gray-100" />
+        ) : (
+          <span
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-gray-800"
+            style={{ backgroundColor: 'rgba(184, 197, 214, 0.55)' }}
+          >
+            {initials}
+          </span>
+        )}
+        <div className="min-w-0 text-left">
+          <p className="text-sm font-semibold text-gray-900 truncate">{user?.name?.trim() || firstName}</p>
+          <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+        </div>
+      </div>
+
+      <p className="welcome-animate text-gray-600 text-sm mb-6 text-center leading-relaxed max-w-sm mx-auto">
+        {message}
+      </p>
+
+      <div className="welcome-animate flex flex-col gap-2.5">
+        <button
+          type="button"
+          onClick={handlePrimary}
+          className="w-full py-3 px-4 rounded-full text-black text-sm font-bold transition-all hover:opacity-90"
+          style={primaryBtnStyle}
+        >
+          {primaryLabel}
+        </button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="w-full py-3 px-4 rounded-full text-gray-700 text-sm font-semibold border border-gray-300 bg-white/70 hover:bg-white transition-all"
+        >
+          Continue browsing
+        </button>
+      </div>
+    </div>
+  );
+}
 
 const LoginModal = ({ isOpen, onClose, onNavigate }) => {
   const overlayRef = useRef(null);
@@ -20,6 +153,7 @@ const LoginModal = ({ isOpen, onClose, onNavigate }) => {
   const [resetData, setResetData] = useState({ email: '', otp: '', newPassword: '', confirmPassword: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [loggedInUser, setLoggedInUser] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [infoMessage, setInfoMessage] = useState('');
 
@@ -32,6 +166,7 @@ const LoginModal = ({ isOpen, onClose, onNavigate }) => {
       setFormData({ email: '', password: '' });
       setResetData({ email: '', otp: '', newPassword: '', confirmPassword: '' });
       setSubmitStatus(null);
+      setLoggedInUser(null);
       setErrorMessage('');
       setInfoMessage('');
     }
@@ -75,6 +210,7 @@ const LoginModal = ({ isOpen, onClose, onNavigate }) => {
         onNavigate?.('/set-password');
         return;
       }
+      setLoggedInUser(loggedInUser);
       setSubmitStatus('success');
     } catch (err) {
       setSubmitStatus('error');
@@ -157,22 +293,8 @@ const LoginModal = ({ isOpen, onClose, onNavigate }) => {
           &times;
         </button>
 
-        {submitStatus === 'success' ? (
-          <div className="text-center py-8">
-            <span className="text-5xl mb-4 block">👋</span>
-            <h2 className="text-black font-extrabold text-xl mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>
-              Welcome back!
-            </h2>
-            <p className="text-gray-500 text-sm mb-6">
-              You have successfully logged in to the Studio 3 platform.
-            </p>
-            <button
-              onClick={onClose}
-              className="w-full bg-black text-white py-2.5 px-4 rounded-xl text-sm font-medium hover:bg-gray-800 transition-all"
-            >
-              Done
-            </button>
-          </div>
+        {submitStatus === 'success' && loggedInUser ? (
+          <LoginWelcomeSuccess user={loggedInUser} onClose={onClose} onNavigate={onNavigate} />
         ) : view === 'forgot-email' ? (
           <div>
             <h2 className="text-black font-extrabold text-2xl mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>

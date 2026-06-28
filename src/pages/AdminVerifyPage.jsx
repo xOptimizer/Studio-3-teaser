@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { adminCheckInTicket, adminVerifyTicket } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
+import { LoadingSpinner, pageGradientStyle, ScannerSkeleton } from '../components/loading/PageLoaders';
 import './admin-scanner.css';
 
 const BRAND_ACCENT = '#B8C5D6';
-const PAGE_BG = '#F7F7F7';
 
 function StatusBadge({ result }) {
   if (!result) return null;
@@ -104,16 +104,12 @@ const AdminVerifyPage = ({ onNavigate }) => {
   };
 
   if (authLoading) {
-    return (
-      <div className="admin-scanner-page min-h-screen pt-[120px] flex items-center justify-center" style={{ background: PAGE_BG }}>
-        <p className="text-gray-700 font-medium">Loading...</p>
-      </div>
-    );
+    return <ScannerSkeleton />;
   }
 
   if (!user || user.role !== 'admin') {
     return (
-      <div className="admin-scanner-page min-h-screen pt-[120px] flex items-center justify-center px-4" style={{ background: PAGE_BG }}>
+      <div className="admin-scanner-page min-h-screen pt-[120px] flex items-center justify-center px-4" style={pageGradientStyle}>
         <div className="max-w-md w-full bg-white rounded-3xl border border-gray-200 p-6 text-center shadow-sm">
           <p className="text-gray-900 font-semibold text-lg">Admin login required</p>
           <p className="text-gray-600 text-sm mt-2">Log in as admin to verify this ticket.</p>
@@ -123,14 +119,14 @@ const AdminVerifyPage = ({ onNavigate }) => {
   }
 
   return (
-    <div className="admin-scanner-page min-h-screen pt-[120px] pb-24 px-4 sm:px-6" style={{ background: PAGE_BG }}>
+    <div className="admin-scanner-page min-h-screen pt-[120px] pb-24 px-4 sm:px-6" style={pageGradientStyle}>
       <div className="max-w-lg mx-auto">
         <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Door check-in</p>
         <h1 className="text-3xl font-extrabold text-gray-900 mt-1 mb-6">Ticket verification</h1>
 
         {verifying && (
-          <div className="bg-white rounded-3xl border border-gray-200 p-6 text-center shadow-sm">
-            <p className="text-gray-700 font-medium">Verifying ticket…</p>
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl border border-white/80 p-10 shadow-sm">
+            <LoadingSpinner label="Verifying ticket…" size="lg" />
           </div>
         )}
 

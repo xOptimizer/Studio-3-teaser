@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { CenteredPageLoader } from '../components/loading/PageLoaders';
 
 const BRAND_ACCENT = '#B8C5D6';
 const BRAND_ACCENT_SOFT = 'rgba(184, 197, 214, 0.35)';
@@ -70,11 +71,7 @@ const SetPasswordPage = ({ onNavigate }) => {
   };
 
   if (authLoading || !user?.mustChangePassword) {
-    return (
-      <div className="min-h-screen pt-[120px] px-4 flex items-center justify-center" style={{ background: '#F7F7F7' }}>
-        <p className="text-gray-500 text-sm">Loading...</p>
-      </div>
-    );
+    return <CenteredPageLoader label="Loading…" />;
   }
 
   return (

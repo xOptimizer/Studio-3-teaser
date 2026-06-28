@@ -6,6 +6,8 @@ export const STUDIO_EVENT = {
   timeLabel: '8:00 PM – 2:00 AM CDT',
   startsAtIso: '2026-07-25T20:00:00-05:00',
   poster: '/assets/Final%20Flyer.jpg',
+  ticketBanner: '/assets/Ticket%20Banner.jpg',
+  logoWithText: '/assets/Logo_With_Text.svg',
   headerLogo: '/assets/header.jpg',
   ticketPrice: 49.95,
   regularTicketPrice: 99.95,
@@ -22,6 +24,8 @@ export const STUDIO_EVENT_DISPLAY = {
   date: STUDIO_EVENT.dateLabel,
   time: STUDIO_EVENT.timeLabel,
   poster: STUDIO_EVENT.poster,
+  ticketBanner: STUDIO_EVENT.ticketBanner,
+  logoWithText: STUDIO_EVENT.logoWithText,
 };
 
 export function formatEventListDate() {
