@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { adminFetchCheckIns } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
+import {
+  AdminSubpageSkeleton,
+  pageGradientStyle,
+  TableRowsSkeleton,
+} from '../components/loading/PageLoaders';
 
 const BRAND_ACCENT = '#B8C5D6';
-const PAGE_BG = '#F7F7F7';
 
 const formatDateTime = (iso) => {
   if (!iso) return '—';
@@ -65,11 +69,7 @@ const AdminCheckInsPage = ({ onNavigate }) => {
   }, [checkIns, query]);
 
   if (authLoading) {
-    return (
-      <div className="min-h-screen pt-[120px] flex items-center justify-center" style={{ background: PAGE_BG }}>
-        <p className="text-gray-700 font-medium">Loading...</p>
-      </div>
-    );
+    return <AdminSubpageSkeleton rows={8} />;
   }
 
   if (!user || user.role !== 'admin') {
@@ -79,7 +79,7 @@ const AdminCheckInsPage = ({ onNavigate }) => {
   return (
     <div
       className="min-h-screen text-gray-900"
-      style={{ background: PAGE_BG, fontFamily: "'Inter', sans-serif", color: '#111827' }}
+      style={{ ...pageGradientStyle, fontFamily: "'Inter', sans-serif" }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 pt-[120px] pb-24">
         <button
@@ -95,7 +95,7 @@ const AdminCheckInsPage = ({ onNavigate }) => {
             <p className="text-[10px] uppercase tracking-widest text-gray-600 font-bold">Admin</p>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1">Checked-in guests</h1>
             <p className="text-gray-600 text-sm mt-1">
-              {loading
+              {loading && checkIns.length === 0
                 ? 'Loading guest list…'
                 : `${checkIns.length} guest${checkIns.length === 1 ? '' : 's'} checked in at the door`}
             </p>
@@ -144,8 +144,8 @@ const AdminCheckInsPage = ({ onNavigate }) => {
             </div>
           )}
 
-          {loading ? (
-            <p className="p-12 text-center text-gray-600 text-sm">Loading checked-in guests…</p>
+          {loading && checkIns.length === 0 ? (
+            <TableRowsSkeleton rows={8} />
           ) : filtered.length === 0 ? (
             <div className="p-12 text-center">
               <p className="text-gray-900 font-semibold">

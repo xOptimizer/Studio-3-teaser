@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { STUDIO_EVENT } from '../constants/event';
 
 function fmtBookingId(code) {
@@ -7,42 +6,33 @@ function fmtBookingId(code) {
 }
 
 function TicketCard({ ticket, qrImageUrl, perforationColor = '#F3F4F6' }) {
-  const [posterSrc, setPosterSrc] = useState(STUDIO_EVENT.poster);
   const valid = ticket.status === 'valid';
-
-  useEffect(() => {
-    setPosterSrc(STUDIO_EVENT.poster);
-  }, []);
 
   return (
     <div
       className="w-full max-w-[360px] overflow-hidden rounded-2xl bg-white shadow-xl"
       style={{ fontFamily: "'Inter', sans-serif" }}
     >
-      {/* Orange banner — matches event page CTA / flyer */}
-      <div
-        className="px-4 py-3 text-center"
-        style={{ background: STUDIO_EVENT.bannerGradient }}
-      >
+      {/* Studio 3 logo + company name */}
+      <div className="px-4 py-4 text-center bg-white border-b border-gray-100">
         <img
-          src={STUDIO_EVENT.headerLogo}
+          src={STUDIO_EVENT.logoWithText}
           alt="Studio 3"
-          className="h-7 w-auto mx-auto object-contain brightness-0 invert"
+          className="h-12 w-auto max-w-[200px] mx-auto object-contain"
           crossOrigin="anonymous"
         />
-        <p className="text-[10px] text-white/90 uppercase tracking-[0.14em] mt-1.5 font-semibold">
+        <p className="text-[10px] text-gray-500 uppercase tracking-[0.14em] mt-2 font-semibold">
           Admission Ticket
         </p>
       </div>
 
-      {/* Event flyer banner */}
-      <div className="h-[200px] bg-gray-100 overflow-hidden">
+      {/* Event ticket banner */}
+      <div className="h-[132px] bg-[#E65100] overflow-hidden">
         <img
-          src={posterSrc}
+          src={STUDIO_EVENT.ticketBanner}
           alt={STUDIO_EVENT.title}
-          className="w-full h-full object-cover object-top"
+          className="w-full h-full object-cover object-center"
           crossOrigin="anonymous"
-          onError={() => setPosterSrc('/assets/Logo_Without_Text.svg')}
         />
       </div>
 

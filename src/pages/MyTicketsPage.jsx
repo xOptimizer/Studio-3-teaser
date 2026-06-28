@@ -5,9 +5,14 @@ import { useAuth } from '../context/AuthContext';
 import TicketCard from '../components/TicketCard';
 import { captureElementAsPng } from '../utils/ticketDownload';
 import { STUDIO_EVENT } from '../constants/event';
+import {
+  PAGE_BG,
+  pageGradientStyle,
+  TicketCardSkeleton,
+  TicketsListSkeleton,
+} from '../components/loading/PageLoaders';
 
 const BRAND_ACCENT = '#B8C5D6';
-const PAGE_BG = '#F7F7F7';
 
 const glassCardClass =
   'bg-white/60 border border-white rounded-3xl backdrop-blur shadow-sm';
@@ -206,9 +211,7 @@ function TicketViewModal({ ticket, onClose }) {
             </button>
           </div>
 
-          {loading && (
-            <p className="text-left text-gray-500 text-sm py-12">Loading ticket...</p>
-          )}
+          {loading && <TicketCardSkeleton />}
           {error && (
             <p className="text-left text-red-600 text-sm py-4">{error}</p>
           )}
@@ -258,13 +261,7 @@ const MyTicketsPage = ({ onNavigate }) => {
   }, []);
 
   if (authLoading || loading) {
-    return (
-      <div className="min-h-screen" style={{ background: PAGE_BG }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 pt-[120px] pb-24">
-          <p className="text-gray-500">Loading tickets...</p>
-        </div>
-      </div>
-    );
+    return <TicketsListSkeleton />;
   }
 
   if (!user) {
@@ -272,7 +269,7 @@ const MyTicketsPage = ({ onNavigate }) => {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: PAGE_BG }}>
+    <div className="min-h-screen" style={{ ...pageGradientStyle, fontFamily: "'Inter', sans-serif" }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 pt-[120px] pb-24">
         <h1 className="text-2xl font-extrabold text-black mb-1">My Tickets</h1>
         <p className="text-gray-500 text-sm mb-8">Signed in as {user?.email}</p>
@@ -294,7 +291,7 @@ const MyTicketsPage = ({ onNavigate }) => {
               <div key={ticket.id} className={`${glassCardClass} p-5 sm:p-6`}>
                 <div className="flex gap-4">
                   <img
-                    src={STUDIO_EVENT.poster}
+                    src={STUDIO_EVENT.ticketBanner}
                     alt=""
                     className="w-14 h-14 rounded-xl object-cover flex-shrink-0 bg-gray-100"
                   />

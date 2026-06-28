@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import {
   adminFetchOrders,
@@ -9,6 +9,8 @@ import {
 import { useAuth } from '../context/AuthContext';
 import TicketCard from '../components/TicketCard';
 import AdminFreePassPanel from '../components/AdminFreePassPanel';
+import { DashboardSkeleton, TicketCardSkeleton } from '../components/loading/PageLoaders';
+import { STUDIO_EVENT } from '../constants/event';
 
 const BRAND_ACCENT = '#B8C5D6';
 const PAGE_BG = '#F7F7F7';
@@ -17,7 +19,7 @@ const glassCardClass =
   'bg-white/60 border border-white rounded-3xl backdrop-blur shadow-sm';
 
 const actionBtnClass =
-  'w-9 h-9 rounded-full flex items-center justify-center transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed';
+  'w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105 hover:shadow-sm disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100';
 
 function EyeIcon({ className = 'w-4 h-4' }) {
   return (
@@ -315,7 +317,7 @@ function AdminTicketViewModal({ ticket, order, onClose }) {
         </p>
       </div>
 
-      {loading && <p className="text-gray-600 text-sm py-12">Loading ticket...</p>}
+      {loading && <TicketCardSkeleton />}
       {error && <p className="text-red-600 text-sm py-4">{error}</p>}
       {!loading && !error && (
         <TicketCard ticket={cardTicket} qrImageUrl={qrImageUrl} perforationColor={PAGE_BG} />
@@ -426,29 +428,88 @@ function EarlyBirdStatsCard({ stats }) {
   );
 }
 
-function StatCard({ label, value, sub, onClick }) {
-  const className = `${glassCardClass} p-4 sm:p-5 text-gray-900 text-left w-full ${
-    onClick ? 'cursor-pointer transition-all hover:shadow-md hover:border-gray-200 active:scale-[0.99]' : ''
-  }`;
+const isFreePassOrder = (order) =>
+  isPaidOrder(order.status) && (order.amountCents || 0) === 0 && !order.finixTransferId;
+
+const STAT_ICONS = {
+  orders: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+    </svg>
+  ),
+  paid: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
+  tickets: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+    </svg>
+  ),
+  checkin: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M12 4v1m6 11h2m-18 0h2m15-6.5V9a3 3 0 00-3-3h-2.5M6 8.5V9a3 3 0 003 3h2.5M9 12a3 3 0 006 0" />
+    </svg>
+  ),
+  revenue: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  ),
+  gift: (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.75" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+    </svg>
+  ),
+};
+
+function StatCard({ label, value, sub, icon, accent = BRAND_ACCENT, onClick }) {
+  const baseClass =
+    'group relative overflow-hidden rounded-2xl border border-white/80 bg-white/70 backdrop-blur-sm p-4 sm:p-5 text-left w-full transition-all duration-300 ease-out';
+  const interactiveClass = onClick
+    ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/5 hover:border-gray-200/80 active:translate-y-0'
+    : 'hover:-translate-y-0.5 hover:shadow-md hover:shadow-black/5';
 
   const content = (
     <>
-      <p className="text-[10px] uppercase tracking-wider text-gray-600 font-bold">{label}</p>
-      <p className="text-xl sm:text-2xl font-extrabold text-gray-900 mt-1 tabular-nums">{value}</p>
-      {sub && <p className="text-xs text-gray-600 mt-1">{sub}</p>}
-      {onClick && <p className="text-[10px] text-gray-500 mt-2 font-semibold">Tap to view →</p>}
+      <div
+        className="absolute -right-4 -top-4 w-24 h-24 rounded-full opacity-[0.12] transition-transform duration-300 group-hover:scale-110"
+        style={{ background: `linear-gradient(135deg, ${accent} 0%, transparent 70%)` }}
+        aria-hidden
+      />
+      <div className="relative flex items-start justify-between gap-3">
+        <div
+          className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105"
+          style={{ backgroundColor: `${accent}33`, color: '#374151' }}
+        >
+          {icon}
+        </div>
+      </div>
+      <div className="relative mt-4">
+        <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">{label}</p>
+        <p className="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1 tabular-nums tracking-tight">
+          {value}
+        </p>
+        {sub && <p className="text-xs text-gray-500 mt-1.5">{sub}</p>}
+        {onClick && (
+          <p className="text-[10px] text-gray-400 mt-2 font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            View details →
+          </p>
+        )}
+      </div>
     </>
   );
 
   if (onClick) {
     return (
-      <button type="button" onClick={onClick} className={className}>
+      <button type="button" onClick={onClick} className={`${baseClass} ${interactiveClass}`}>
         {content}
       </button>
     );
   }
 
-  return <div className={className}>{content}</div>;
+  return <div className={`${baseClass} ${interactiveClass}`}>{content}</div>;
 }
 
 function StatusBadge({ status }) {
@@ -521,7 +582,7 @@ function OrderCard({ order, onSelect, onView, onResend, resendingId }) {
           onSelect(order);
         }
       }}
-      className={`${glassCardClass} p-4 sm:p-5 space-y-3 text-gray-900 cursor-pointer hover:bg-white/70 transition-colors`}
+      className={`${glassCardClass} p-4 sm:p-5 space-y-3 text-gray-900 cursor-pointer transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:bg-white/80`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
@@ -577,6 +638,15 @@ const AdminDashboard = ({ onNavigate }) => {
   const [viewingOrder, setViewingOrder] = useState(null);
   const [resendingId, setResendingId] = useState(null);
   const [ticketStats, setTicketStats] = useState(null);
+  const [freePassExpanded, setFreePassExpanded] = useState(false);
+  const freePassPanelRef = useRef(null);
+
+  const openFreePassPanel = useCallback(() => {
+    setFreePassExpanded(true);
+    requestAnimationFrame(() => {
+      freePassPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, []);
 
   const loadDashboard = useCallback(() => {
     return Promise.all([
@@ -607,6 +677,9 @@ const AdminDashboard = ({ onNavigate }) => {
       paidOrders: paidOrders.length,
       revenueCents,
       ticketsSold,
+      freePassesGiven: paidOrders
+        .filter(isFreePassOrder)
+        .reduce((sum, o) => sum + (o.quantity || 0), 0),
       checkedInCount: orders.reduce(
         (sum, o) => sum + (o.tickets?.filter((t) => t.status === 'used').length || 0),
         0
@@ -651,13 +724,7 @@ const AdminDashboard = ({ onNavigate }) => {
   }, []);
 
   if (authLoading || loading) {
-    return (
-      <div className="min-h-screen text-gray-900" style={{ background: PAGE_BG, color: '#111827' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 pt-[120px] pb-24">
-          <p className="text-gray-600 text-sm">Loading admin dashboard...</p>
-        </div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   if (!user || user.role !== 'admin') {
@@ -667,57 +734,119 @@ const AdminDashboard = ({ onNavigate }) => {
   return (
     <div
       className="min-h-screen text-gray-900"
-      style={{ background: PAGE_BG, fontFamily: "'Inter', sans-serif", color: '#111827' }}
+      style={{
+        background: `linear-gradient(180deg, ${PAGE_BG} 0%, #EEF1F5 100%)`,
+        fontFamily: "'Inter', sans-serif",
+        color: '#111827',
+      }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 pt-[120px] pb-24">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-6 sm:mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5 mb-8">
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-gray-600 font-bold">Admin</p>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mt-1">Dashboard</h1>
-            <p className="text-gray-600 text-sm mt-1">Orders, revenue, and door check-in</p>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold">Studio 3 Admin</p>
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mt-1 tracking-tight">Dashboard</h1>
+            <p className="text-gray-500 text-sm mt-2 max-w-md">
+              Monitor orders, issue complimentary passes, and manage door check-in — all in one place.
+            </p>
           </div>
-          <button
-            type="button"
-            onClick={() => onNavigate('/admin/scanner')}
-            className="self-start lg:self-auto px-5 py-3 rounded-full text-black text-sm font-bold transition-all hover:opacity-90"
-            style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              backgroundColor: BRAND_ACCENT,
-              boxShadow: '0 2px 8px 0 rgba(0, 0, 0, 0.1)',
-            }}
-          >
-            Open QR Scanner
-          </button>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 self-start lg:self-auto">
+            <button
+              type="button"
+              onClick={openFreePassPanel}
+              className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-white text-sm font-bold transition-all duration-200 hover:-translate-y-0.5 hover:opacity-95 active:translate-y-0"
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                background: STUDIO_EVENT.bannerGradient,
+                boxShadow: '0 8px 24px rgba(230, 81, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.12)',
+              }}
+            >
+              <svg className="w-4 h-4 shrink-0 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+              </svg>
+              Issue free passes
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('/admin/scanner')}
+              className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full text-gray-900 text-sm font-bold transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0"
+              style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                backgroundColor: BRAND_ACCENT,
+                color: '#111827',
+                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.08)',
+              }}
+            >
+              <svg
+                className="w-4 h-4 shrink-0 text-gray-900"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M3.75 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 013.75 9.375v-4.5zM3.75 14.625c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5a1.125 1.125 0 01-1.125-1.125v-4.5zM13.5 4.875c0-.621.504-1.125 1.125-1.125h4.5c.621 0 1.125.504 1.125 1.125v4.5c0 .621-.504 1.125-1.125 1.125h-4.5A1.125 1.125 0 0113.5 9.375v-4.5z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M17.25 17.25h1.875v1.875M17.25 21h1.875M21 17.25v1.875M21 21h1.875M21 21v1.875M21 17.25h1.875"
+                />
+              </svg>
+              Open QR Scanner
+            </button>
+          </div>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 rounded-2xl bg-red-50 text-red-600 text-sm border border-red-100">
+          <div className="mb-5 p-4 rounded-2xl bg-red-50/90 text-red-700 text-sm border border-red-100/80 backdrop-blur-sm animate-fadeIn">
             {error}
           </div>
         )}
 
         {success && (
-          <div className="mb-4 p-3 rounded-2xl bg-emerald-50 text-emerald-700 text-sm border border-emerald-100">
+          <div className="mb-5 p-4 rounded-2xl bg-emerald-50/90 text-emerald-800 text-sm border border-emerald-100/80 backdrop-blur-sm animate-fadeIn">
             {success}
           </div>
         )}
 
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 sm:mb-8">
-          <StatCard label="Total orders" value={stats.totalOrders} />
-          <StatCard label="Paid orders" value={stats.paidOrders} />
-          <StatCard label="Tickets sold" value={stats.ticketsSold} />
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4 mb-8">
+          <StatCard label="Total orders" value={stats.totalOrders} icon={STAT_ICONS.orders} accent="#94A3B8" />
+          <StatCard label="Paid orders" value={stats.paidOrders} icon={STAT_ICONS.paid} accent="#34D399" />
+          <StatCard label="Tickets sold" value={stats.ticketsSold} icon={STAT_ICONS.tickets} accent={BRAND_ACCENT} />
           <StatCard
             label="Checked in"
             value={stats.checkedInCount}
             sub="At the door"
+            icon={STAT_ICONS.checkin}
+            accent="#60A5FA"
             onClick={() => onNavigate('/admin/check-ins')}
           />
-          <StatCard label="Revenue" value={formatMoney(stats.revenueCents)} sub="Paid orders only" />
+          <StatCard
+            label="Revenue"
+            value={formatMoney(stats.revenueCents)}
+            sub="Paid orders"
+            icon={STAT_ICONS.revenue}
+            accent="#FBBF24"
+          />
+          <StatCard
+            label="Free passes"
+            value={stats.freePassesGiven}
+            sub="Complimentary"
+            icon={STAT_ICONS.gift}
+            accent="#C084FC"
+          />
         </div>
 
         <EarlyBirdStatsCard stats={ticketStats} />
 
         <AdminFreePassPanel
+          panelRef={freePassPanelRef}
+          expanded={freePassExpanded}
+          onExpandedChange={setFreePassExpanded}
           onIssued={() => {
             setError(null);
             loadDashboard();
@@ -729,30 +858,41 @@ const AdminDashboard = ({ onNavigate }) => {
           }}
         />
 
-        <div className={`${glassCardClass} overflow-hidden text-gray-900`}>
-          <div className="p-4 sm:p-6 border-b border-gray-100/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="rounded-3xl border border-white/80 bg-white/60 backdrop-blur-sm shadow-sm overflow-hidden text-gray-900">
+          <div className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h2 className="font-extrabold text-gray-900 text-base sm:text-lg">Recent orders</h2>
-              <p className="text-xs text-gray-600 mt-0.5">
-                {filteredOrders.length} of {orders.length} shown
+              <h2 className="font-extrabold text-gray-900 text-lg sm:text-xl tracking-tight">Recent orders</h2>
+              <p className="text-xs text-gray-500 mt-1">
+                {filteredOrders.length} of {orders.length} orders
               </p>
             </div>
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search name, email, event..."
-              className="w-full sm:w-64 px-3 py-2.5 rounded-xl text-sm text-gray-900 placeholder:text-gray-500 border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-black/10"
-            />
+            <div className="relative w-full sm:w-72">
+              <svg
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search name, email, event..."
+                className="w-full pl-10 pr-3 py-2.5 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 border border-gray-200/80 bg-white/90 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-300 transition-all"
+              />
+            </div>
           </div>
 
           {filteredOrders.length === 0 ? (
-            <p className="p-8 sm:p-12 text-center text-gray-600 text-sm">
+            <p className="px-6 pb-12 pt-4 text-center text-gray-500 text-sm">
               {orders.length === 0 ? 'No orders yet.' : 'No orders match your search.'}
             </p>
           ) : (
             <>
-              <div className="lg:hidden p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="lg:hidden px-4 sm:px-6 pb-6 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {filteredOrders.map((order) => (
                   <OrderCard
                     key={order.id}
@@ -765,63 +905,72 @@ const AdminDashboard = ({ onNavigate }) => {
                 ))}
               </div>
 
-              <div className="hidden lg:block overflow-x-auto bg-white/80">
-                <table className="w-full text-sm text-gray-900">
-                  <thead>
-                    <tr className="text-left text-[10px] uppercase tracking-wider text-gray-600 border-b border-gray-200 bg-white/90">
-                      <th className="px-6 py-4 font-bold text-gray-700">Date</th>
-                      <th className="px-6 py-4 font-bold text-gray-700">Buyer</th>
-                      <th className="px-6 py-4 font-bold text-gray-700">Event</th>
-                      <th className="px-6 py-4 font-bold text-center text-gray-700">Qty</th>
-                      <th className="px-6 py-4 font-bold text-right text-gray-700">Amount</th>
-                      <th className="px-6 py-4 font-bold text-gray-700">Status</th>
-                      <th className="px-6 py-4 font-bold text-gray-700">Tickets</th>
-                    </tr>
-                  </thead>
-                  <tbody className="text-gray-900">
-                    {filteredOrders.map((order) => {
-                      const canAct = isPaidOrder(order.status) && (order.tickets?.length || 0) > 0;
-                      return (
-                        <tr
-                          key={order.id}
-                          onClick={() => setDetailOrder(order)}
-                          className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors cursor-pointer"
-                        >
-                          <td className="px-6 py-4 text-gray-700 whitespace-nowrap">
-                            {formatDateTime(order.createdAt)}
-                          </td>
-                          <td className="px-6 py-4 min-w-[180px]">
-                            <div className="font-semibold text-gray-900">{order.user?.name || 'Guest'}</div>
-                            <div className="text-gray-600 text-xs truncate max-w-[220px]">
-                              {order.buyerEmail}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 text-gray-900 font-medium max-w-[200px]">
-                            <span className="line-clamp-2">{order.event?.title || '—'}</span>
-                          </td>
-                          <td className="px-6 py-4 text-center font-semibold text-gray-900 tabular-nums">
-                            {order.quantity ?? '—'}
-                          </td>
-                          <td className="px-6 py-4 text-right font-extrabold text-gray-900 tabular-nums">
-                            {formatMoney(order.amountCents)}
-                          </td>
-                          <td className="px-6 py-4">
-                            <StatusBadge status={order.status} />
-                          </td>
-                          <td className="px-6 py-4 min-w-[160px]">
-                            <OrderTicketActions
-                              order={order}
-                              onView={setViewingOrder}
-                              onResend={handleResend}
-                              resending={resendingId === order.id}
-                              canAct={canAct}
-                            />
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+              <div className="hidden lg:block px-4 sm:px-6 pb-6">
+                <div className="rounded-2xl overflow-hidden border border-gray-100/80">
+                  <table className="w-full text-sm text-gray-900 border-collapse">
+                    <thead>
+                      <tr className="text-left text-[10px] uppercase tracking-widest text-gray-500 bg-[#F3F4F6]/80">
+                        <th className="px-5 py-3.5 font-bold">Date</th>
+                        <th className="px-5 py-3.5 font-bold">Buyer</th>
+                        <th className="px-5 py-3.5 font-bold">Event</th>
+                        <th className="px-5 py-3.5 font-bold text-center">Qty</th>
+                        <th className="px-5 py-3.5 font-bold text-right">Amount</th>
+                        <th className="px-5 py-3.5 font-bold">Status</th>
+                        <th className="px-5 py-3.5 font-bold">Tickets</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredOrders.map((order, index) => {
+                        const canAct = isPaidOrder(order.status) && (order.tickets?.length || 0) > 0;
+                        const isEven = index % 2 === 0;
+                        return (
+                          <tr
+                            key={order.id}
+                            onClick={() => setDetailOrder(order)}
+                            className={`transition-colors duration-150 cursor-pointer ${
+                              isEven ? 'bg-white/90' : 'bg-[#F8F9FB]/90'
+                            } hover:bg-[#EEF2F7]/90`}
+                          >
+                            <td className="px-5 py-4 text-gray-600 whitespace-nowrap text-xs">
+                              {formatDateTime(order.createdAt)}
+                            </td>
+                            <td className="px-5 py-4 min-w-[180px]">
+                              <div className="font-semibold text-gray-900">{order.user?.name || 'Guest'}</div>
+                              <div className="text-gray-500 text-xs truncate max-w-[220px] mt-0.5">
+                                {order.buyerEmail}
+                              </div>
+                            </td>
+                            <td className="px-5 py-4 text-gray-800 font-medium max-w-[200px]">
+                              <span className="line-clamp-2">{order.event?.title || '—'}</span>
+                            </td>
+                            <td className="px-5 py-4 text-center font-semibold text-gray-900 tabular-nums">
+                              {order.quantity ?? '—'}
+                            </td>
+                            <td className="px-5 py-4 text-right font-bold text-gray-900 tabular-nums">
+                              {isFreePassOrder(order) ? (
+                                <span className="text-violet-600 text-xs font-bold uppercase tracking-wide">Free</span>
+                              ) : (
+                                formatMoney(order.amountCents)
+                              )}
+                            </td>
+                            <td className="px-5 py-4">
+                              <StatusBadge status={order.status} />
+                            </td>
+                            <td className="px-5 py-4 min-w-[120px]">
+                              <OrderTicketActions
+                                order={order}
+                                onView={setViewingOrder}
+                                onResend={handleResend}
+                                resending={resendingId === order.id}
+                                canAct={canAct}
+                              />
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </>
           )}

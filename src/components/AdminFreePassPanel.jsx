@@ -184,12 +184,25 @@ function EventPicker({ events, value, onChange, loading }) {
   );
 }
 
-function AdminFreePassPanel({ onIssued, onError, onSuccess }) {  const [events, setEvents] = useState([]);
+function AdminFreePassPanel({ onIssued, onError, onSuccess, expanded: expandedProp, onExpandedChange, panelRef }) {
+  const [events, setEvents] = useState([]);
   const [eventsLoading, setEventsLoading] = useState(true);
   const [eventId, setEventId] = useState('');
   const [guests, setGuests] = useState([emptyGuest()]);
   const [submitting, setSubmitting] = useState(false);
-  const [expanded, setExpanded] = useState(false);
+  const [expandedInternal, setExpandedInternal] = useState(false);
+
+  const isControlled = expandedProp !== undefined;
+  const expanded = isControlled ? expandedProp : expandedInternal;
+
+  const setExpanded = (value) => {
+    const next = typeof value === 'function' ? value(expanded) : value;
+    if (isControlled) {
+      onExpandedChange?.(next);
+    } else {
+      setExpandedInternal(next);
+    }
+  };
 
   useEffect(() => {
     adminFetchEvents()
@@ -258,7 +271,11 @@ function AdminFreePassPanel({ onIssued, onError, onSuccess }) {  const [events, 
 
   const selectedEvent = events.find((ev) => ev.id === eventId);
 
-  return (    <div className={`${glassCardClass} text-gray-900 mb-6 sm:mb-8 overflow-hidden`}>
+  return (
+    <div
+      ref={panelRef}
+      className={`${glassCardClass} text-gray-900 mb-6 sm:mb-8 overflow-hidden scroll-mt-32`}
+    >
       <button
         type="button"
         onClick={() => setExpanded((v) => !v)}

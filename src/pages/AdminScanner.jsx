@@ -2,10 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 import QrCameraScanner from '../components/QrCameraScanner';
 import { adminCheckInTicket, adminVerifyTicket } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
+import { pageGradientStyle, ScannerSkeleton } from '../components/loading/PageLoaders';
 import './admin-scanner.css';
 
 const BRAND_ACCENT = '#B8C5D6';
-const PAGE_BG = '#F7F7F7';
 
 function extractQrToken(value) {
   if (!value) return null;
@@ -159,16 +159,12 @@ const AdminScanner = ({ onNavigate }) => {
   };
 
   if (authLoading) {
-    return (
-      <div className="admin-scanner-page min-h-screen pt-[120px] flex items-center justify-center" style={{ background: PAGE_BG }}>
-        <p className="text-gray-700 font-medium">Loading...</p>
-      </div>
-    );
+    return <ScannerSkeleton />;
   }
 
   if (!user || user.role !== 'admin') {
     return (
-      <div className="admin-scanner-page min-h-screen pt-[120px] flex items-center justify-center px-4" style={{ background: PAGE_BG }}>
+      <div className="admin-scanner-page min-h-screen pt-[120px] flex items-center justify-center px-4" style={pageGradientStyle}>
         <div className="max-w-md w-full bg-white rounded-3xl border border-gray-200 p-6 text-center shadow-sm">
           <p className="text-gray-900 font-semibold text-lg">Admin login required</p>
           <p className="text-gray-600 text-sm mt-2">
@@ -180,7 +176,7 @@ const AdminScanner = ({ onNavigate }) => {
   }
 
   return (
-    <div className="admin-scanner-page min-h-screen pt-[120px] pb-24 px-4 sm:px-6" style={{ background: PAGE_BG }}>
+    <div className="admin-scanner-page min-h-screen pt-[120px] pb-24 px-4 sm:px-6" style={pageGradientStyle}>
       <div className="max-w-2xl mx-auto">
         <button
           type="button"
