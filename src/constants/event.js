@@ -1,3 +1,6 @@
+/** Hero / studio tagline — used on home event promo */
+export const STUDIO_HOME_STATEMENT = 'A creative home, not just a workspace.';
+
 export const STUDIO_EVENT = {
   title: 'Inside the Mind of an Artist',
   venue: 'Dec on Dragon',
@@ -37,3 +40,11 @@ export function formatEventListDate() {
 export function getEventVenueLine() {
   return `${STUDIO_EVENT.venue}, ${STUDIO_EVENT.address}`;
 }
+
+const mapsQuery = encodeURIComponent(STUDIO_EVENT.address);
+
+export const EVENT_MAPS = {
+  embedUrl: `https://maps.google.com/maps?q=${mapsQuery}&z=16&output=embed`,
+  directionsUrl: `https://www.google.com/maps/dir/?api=1&destination=${mapsQuery}`,
+  openUrl: `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`,
+};
