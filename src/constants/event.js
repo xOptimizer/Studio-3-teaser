@@ -5,13 +5,15 @@ export const STUDIO_EVENT = {
   dateLabel: 'Saturday, July 25, 2026',
   timeLabel: '8:00 PM – 2:00 AM CDT',
   startsAtIso: '2026-07-25T20:00:00-05:00',
-  poster: '/assets/Final%20Flyer.jpg',
+  poster: '/assets/flyer.jpg',
   ticketBanner: '/assets/Ticket%20Banner.jpg',
   logoWithText: '/assets/Logo_With_Text.svg',
-  headerLogo: '/assets/header.jpg',
+  headerLogo: '/assets/S3_Horizontal.png',
   ticketPrice: 49.95,
   regularTicketPrice: 99.95,
   earlyBirdLimit: 55,
+  /** Marketing copy on the event page only — actual early bird capacity stays at earlyBirdLimit */
+  earlyBirdLimitDisplay: 50,
   bannerGradient:
     'linear-gradient(135deg, #FFD54F 0%, #FF9800 32%, #FF6D00 68%, #E65100 100%)',
 };

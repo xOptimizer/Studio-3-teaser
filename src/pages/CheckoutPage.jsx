@@ -10,6 +10,8 @@ import {
   glassCardClass,
 } from '../components/checkout/shared';
 import WalletPayments from '../components/checkout/WalletPayments';
+import { AccountMarketingOptIns, CheckoutTransactionalNotice } from '../components/checkout/CheckoutOptInCopy';
+import PaymentProcessingOverlay from '../components/checkout/PaymentProcessingOverlay';
 import { calculateTieredOrderPricing, formatCents, formatRate, formatCentsAsDollars } from '../lib/pricing';
 import { STUDIO_EVENT } from '../constants/event';
 
@@ -73,6 +75,7 @@ const CheckoutPage = ({ onNavigate }) => {
   const [checkoutStep, setCheckoutStep] = useState(1);
   const [ticketQuantity, setTicketQuantity] = useState(1);
   const [buyerInfo, setBuyerInfo] = useState({ name: '', email: '', confirmEmail: '', phone: '' });
+  const [marketingOptIns, setMarketingOptIns] = useState({ email: false, sms: false });
   const [showEmail, setShowEmail] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkoutError, setCheckoutError] = useState('');
@@ -225,13 +228,19 @@ const CheckoutPage = ({ onNavigate }) => {
 
   const btnCompact = `${checkoutButtonClass} !py-3`;
   const btnOutline =
-    'flex-1 py-3 px-5 rounded-full text-black font-bold text-sm border border-gray-300 bg-white hover:bg-gray-50 transition-all';
+    'flex-1 py-3 px-5 rounded-full text-black font-bold text-sm border border-gray-300 bg-white hover:bg-gray-50 transition-all disabled:opacity-50 disabled:pointer-events-none';
+
+  const isProcessingPayment = isSubmitting && checkoutStep === 3;
 
   return (
     <div
       className="relative w-full min-h-screen"
       style={{ background: '#F7F7F7', fontFamily: "'Inter', sans-serif" }}
     >
+      <PaymentProcessingOverlay
+        active={isProcessingPayment}
+        amountLabel={formatCents(checkoutAmountCents)}
+      />
       <div
         className="absolute top-0 right-0 w-[30vw] h-[30vw] rounded-full blur-[100px] pointer-events-none opacity-10"
         style={{
@@ -244,7 +253,8 @@ const CheckoutPage = ({ onNavigate }) => {
           <button
             type="button"
             onClick={() => onNavigate(checkoutStep === 'success' ? '/tickets' : '/event')}
-            className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-gray-500 hover:text-black transition-colors"
+            disabled={isProcessingPayment}
+            className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-gray-500 hover:text-black transition-colors disabled:opacity-40 disabled:pointer-events-none"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
@@ -381,17 +391,25 @@ const CheckoutPage = ({ onNavigate }) => {
                         />
                       </div>
                     </div>
+
+                    <div className="sm:col-span-2">
+                      <AccountMarketingOptIns
+                      emailOptIn={marketingOptIns.email}
+                      smsOptIn={marketingOptIns.sms}
+                      onEmailOptInChange={(checked) =>
+                        setMarketingOptIns((prev) => ({ ...prev, email: checked }))
+                      }
+                      onSmsOptInChange={(checked) =>
+                        setMarketingOptIns((prev) => ({ ...prev, sms: checked }))
+                      }
+                      onNavigate={onNavigate}
+                      />
+                    </div>
                   </div>
                 )}
 
                 {checkoutStep === 2 && (
                   <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
-                    {orderPricing.currentTier === 'early_bird' && orderPricing.earlyBirdRemaining > 0 && (
-                      <p className="text-xs text-amber-800 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2 mb-3">
-                        Early bird pricing — {orderPricing.earlyBirdRemaining} of {orderPricing.earlyBirdLimit} left at{' '}
-                        {formatCents(orderPricing.earlyBirdPriceCents)}
-                      </p>
-                    )}
                     {orderPricing.currentTier === 'regular' && (
                       <p className="text-xs text-gray-700 bg-gray-100 border border-gray-200 rounded-xl px-3 py-2 mb-3">
                         Early bird sold out. Tickets are {formatCents(orderPricing.regularPriceCents)} each.
@@ -448,12 +466,12 @@ const CheckoutPage = ({ onNavigate }) => {
                 )}
                 {checkoutStep === 2 && (
                   <>
-                    <button type="button" onClick={() => { setCheckoutError(''); setCheckoutStep(1); }} className={btnOutline}>Back</button>
+                    <button type="button" onClick={() => { setCheckoutError(''); setCheckoutStep(1); }} disabled={isProcessingPayment} className={btnOutline}>Back</button>
                     <button type="button" onClick={() => { setCheckoutError(''); setCheckoutStep(3); }} className={`flex-1 ${btnCompact}`} style={checkoutButtonStyle}>Checkout</button>
                   </>
                 )}
                 {checkoutStep === 3 && (
-                  <button type="button" onClick={() => { setCheckoutError(''); setCheckoutStep(2); }} disabled={isSubmitting} className={`w-full ${btnOutline} disabled:opacity-50`}>Back</button>
+                  <button type="button" onClick={() => { setCheckoutError(''); setCheckoutStep(2); }} disabled={isProcessingPayment} className={`w-full ${btnOutline}`}>Back</button>
                 )}
               </div>
             </div>
@@ -461,13 +479,14 @@ const CheckoutPage = ({ onNavigate }) => {
             {/* Side column — poster or payment */}
             <div className={`w-full ${checkoutStep === 3 ? 'lg:col-span-6' : 'lg:col-span-5'} lg:sticky lg:top-[120px]`}>
               {checkoutStep === 3 ? (
-                <div className={`${glassCardClass} p-4 sm:p-6 lg:p-8`}>
+                <div className={`${glassCardClass} p-4 sm:p-6 lg:p-8 ${isProcessingPayment ? 'pointer-events-none opacity-60' : ''}`}>
                   <div className="mb-4">
                     <h2 className="text-black font-extrabold text-lg sm:text-xl">Payment</h2>
                     <p className="text-gray-500 text-xs sm:text-sm mt-1">
                       Choose Apple Pay, Google Pay, or enter your card below.
                     </p>
                   </div>
+                  <CheckoutTransactionalNotice onNavigate={onNavigate} />
                   <WalletPayments
                     amountCents={checkoutAmountCents}
                     buyerName={buyerInfo.name}
@@ -479,9 +498,6 @@ const CheckoutPage = ({ onNavigate }) => {
                     <div className="p-2.5 rounded-xl bg-red-50 text-red-600 text-xs mt-4">{checkoutError}</div>
                   )}
                   <FinixPaymentForm onPaymentSubmit={handleFinixSubmit} onConfigError={handleFinixConfigError} />
-                  {isSubmitting && (
-                    <p className="text-center text-xs sm:text-sm text-gray-500 mt-4">Processing payment...</p>
-                  )}
                 </div>
               ) : (
                 <div className="rounded-3xl overflow-hidden shadow-lg border border-white border-opacity-40">

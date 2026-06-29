@@ -3,13 +3,17 @@ const PAGE_BG = '#F7F7F7';
 const glassCardClass =
   'bg-white/60 border border-white rounded-3xl backdrop-blur shadow-sm';
 
-function LegalPageLayout({ title, subtitle, children, onNavigate }) {
+function LegalPageLayout({ title, subtitle, children, onNavigate, fullWidth = false }) {
   return (
     <div
       className="min-h-screen text-gray-900"
       style={{ background: PAGE_BG, fontFamily: "'Inter', sans-serif", color: '#111827' }}
     >
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 pt-[120px] pb-24">
+      <div
+        className={`mx-auto px-4 sm:px-6 md:px-8 lg:px-12 pt-[120px] pb-24 ${
+          fullWidth ? 'max-w-7xl w-full' : 'max-w-3xl'
+        }`}
+      >
         <button
           type="button"
           onClick={() => onNavigate && onNavigate('/')}

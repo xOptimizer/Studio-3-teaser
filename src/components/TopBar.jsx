@@ -125,9 +125,9 @@ const TopBar = ({ onNavigate, currentPath }) => {
           aria-label="Studio 3 home"
         >
           <img
-            src="/assets/header.jpg"
+            src="/assets/S3_Horizontal.png"
             alt="Studio 3"
-            className="h-8 sm:h-9 md:h-10 w-auto object-contain"
+            className="h-7 sm:h-8 md:h-9 w-auto object-contain"
           />
         </button>
 

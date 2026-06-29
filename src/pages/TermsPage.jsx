@@ -4,8 +4,9 @@ import TermsContent from '../components/legal/TermsContent';
 const TermsPage = ({ onNavigate }) => (
   <LegalPageLayout
     title="Terms of Service"
-    subtitle="Last updated: January 18, 2026"
+    subtitle="Third Place Studios LLC, d/b/a Studio 3 · Effective: July 2026"
     onNavigate={onNavigate}
+    fullWidth
   >
     <TermsContent />
   </LegalPageLayout>

@@ -1,5 +1,5 @@
 /** Keep in sync with studio-3-ticketing-api/src/lib/pricing.js */
-export const SALES_TAX_RATE = 0.0824;
+export const SALES_TAX_RATE = 0.0825;
 export const SERVICE_FEE_RATE = 0.05;
 
 export function calculateTieredTicketSubtotal(input) {

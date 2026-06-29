@@ -9,7 +9,7 @@ const BRAND_ACCENT_MUTED = '#7A8FA8';
 
 const TICKET_PRICE = STUDIO_EVENT.ticketPrice;
 
-/** Matches the Final Flyer poster orange tones */
+/** Matches the event flyer orange tones */
 const EVENT_BANNER_GRADIENT = STUDIO_EVENT.bannerGradient;
 
 const getTimeRemaining = (targetDate) => {
@@ -358,7 +358,7 @@ const EventPage = ({ onNavigate }) => {
                 Come to see the work. Stay for the night.
               </p>
               <p className="text-gray-600 text-sm sm:text-base leading-relaxed font-semibold text-black">
-                Early bird ${STUDIO_EVENT.ticketPrice.toFixed(2)} for the first {STUDIO_EVENT.earlyBirdLimit} tickets · then ${STUDIO_EVENT.regularTicketPrice.toFixed(2)}.
+                Early bird ${STUDIO_EVENT.ticketPrice.toFixed(2)} for the first {STUDIO_EVENT.earlyBirdLimitDisplay} tickets · then ${STUDIO_EVENT.regularTicketPrice.toFixed(2)}.
               </p>
             </div>
 
@@ -482,11 +482,6 @@ const EventPage = ({ onNavigate }) => {
                     background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 40%)'
                   }}
                 />
-                
-                {/* Floating Badge */}
-                <div className="absolute top-4 right-4 bg-black bg-opacity-70 backdrop-blur text-white text-[9pt] font-extrabold uppercase px-3 py-1.5 rounded-full tracking-wider shadow">
-                  ${STUDIO_EVENT.ticketPrice.toFixed(2)} · first {STUDIO_EVENT.earlyBirdLimit}
-                </div>
               </div>
 
               {/* Social Medias / Footer links inside the poster just like the posh mockup */}
