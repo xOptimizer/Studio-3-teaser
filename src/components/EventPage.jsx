@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import SocialLinks from './SocialLinks';
 import VenueMap from './VenueMap';
+import SupportEmailLink from './SupportEmailLink';
 import { STUDIO_EVENT } from '../constants/event';
+import { fetchCheckoutConfig } from '../lib/api';
 
 const EVENT_START_ISO = STUDIO_EVENT.startsAtIso;
 const BRAND_ACCENT = '#B8C5D6';
@@ -109,19 +111,13 @@ const EventCountdown = ({ compact = false }) => {
 
 const EventPage = ({ onNavigate }) => {
   const [activeFaq, setActiveFaq] = useState(null);
+  const [soldCount, setSoldCount] = useState(null);
 
-  const totalAttendees = 239;
-
-  const attendees = [
-    { name: 'Bree', avatar: 'https://i.pravatar.cc/150?img=32' },
-    { name: 'Marcus', avatar: 'https://i.pravatar.cc/150?img=12' },
-    { name: 'Sarah', avatar: 'https://i.pravatar.cc/150?img=47' },
-    { name: 'Devon', avatar: 'https://i.pravatar.cc/150?img=33' },
-    { name: 'Aaliyah', avatar: 'https://i.pravatar.cc/150?img=44' },
-    { name: 'Jordan', avatar: 'https://i.pravatar.cc/150?img=68' },
-    { name: 'Taylor', avatar: 'https://i.pravatar.cc/150?img=21' },
-    { name: 'Elena', avatar: 'https://i.pravatar.cc/150?img=9' },
-  ];
+  useEffect(() => {
+    fetchCheckoutConfig()
+      .then((data) => setSoldCount(data.pricing?.soldCount ?? 0))
+      .catch(() => setSoldCount(0));
+  }, []);
 
   /*
   const eventAgenda = [
@@ -143,24 +139,58 @@ const EventPage = ({ onNavigate }) => {
   ];
   */
 
-  // FAQs data
   const faqs = [
     {
-      q: 'Is there an age restriction?',
-      a: 'Yes, this is a 21+ event.'
+      q: 'Is there parking?',
+      a: 'Yes. Valet is available at the venue.',
     },
     {
-      q: 'Is parking available?',
-      a: 'Valet parking is available at the venue. If you plan on drinking, please arrange a rideshare or a designated driver.'
+      q: "What's the dress code?",
+      a: 'Elevated attire is encouraged. Think of it as a night out, dress the part.',
     },
     {
-      q: 'Are tickets refundable?',
-      a: 'All sales are final. Tickets are transferable — if you can\'t make it, you can pass yours along.'
+      q: 'Is this a 21+ event?',
+      a: 'Yes. This is a 21+ event. A valid government-issued ID is required at the door.',
+    },
+    {
+      q: 'How do I get in?',
+      a: "Your ticket will be sent to the email you used at checkout. Have it ready on your phone and we'll scan it at the door. No need to print.",
+    },
+    {
+      q: 'Are tickets refundable or transferable?',
+      a: (
+        <>
+          All ticket sales are final and non-transferable. If you have an issue, reach out to us at{' '}
+          <SupportEmailLink className="text-gray-700 font-semibold underline underline-offset-2 hover:opacity-80" />
+          .
+        </>
+      ),
+    },
+    {
+      q: 'What should I expect at the event?',
+      a: "Inside the Mind of an Artist is an immersive installation experience featuring some of the most interesting creative artists in Dallas right now. You'll move through their worlds, hear live music from four DJs, and spend the night inside a space built around art, process, and creative energy.",
+    },
+    {
+      q: 'Will there be art for sale?',
+      a: 'Yes. Work from the featured artists will be available to collect at the event.',
     },
     {
       q: 'Will there be food and drinks?',
-      a: 'Every ticket includes an open bar and a dining credit to use at your leisure.'
-    }
+      a: 'Open bar is included with your ticket. There will not be food served. We recommend eating before you arrive.',
+    },
+    {
+      q: 'Is this a one-time event?',
+      a: 'This is the beginning. Inside the Mind of an Artist is the public launch of Studio 3. Expect more to follow.',
+    },
+    {
+      q: 'Still have questions?',
+      a: (
+        <>
+          Reach out at <SupportEmailLink className="text-gray-700 font-semibold underline underline-offset-2 hover:opacity-80" />{' '}
+          and we&apos;ll get back to you.
+        </>
+      ),
+    },
   ];
 
   return (
@@ -252,36 +282,14 @@ const EventPage = ({ onNavigate }) => {
                 <EventCountdown />
               </div>
 
-              {/* Attendee Avatars */}
+              {/* Attendance */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-                  <div className="flex items-center flex-shrink-0">
-                    {attendees.slice(0, 6).map((person, index) => (
-                      <img
-                        key={person.name}
-                        src={person.avatar}
-                        alt={person.name}
-                        title={person.name}
-                        className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-white object-cover shadow-sm bg-gray-100"
-                        style={{ marginLeft: index === 0 ? 0 : '-10px', zIndex: attendees.length - index }}
-                      />
-                    ))}
-                    <div
-                      className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-[10px] sm:text-xs font-bold text-gray-600 shadow-sm flex-shrink-0"
-                      style={{ marginLeft: '-10px', zIndex: 0 }}
-                      aria-label={`${totalAttendees - 6} more attendees`}
-                    >
-                      +{totalAttendees - 6}
-                    </div>
-                  </div>
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-black text-sm font-bold">
-                      {totalAttendees} people going
-                    </span>
-                    <span className="text-gray-500 text-xs sm:text-sm truncate">
-                      Bree, Marcus, Sarah, and {totalAttendees - 3} others
-                    </span>
-                  </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-black text-sm font-bold">
+                    {soldCount === null
+                      ? 'Loading attendance…'
+                      : `${soldCount} attending`}
+                  </span>
                 </div>
 
                 <div className="px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-600 text-xs font-bold border border-emerald-100 flex items-center justify-center self-start sm:self-auto flex-shrink-0">
@@ -433,10 +441,8 @@ const EventPage = ({ onNavigate }) => {
               </div>
 
               {/* Social Medias / Footer links inside the poster just like the posh mockup */}
-              <div className="px-5 py-4 bg-black bg-opacity-95 text-white flex justify-between items-center text-[8pt] uppercase tracking-widest font-semibold border-t border-gray-800">
+              <div className="px-5 py-4 bg-black bg-opacity-95 text-white flex justify-center items-center border-t border-gray-800">
                 <SocialLinks variant="dark" />
-                <span>studio3.dallas</span>
-                <span>Connection</span>
               </div>
             </div>
 

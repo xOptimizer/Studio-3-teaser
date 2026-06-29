@@ -1,4 +1,5 @@
 import SocialLinks from './SocialLinks';
+import { SUPPORT_EMAIL } from '../constants/support';
 
 const Footer = ({ onNavigate }) => (
   <footer
@@ -52,6 +53,12 @@ const Footer = ({ onNavigate }) => (
       >
         Terms
       </button>
+      <a
+        href={`mailto:${SUPPORT_EMAIL}`}
+        className="text-black text-sm font-semibold hover:opacity-70 transition-opacity"
+      >
+        Support
+      </a>
       <button
         onClick={() => onNavigate && onNavigate('/contact')}
         className="text-black text-sm font-semibold hover:opacity-70 transition-opacity"

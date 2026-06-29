@@ -66,6 +66,31 @@ function NavLink({ path, label, currentPath, onNavigate }) {
   );
 }
 
+function LaunchEventNavLink({ currentPath, onNavigate }) {
+  const active = isNavActive(currentPath, '/event');
+
+  return (
+    <button
+      type="button"
+      onClick={() => onNavigate?.('/event')}
+      className={`relative flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap flex-shrink-0 ${
+        active
+          ? 'text-gray-900 bg-white shadow-sm ring-1 ring-black/5'
+          : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
+      }`}
+      style={{ fontFamily: "'Inter', sans-serif" }}
+      aria-current={active ? 'page' : undefined}
+    >
+      <span
+        className="w-2 h-2 rounded-full shrink-0 animate-pulse"
+        style={{ backgroundColor: '#FF9800', boxShadow: '0 0 6px rgba(255, 152, 0, 0.7)' }}
+        aria-hidden
+      />
+      Launch Event
+    </button>
+  );
+}
+
 const TopBar = ({ onNavigate, currentPath }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
@@ -132,7 +157,7 @@ const TopBar = ({ onNavigate, currentPath }) => {
         </button>
 
         <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-wrap justify-end min-w-0">
-          <NavLink path="/event" label="Launch Event" currentPath={currentPath} onNavigate={onNavigate} />
+          <LaunchEventNavLink currentPath={currentPath} onNavigate={onNavigate} />
 
           {user && !needsPasswordChange && (
             <NavLink path="/tickets" label="My Tickets" currentPath={currentPath} onNavigate={onNavigate} />
