@@ -196,6 +196,10 @@ export async function adminFetchOrders() {
   return apiFetch('/admin/orders');
 }
 
+export async function adminFetchFreePasses() {
+  return apiFetch('/admin/free-passes');
+}
+
 export async function adminFetchEvents() {
   return apiFetch('/admin/events');
 }
