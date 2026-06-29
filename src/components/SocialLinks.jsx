@@ -63,11 +63,11 @@ const SocialLinks = ({ variant = 'header', showLabels = false, className = '' })
   return (
     <div className={`${styles.wrapper} ${className}`}>
       {showLabels && variant === 'footer' && (
-        <p className="text-black text-xs font-semibold text-center md:text-left hidden md:block">
+        <p className="text-black text-xs font-semibold text-left w-full">
           Follow us
         </p>
       )}
-      <div className={`flex items-center ${variant === 'footer' ? 'gap-3 justify-center md:justify-start' : 'gap-2'}`}>
+      <div className={`flex items-center ${variant === 'footer' ? 'gap-2 sm:gap-3 justify-start' : 'gap-2'}`}>
         {SOCIAL_LINKS.map((social) => {
           const Icon = ICONS[social.id];
           return (

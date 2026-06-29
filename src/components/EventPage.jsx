@@ -313,8 +313,11 @@ const EventPage = ({ onNavigate }) => {
               <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-4">
                 Come to see the work. Stay for the night.
               </p>
-              <p className="text-gray-600 text-sm sm:text-base leading-relaxed font-semibold text-black">
+              {/* <p className="text-gray-600 text-sm sm:text-base leading-relaxed font-semibold text-black">
                 Early bird ${STUDIO_EVENT.ticketPrice.toFixed(2)} for the first {STUDIO_EVENT.earlyBirdLimitDisplay} tickets · then ${STUDIO_EVENT.regularTicketPrice.toFixed(2)}.
+              </p> */}
+              <p className="text-gray-600 text-sm sm:text-base leading-relaxed font-semibold text-black">
+                Early bird $49.95
               </p>
             </div>
 
