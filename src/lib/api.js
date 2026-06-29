@@ -1,4 +1,6 @@
 /** In dev, default to Vite proxy (/api → localhost:3001) so ngrok HTTPS can reach the API without mixed-content blocks. */
+import { normalizeCheckoutResponse } from './checkoutSession.js';
+
 function getApiBaseUrl() {
   const configured = import.meta.env.VITE_API_URL?.trim();
   if (configured) return configured.replace(/\/$/, '');
@@ -123,10 +125,30 @@ export function resolveProfilePhotoUrl(path) {
 }
 
 export async function checkout(payload) {
-  return apiFetch('/checkout', {
+  const headers = { 'Content-Type': 'application/json' };
+  const token = getToken();
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(`${API_URL}/checkout`, {
     method: 'POST',
+    headers,
     body: JSON.stringify(payload),
   });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (data.success) {
+    return data;
+  }
+
+  const normalized = normalizeCheckoutResponse(data, response.status);
+  if (normalized) {
+    return normalized;
+  }
+
+  throw new Error(data.message || data.error || 'Checkout failed');
 }
 
 export async function fetchCheckoutConfig() {
