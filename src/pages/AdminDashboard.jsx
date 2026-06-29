@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import {
   adminFetchOrders,
   adminFetchStats,
+  adminFetchFreePasses,
   adminFetchTicketQrBlob,
   adminResendOrderTickets,
 } from '../lib/api';
@@ -429,7 +430,8 @@ function EarlyBirdStatsCard({ stats }) {
 }
 
 const isFreePassOrder = (order) =>
-  isPaidOrder(order.status) && (order.amountCents || 0) === 0 && !order.finixTransferId;
+  order.isFreePass ||
+  (isPaidOrder(order.status) && (order.amountCents || 0) === 0 && !order.finixTransferId);
 
 const STAT_ICONS = {
   orders: (
@@ -638,7 +640,9 @@ const AdminDashboard = ({ onNavigate }) => {
   const [viewingOrder, setViewingOrder] = useState(null);
   const [resendingId, setResendingId] = useState(null);
   const [ticketStats, setTicketStats] = useState(null);
+  const [freePasses, setFreePasses] = useState([]);
   const [freePassExpanded, setFreePassExpanded] = useState(false);
+  const [listTab, setListTab] = useState('orders');
   const freePassPanelRef = useRef(null);
 
   const openFreePassPanel = useCallback(() => {
@@ -652,6 +656,9 @@ const AdminDashboard = ({ onNavigate }) => {
     return Promise.all([
       adminFetchOrders().then((data) => setOrders(data.orders || [])),
       adminFetchStats().then((data) => setTicketStats(data)).catch(() => setTicketStats(null)),
+      adminFetchFreePasses()
+        .then((data) => setFreePasses(data.freePasses || []))
+        .catch(() => setFreePasses([])),
     ]).catch((err) => setError(err.message));
   }, []);
 
@@ -670,22 +677,22 @@ const AdminDashboard = ({ onNavigate }) => {
   const stats = useMemo(() => {
     const paidOrders = orders.filter((o) => isPaidOrder(o.status));
     const revenueCents = paidOrders.reduce((sum, o) => sum + (o.amountCents || 0), 0);
-    const ticketsSold = orders.reduce((sum, o) => sum + (o.quantity || 0), 0);
+    const orderTicketsSold = orders.reduce((sum, o) => sum + (o.quantity || 0), 0);
+    const orderCheckIns = orders.reduce(
+      (sum, o) => sum + (o.tickets?.filter((t) => t.status === 'used').length || 0),
+      0
+    );
+    const freePassCheckIns = freePasses.filter((p) => p.status === 'used').length;
 
     return {
       totalOrders: orders.length,
       paidOrders: paidOrders.length,
       revenueCents,
-      ticketsSold,
-      freePassesGiven: paidOrders
-        .filter(isFreePassOrder)
-        .reduce((sum, o) => sum + (o.quantity || 0), 0),
-      checkedInCount: orders.reduce(
-        (sum, o) => sum + (o.tickets?.filter((t) => t.status === 'used').length || 0),
-        0
-      ),
+      ticketsSold: ticketStats?.ticketsSold ?? orderTicketsSold,
+      freePassesGiven: ticketStats?.freePassesIssued ?? freePasses.length,
+      checkedInCount: orderCheckIns + freePassCheckIns,
     };
-  }, [orders]);
+  }, [orders, freePasses, ticketStats]);
 
   const filteredOrders = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -705,6 +712,25 @@ const AdminDashboard = ({ onNavigate }) => {
       return haystack.includes(q);
     });
   }, [orders, query]);
+
+  const filteredFreePasses = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return freePasses;
+
+    return freePasses.filter((pass) => {
+      const haystack = [
+        pass.attendeeName,
+        pass.email,
+        pass.event?.title,
+        pass.confirmationCode,
+        pass.status,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return haystack.includes(q);
+    });
+  }, [freePasses, query]);
 
   const handleResend = useCallback(async (order) => {
     if (!window.confirm(`Resend ticket email to ${order.buyerEmail}?`)) return;
@@ -859,40 +885,142 @@ const AdminDashboard = ({ onNavigate }) => {
         />
 
         <div className="rounded-3xl border border-white/80 bg-white/60 backdrop-blur-sm shadow-sm overflow-hidden text-gray-900">
-          <div className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h2 className="font-extrabold text-gray-900 text-lg sm:text-xl tracking-tight">Recent orders</h2>
-              <p className="text-xs text-gray-500 mt-1">
-                {filteredOrders.length} of {orders.length} orders
-              </p>
+          <div className="p-4 sm:p-6 flex flex-col gap-4 border-b border-gray-100/80">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h2 className="font-extrabold text-gray-900 text-lg sm:text-xl tracking-tight">Orders & passes</h2>
+                <p className="text-xs text-gray-500 mt-1">
+                  {listTab === 'orders'
+                    ? `${filteredOrders.length} of ${orders.length} orders`
+                    : `${filteredFreePasses.length} of ${freePasses.length} free passes`}
+                </p>
+              </div>
+              <div className="relative w-full sm:w-72">
+                <svg
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search name, email, event..."
+                  className="w-full pl-10 pr-3 py-2.5 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 border border-gray-200/80 bg-white/90 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-300 transition-all"
+                />
+              </div>
             </div>
-            <div className="relative w-full sm:w-72">
-              <svg
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setListTab('orders')}
+                className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${
+                  listTab === 'orders'
+                    ? 'bg-gray-900 text-white shadow-sm'
+                    : 'bg-white/80 text-gray-600 border border-gray-200 hover:bg-white'
+                }`}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search name, email, event..."
-                className="w-full pl-10 pr-3 py-2.5 rounded-xl text-sm text-gray-900 placeholder:text-gray-400 border border-gray-200/80 bg-white/90 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-gray-300 transition-all"
-              />
+                Orders
+                {orders.length > 0 && (
+                  <span className={`ml-1.5 tabular-nums ${listTab === 'orders' ? 'text-white/70' : 'text-gray-400'}`}>
+                    ({orders.length})
+                  </span>
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => setListTab('freePasses')}
+                className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${
+                  listTab === 'freePasses'
+                    ? 'bg-gray-900 text-white shadow-sm'
+                    : 'bg-white/80 text-gray-600 border border-gray-200 hover:bg-white'
+                }`}
+              >
+                Free passes
+                {freePasses.length > 0 && (
+                  <span className={`ml-1.5 tabular-nums ${listTab === 'freePasses' ? 'text-white/70' : 'text-gray-400'}`}>
+                    ({freePasses.length})
+                  </span>
+                )}
+              </button>
             </div>
           </div>
 
-          {filteredOrders.length === 0 ? (
+          {listTab === 'orders' && filteredOrders.length === 0 ? (
             <p className="px-6 pb-12 pt-4 text-center text-gray-500 text-sm">
               {orders.length === 0 ? 'No orders yet.' : 'No orders match your search.'}
             </p>
+          ) : listTab === 'freePasses' && filteredFreePasses.length === 0 ? (
+            <p className="px-6 pb-12 pt-4 text-center text-gray-500 text-sm">
+              {freePasses.length === 0 ? 'No free passes issued yet.' : 'No free passes match your search.'}
+            </p>
+          ) : listTab === 'freePasses' ? (
+            <>
+              <div className="hidden lg:block px-4 sm:px-6 pb-6 pt-4">
+                <div className="rounded-2xl overflow-hidden border border-gray-100/80">
+                  <table className="w-full text-sm text-gray-900 border-collapse">
+                    <thead>
+                      <tr className="text-left text-[10px] uppercase tracking-widest text-gray-500 bg-[#F3F4F6]/80">
+                        <th className="px-5 py-3.5 font-bold">Issued</th>
+                        <th className="px-5 py-3.5 font-bold">Guest</th>
+                        <th className="px-5 py-3.5 font-bold">Event</th>
+                        <th className="px-5 py-3.5 font-bold">Code</th>
+                        <th className="px-5 py-3.5 font-bold">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredFreePasses.map((pass, index) => {
+                        const isEven = index % 2 === 0;
+                        return (
+                          <tr
+                            key={pass.id}
+                            className={`${isEven ? 'bg-white/90' : 'bg-[#F8F9FB]/90'}`}
+                          >
+                            <td className="px-5 py-4 text-gray-600 whitespace-nowrap text-xs">
+                              {formatDateTime(pass.issuedAt)}
+                            </td>
+                            <td className="px-5 py-4 min-w-[180px]">
+                              <div className="font-semibold text-gray-900">{pass.attendeeName}</div>
+                              <div className="text-gray-500 text-xs truncate max-w-[220px] mt-0.5">{pass.email}</div>
+                            </td>
+                            <td className="px-5 py-4 text-gray-800 font-medium max-w-[200px]">
+                              <span className="line-clamp-2">{pass.event?.title || '—'}</span>
+                            </td>
+                            <td className="px-5 py-4 font-mono text-xs text-gray-700">{pass.confirmationCode}</td>
+                            <td className="px-5 py-4">
+                              <StatusBadge status={pass.status === 'used' ? 'used' : 'valid'} />
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="lg:hidden px-4 sm:px-6 pb-6 pt-4 space-y-3">
+                {filteredFreePasses.map((pass) => (
+                  <div key={pass.id} className="rounded-2xl border border-gray-100 bg-white/90 p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="font-semibold text-gray-900">{pass.attendeeName}</p>
+                        <p className="text-xs text-gray-500 truncate mt-0.5">{pass.email}</p>
+                      </div>
+                      <StatusBadge status={pass.status === 'used' ? 'used' : 'valid'} />
+                    </div>
+                    <p className="text-xs text-gray-600 mt-2">{pass.event?.title}</p>
+                    <p className="text-[11px] text-gray-500 mt-1 font-mono">{pass.confirmationCode}</p>
+                    <p className="text-[11px] text-gray-400 mt-1">{formatDateTime(pass.issuedAt)}</p>
+                  </div>
+                ))}
+              </div>
+            </>
           ) : (
             <>
-              <div className="lg:hidden px-4 sm:px-6 pb-6 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="lg:hidden px-4 sm:px-6 pb-6 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {filteredOrders.map((order) => (
                   <OrderCard
                     key={order.id}
@@ -905,7 +1033,7 @@ const AdminDashboard = ({ onNavigate }) => {
                 ))}
               </div>
 
-              <div className="hidden lg:block px-4 sm:px-6 pb-6">
+              <div className="hidden lg:block px-4 sm:px-6 pb-6 pt-4">
                 <div className="rounded-2xl overflow-hidden border border-gray-100/80">
                   <table className="w-full text-sm text-gray-900 border-collapse">
                     <thead>
