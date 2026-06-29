@@ -1,5 +1,6 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import SocialLinks from './SocialLinks';
+import VenueMap from './VenueMap';
 import { STUDIO_EVENT } from '../constants/event';
 
 const EVENT_START_ISO = STUDIO_EVENT.startsAtIso;
@@ -101,59 +102,6 @@ const EventCountdown = ({ compact = false }) => {
             </span>
           </div>
         ))}
-      </div>
-    </div>
-  );
-};
-
-const VenueMap = () => {
-  return (
-    <div className="relative w-full h-[240px] sm:h-[300px] rounded-3xl overflow-hidden shadow-inner border border-gray-200" style={{ background: '#121212' }}>
-      {/* Dark map mock SVG */}
-      <svg className="w-full h-full opacity-90" viewBox="0 0 800 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Grid Gridlines / Minor Streets */}
-        <line x1="0" y1="50" x2="800" y2="50" stroke="#1f1f1f" strokeWidth="1.5" />
-        <line x1="0" y1="150" x2="800" y2="150" stroke="#1f1f1f" strokeWidth="1.5" />
-        <line x1="0" y1="250" x2="800" y2="250" stroke="#1f1f1f" strokeWidth="1.5" />
-        <line x1="0" y1="350" x2="800" y2="350" stroke="#1f1f1f" strokeWidth="1.5" />
-        <line x1="100" y1="0" x2="100" y2="400" stroke="#1f1f1f" strokeWidth="1.5" />
-        <line x1="200" y1="0" x2="200" y2="400" stroke="#1f1f1f" strokeWidth="1.5" />
-        <line x1="300" y1="0" x2="300" y2="400" stroke="#1f1f1f" strokeWidth="1.5" />
-        <line x1="500" y1="0" x2="500" y2="400" stroke="#1f1f1f" strokeWidth="1.5" />
-        <line x1="700" y1="0" x2="700" y2="400" stroke="#1f1f1f" strokeWidth="1.5" />
-
-        {/* Major Roads / Streets */}
-        <path d="M 0 100 L 800 100" stroke="#2a2a2a" strokeWidth="10" />
-        <path d="M 0 300 L 800 300" stroke="#2a2a2a" strokeWidth="14" />
-        <path d="M 150 0 L 150 400" stroke="#2a2a2a" strokeWidth="8" />
-        <path d="M 400 0 L 400 400" stroke="#2d2d2d" strokeWidth="12" />
-        <path d="M 600 0 L 600 400" stroke="#2a2a2a" strokeWidth="8" />
-        
-        {/* Secondary streets */}
-        <path d="M 0 180 L 800 180" stroke="#222" strokeWidth="4" />
-        <path d="M 280 0 L 280 400" stroke="#222" strokeWidth="4" />
-        <path d="M 490 0 L 490 400" stroke="#222" strokeWidth="4" />
-        
-        {/* Ramps / Curves */}
-        <path d="M 150 100 Q 200 120 280 180" stroke="#333" strokeWidth="3" strokeDasharray="6 4" />
-        
-        {/* Street Labels */}
-        <text x="180" y="88" fill="#555" fontSize="10" fontFamily="monospace" fontWeight="500">Dallas North Tollway</text>
-        <text x="418" y="60" fill="#444" fontSize="9" fontFamily="monospace" fontWeight="500" transform="rotate(90 418 60)">Hi Line Dr</text>
-        <text x="612" y="160" fill="#444" fontSize="9" fontFamily="monospace" fontWeight="500" transform="rotate(90 612 160)">Oak Lawn Ave</text>
-        <text x="290" y="220" fill="#444" fontSize="9" fontFamily="monospace" fontWeight="500" transform="rotate(90 290 220)">Stemmons Fwy</text>
-        <text x="350" y="288" fill="#555" fontSize="10" fontFamily="monospace" fontWeight="500">Dragon St</text>
-        
-        {/* Area Labels */}
-        <text x="40" y="45" fill="#3a3a3a" fontSize="11" fontWeight="bold" letterSpacing="0.05em">DALLAS DESIGN DISTRICT</text>
-        <text x="440" y="370" fill="#3a3a3a" fontSize="11" fontWeight="bold" letterSpacing="0.05em">DEC ON DRAGON</text>
-      </svg>
-      
-      {/* Glow Pulse Pin at Kirby Ice House location */}
-      <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
-        <span className="absolute w-8 h-8 rounded-full opacity-40 animate-ping" style={{ backgroundColor: BRAND_ACCENT }} />
-        <span className="absolute w-12 h-12 rounded-full opacity-20 animate-pulse" style={{ backgroundColor: BRAND_ACCENT }} />
-        <span className="w-4.5 h-4.5 rounded-full border-2 border-white shadow-md relative z-10" style={{ backgroundColor: BRAND_ACCENT }} />
       </div>
     </div>
   );
@@ -396,7 +344,7 @@ const EventPage = ({ onNavigate }) => {
                 className="text-black font-extrabold text-[12pt] sm:text-[14pt] tracking-wide mb-3"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
-                Welcome to Dec on Dragon
+                Welcome to {STUDIO_EVENT.venue}
               </h2>
               <p className="text-gray-500 text-sm sm:text-base leading-relaxed mb-6">
                 Dec on Dragon is one of Dallas's most iconic creative venues — a raw, expansive space that transforms with every event it hosts. Doors open at 8. The installations are live all night.
@@ -413,7 +361,7 @@ const EventPage = ({ onNavigate }) => {
               <div className="flex flex-col gap-1">
                 <h4 className="text-black font-extrabold text-sm sm:text-base">Location</h4>
                 <p className="text-gray-500 text-xs sm:text-sm">
-                  Dec on Dragon · 1414 Dragon St, Dallas, TX 75207
+                  {STUDIO_EVENT.venue} · {STUDIO_EVENT.address}
                 </p>
               </div>
             </div>

@@ -18,6 +18,7 @@ import AdminVerifyPage from './pages/AdminVerifyPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
 import ContactPage from './pages/ContactPage';
+import EventHomePromo from './components/EventHomePromo';
 import { heroVideo } from './utils';
 import { preloadAssets } from './utils/cloudinary';
 
@@ -135,10 +136,13 @@ const App = () => {
     );
   }
 
+  const isHomePage = currentPath === '/';
+
   return (
     <main style={{ background: '#F7F7F7' }}>
       <TopBar onNavigate={navigate} currentPath={currentPath} />
       {pageContent}
+      {isHomePage && <EventHomePromo onNavigate={navigate} />}
       {currentPath !== '/event/checkout' && <Footer onNavigate={navigate} />}
     </main>
   );
