@@ -29,6 +29,9 @@ const scrollToTop = () => {
 
 const App = () => {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const [routeKey, setRouteKey] = useState(
+    () => `${window.location.pathname}${window.location.search}`
+  );
   const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
@@ -38,6 +41,7 @@ const App = () => {
   useEffect(() => {
     const handlePopState = () => {
       setCurrentPath(window.location.pathname);
+      setRouteKey(`${window.location.pathname}${window.location.search}`);
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -48,11 +52,15 @@ const App = () => {
   }, [currentPath]);
 
   const navigate = useCallback((path) => {
-    if (window.location.pathname === path) {
+    const target = path.startsWith('/') ? path : `/${path}`;
+    const current = `${window.location.pathname}${window.location.search}`;
+    if (current === target) {
       scrollToTop();
       return;
     }
-    window.history.pushState({}, '', path);
+    window.history.pushState({}, '', target);
+    setCurrentPath(window.location.pathname);
+    setRouteKey(`${window.location.pathname}${window.location.search}`);
     window.dispatchEvent(new PopStateEvent('popstate'));
   }, []);
 
@@ -105,7 +113,7 @@ const App = () => {
   } else if (currentPath === '/admin/check-ins') {
     pageContent = <AdminCheckInsPage onNavigate={navigate} />;
   } else if (currentPath.startsWith('/admin/verify')) {
-    pageContent = <AdminVerifyPage onNavigate={navigate} />;
+    pageContent = <AdminVerifyPage key={routeKey} onNavigate={navigate} />;
   } else if (currentPath === '/event/checkout') {
     pageContent = <CheckoutPage onNavigate={navigate} />;
   } else if (currentPath === '/event') {
