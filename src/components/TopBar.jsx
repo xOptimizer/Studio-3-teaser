@@ -46,18 +46,21 @@ function isNavActive(currentPath, path) {
   return currentPath === path || currentPath.startsWith(`${path}/`);
 }
 
-function NavLink({ path, label, currentPath, onNavigate }) {
+function NavLink({ path, label, currentPath, onNavigate, onAfterNavigate, className = '' }) {
   const active = isNavActive(currentPath, path);
 
   return (
     <button
       type="button"
-      onClick={() => onNavigate?.(path)}
+      onClick={() => {
+        onNavigate?.(path);
+        onAfterNavigate?.();
+      }}
       className={`relative px-3 sm:px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap flex-shrink-0 ${
         active
           ? 'text-gray-900 bg-white shadow-sm ring-1 ring-black/5'
           : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
-      }`}
+      } ${className}`}
       style={{ fontFamily: "'Inter', sans-serif" }}
       aria-current={active ? 'page' : undefined}
     >
@@ -66,18 +69,21 @@ function NavLink({ path, label, currentPath, onNavigate }) {
   );
 }
 
-function LaunchEventNavLink({ currentPath, onNavigate }) {
+function LaunchEventNavLink({ currentPath, onNavigate, onAfterNavigate, className = '' }) {
   const active = isNavActive(currentPath, '/event');
 
   return (
     <button
       type="button"
-      onClick={() => onNavigate?.('/event')}
+      onClick={() => {
+        onNavigate?.('/event');
+        onAfterNavigate?.();
+      }}
       className={`relative flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 whitespace-nowrap flex-shrink-0 ${
         active
           ? 'text-gray-900 bg-white shadow-sm ring-1 ring-black/5'
           : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
-      }`}
+      } ${className}`}
       style={{ fontFamily: "'Inter', sans-serif" }}
       aria-current={active ? 'page' : undefined}
     >
@@ -95,27 +101,42 @@ const TopBar = ({ onNavigate, currentPath }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
+  const mobileMenuRef = useRef(null);
   const { user, logout } = useAuth();
   const needsPasswordChange = user?.mustChangePassword && user?.role !== 'admin';
+
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setIsUserMenuOpen(false);
       }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+        setIsMobileMenuOpen(false);
+      }
     };
 
-    if (isUserMenuOpen) {
+    if (isUserMenuOpen || isMobileMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isUserMenuOpen]);
+  }, [isUserMenuOpen, isMobileMenuOpen]);
 
   useEffect(() => {
     setIsUserMenuOpen(false);
+    setIsMobileMenuOpen(false);
   }, [currentPath, user]);
+
+  useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
 
   const handleLogout = () => {
     setIsUserMenuOpen(false);
@@ -131,6 +152,7 @@ const TopBar = ({ onNavigate, currentPath }) => {
     <header
       className="fixed top-0 left-0 right-0 z-50 w-full py-2 sm:py-3 md:py-4 px-2 sm:px-3 md:px-4"
       style={{ background: 'transparent', pointerEvents: 'none' }}
+      ref={mobileMenuRef}
     >
       <div
         className="flex items-center justify-between gap-2 sm:gap-4 w-full max-w-7xl mx-auto rounded-2xl px-3 sm:px-5 md:px-6 py-2.5 sm:py-3 min-h-[3.25rem] sm:min-h-[3.5rem]"
@@ -146,31 +168,38 @@ const TopBar = ({ onNavigate, currentPath }) => {
         <button
           type="button"
           onClick={() => onNavigate && onNavigate('/')}
-          className="flex items-center flex-shrink-0 cursor-pointer hover:opacity-75 transition-opacity duration-200"
+          className="flex items-center flex-shrink-0 min-w-0 cursor-pointer hover:opacity-75 transition-opacity duration-200"
           aria-label="Studio 3 home"
         >
           <img
+            src="/assets/Logo_With_Text.svg"
+            alt="Studio 3"
+            className="block lg:hidden h-8 w-auto max-w-[min(52vw,11rem)] object-contain object-left"
+          />
+          <img
             src="/assets/S3_Horizontal.png"
             alt="Studio 3"
-            className="h-7 sm:h-8 md:h-9 w-auto object-contain"
+            className="hidden lg:block h-7 sm:h-8 md:h-9 w-auto object-contain"
           />
         </button>
 
-        <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-wrap justify-end min-w-0">
-          <LaunchEventNavLink currentPath={currentPath} onNavigate={onNavigate} />
+        <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 justify-end min-w-0">
+          <div className="hidden lg:flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-wrap justify-end min-w-0">
+            <LaunchEventNavLink currentPath={currentPath} onNavigate={onNavigate} />
 
-          {user && !needsPasswordChange && (
-            <NavLink path="/tickets" label="My Tickets" currentPath={currentPath} onNavigate={onNavigate} />
-          )}
+            {user && !needsPasswordChange && (
+              <NavLink path="/tickets" label="My Tickets" currentPath={currentPath} onNavigate={onNavigate} />
+            )}
 
-          <SocialLinks variant="header" />
+            <SocialLinks variant="header" />
+          </div>
 
           {user ? (
-            <div className="relative flex-shrink-0 ml-0.5 sm:ml-1" ref={userMenuRef}>
+            <div className="relative flex-shrink-0 lg:ml-1" ref={userMenuRef}>
               <button
                 type="button"
                 onClick={() => setIsUserMenuOpen((prev) => !prev)}
-                className={`flex items-center gap-2 pl-1 pr-2.5 sm:pr-3 py-1 rounded-full transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-black/15 border bg-white/60 backdrop-blur-sm ${
+                className={`flex items-center gap-2 pl-0.5 lg:pl-1 pr-0.5 lg:pr-3 py-0.5 lg:py-1 rounded-full transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-black/15 border bg-white/60 backdrop-blur-sm ${
                   isUserMenuOpen
                     ? 'border-gray-300/90 bg-white/90 shadow-sm'
                     : 'border-gray-200/80 hover:border-gray-300/90 hover:bg-white/80 hover:shadow-sm'
@@ -192,13 +221,13 @@ const TopBar = ({ onNavigate, currentPath }) => {
                   )}
                 </span>
                 <span
-                  className="hidden md:inline max-w-[140px] truncate text-sm font-semibold text-gray-900"
+                  className="hidden lg:inline max-w-[140px] truncate text-sm font-semibold text-gray-900"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
                   {displayName}
                 </span>
                 <svg
-                  className={`w-4 h-4 text-gray-500 shrink-0 transition-transform duration-200 ${
+                  className={`hidden lg:block w-4 h-4 text-gray-500 shrink-0 transition-transform duration-200 ${
                     isUserMenuOpen ? 'rotate-180' : ''
                   }`}
                   fill="none"
@@ -221,7 +250,7 @@ const TopBar = ({ onNavigate, currentPath }) => {
                   className="rounded-2xl border border-white/70 bg-white/95 backdrop-blur-xl py-1.5 overflow-hidden"
                   style={{ boxShadow: '0 12px 40px rgba(0, 0, 0, 0.12)' }}
                 >
-                  <div className="px-4 py-2.5 border-b border-gray-100 md:hidden">
+                  <div className="px-4 py-2.5 border-b border-gray-100 lg:hidden">
                     <p className="text-sm font-semibold text-gray-900 truncate">{fullName}</p>
                     <p className="text-xs text-gray-500 truncate">{user.email}</p>
                   </div>
@@ -275,7 +304,64 @@ const TopBar = ({ onNavigate, currentPath }) => {
               Login
             </button>
           )}
+
+          <button
+            type="button"
+            onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+            className="lg:hidden h-9 w-9 rounded-full flex items-center justify-center text-gray-900 border border-gray-200/80 bg-white/60 backdrop-blur-sm hover:bg-white/80 hover:border-gray-300/90 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/15"
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMobileMenuOpen}
+          >
+            {isMobileMenuOpen ? (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
         </div>
+      </div>
+
+      <div
+        className={`lg:hidden w-full max-w-7xl mx-auto mt-2 px-2 sm:px-3 transition-all duration-200 ease-out origin-top ${
+          isMobileMenuOpen
+            ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto max-h-[min(70vh,28rem)]'
+            : 'opacity-0 scale-[0.98] -translate-y-2 pointer-events-none max-h-0 overflow-hidden'
+        }`}
+        style={{ pointerEvents: isMobileMenuOpen ? 'auto' : 'none' }}
+      >
+        <nav
+          className="rounded-2xl border border-white/45 bg-white/95 backdrop-blur-xl px-4 py-4 shadow-lg"
+          style={{ boxShadow: '0 12px 40px rgba(0, 0, 0, 0.1)' }}
+          aria-label="Mobile navigation"
+        >
+          <div className="flex flex-col gap-2">
+            <LaunchEventNavLink
+              currentPath={currentPath}
+              onNavigate={onNavigate}
+              onAfterNavigate={closeMobileMenu}
+              className="w-full justify-center py-2.5"
+            />
+
+            {user && !needsPasswordChange && (
+              <NavLink
+                path="/tickets"
+                label="My Tickets"
+                currentPath={currentPath}
+                onNavigate={onNavigate}
+                onAfterNavigate={closeMobileMenu}
+                className="w-full justify-center py-2.5"
+              />
+            )}
+
+            <div className="pt-2 mt-1 border-t border-gray-100 flex justify-center">
+              <SocialLinks variant="header" />
+            </div>
+          </div>
+        </nav>
       </div>
 
       <RegistrationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
