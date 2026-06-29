@@ -1,9 +1,8 @@
 import { useEffect, useState, useRef, useCallback, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { STUDIO_EVENT, STUDIO_HOME_STATEMENT } from '../constants/event';
+import { STUDIO_EVENT } from '../constants/event';
 
 const STORAGE_KEY = 'studio3-event-promo-dismissed';
-const BRAND_ACCENT = '#B8C5D6';
 const ANIM_DURATION = 420;
 
 const STORY_RING_GRADIENT =
@@ -122,16 +121,9 @@ function EventPromoModal({
           >
             {STUDIO_EVENT.title}
           </h2>
-          <p className="text-white/80 text-sm mb-4">
+          <p className="text-white/80 text-sm mb-6">
             {STUDIO_EVENT.dateLabel} · {STUDIO_EVENT.venue}
           </p>
-
-          <blockquote
-            className="text-white font-semibold text-base sm:text-lg leading-snug mb-6 border-l-[3px] pl-4"
-            style={{ borderColor: BRAND_ACCENT, fontFamily: "'Inter', sans-serif" }}
-          >
-            {STUDIO_HOME_STATEMENT}
-          </blockquote>
 
           <div className="flex flex-col gap-2.5">
             <button

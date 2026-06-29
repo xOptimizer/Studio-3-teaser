@@ -9,7 +9,8 @@ import {
   checkoutButtonStyle,
   glassCardClass,
 } from '../components/checkout/shared';
-import WalletPayments from '../components/checkout/WalletPayments';
+// import WalletPayments from '../components/checkout/WalletPayments';
+import SocialLinks from '../components/SocialLinks';
 import { AccountMarketingOptIns, CheckoutTransactionalNotice } from '../components/checkout/CheckoutOptInCopy';
 import PaymentProcessingOverlay from '../components/checkout/PaymentProcessingOverlay';
 import { calculateTieredOrderPricing, formatCents, formatRate, formatCentsAsDollars } from '../lib/pricing';
@@ -56,10 +57,6 @@ function OrderPricingBreakdown({ pricing, compact = false }) {
         </div>
       )}
       <div className="flex justify-between text-gray-600">
-        <span>Service fee ({formatRate(pricing.rates.serviceFee)})</span>
-        <span className="tabular-nums text-gray-900">{formatCents(pricing.serviceFeeCents)}</span>
-      </div>
-      <div className="flex justify-between text-gray-600">
         <span>Sales tax ({formatRate(pricing.rates.salesTax)})</span>
         <span className="tabular-nums text-gray-900">{formatCents(pricing.salesTaxCents)}</span>
       </div>
@@ -76,10 +73,8 @@ const CheckoutPage = ({ onNavigate }) => {
   const [ticketQuantity, setTicketQuantity] = useState(1);
   const [buyerInfo, setBuyerInfo] = useState({ name: '', email: '', confirmEmail: '', phone: '' });
   const [marketingOptIns, setMarketingOptIns] = useState({ email: false, sms: false });
-  const [showEmail, setShowEmail] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [checkoutError, setCheckoutError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
   const [tierConfig, setTierConfig] = useState(DEFAULT_TIERS);
 
   useEffect(() => {
@@ -109,6 +104,7 @@ const CheckoutPage = ({ onNavigate }) => {
     ticketQuantityRef.current = ticketQuantity;
   }, [ticketQuantity]);
 
+  /*
   const handleWalletPay = useCallback(async (walletPayload) => {
     const { name, email, phone } = buyerInfoRef.current;
     const quantity = ticketQuantityRef.current;
@@ -121,7 +117,7 @@ const CheckoutPage = ({ onNavigate }) => {
     setCheckoutError('');
 
     try {
-      const data = await checkout({
+      await checkout({
         ...walletPayload,
         quantity,
         name: name.trim(),
@@ -129,7 +125,6 @@ const CheckoutPage = ({ onNavigate }) => {
         phone: toE164US(phone),
       });
 
-      setSuccessMessage(data.message || 'Check your email for your ticket and login details.');
       setCheckoutStep('success');
     } catch (err) {
       setCheckoutError(err.message || 'Checkout failed');
@@ -138,14 +133,17 @@ const CheckoutPage = ({ onNavigate }) => {
       setIsSubmitting(false);
     }
   }, []);
+  */
 
   const handleFinixConfigError = useCallback((message) => {
     setCheckoutError(message);
   }, []);
 
+  /*
   const handleWalletError = useCallback((message) => {
     setCheckoutError(message);
   }, []);
+  */
 
   const orderPricing = useMemo(
     () =>
@@ -184,7 +182,7 @@ const CheckoutPage = ({ onNavigate }) => {
         throw new Error('No payment token received from Finix');
       }
 
-      const data = await checkout({
+      await checkout({
         token,
         fraudSessionId: finixAuth?.getSessionKey?.(),
         quantity,
@@ -193,7 +191,6 @@ const CheckoutPage = ({ onNavigate }) => {
         phone: toE164US(phone),
       });
 
-      setSuccessMessage(data.message || 'Check your email for your ticket and login details.');
       setCheckoutStep('success');
     } catch (err) {
       setCheckoutError(err.message || 'Checkout failed');
@@ -224,7 +221,9 @@ const CheckoutPage = ({ onNavigate }) => {
   const inputClass =
     'w-full px-3 py-2.5 rounded-xl text-black text-sm focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black border border-gray-200 bg-white transition-all';
 
-  const inputWithIconClass = `${inputClass} pr-10`;
+  const noCopyClass = 'select-none';
+
+  const preventCopy = (e) => e.preventDefault();
 
   const btnCompact = `${checkoutButtonClass} !py-3`;
   const btnOutline =
@@ -252,14 +251,14 @@ const CheckoutPage = ({ onNavigate }) => {
         <div className="flex items-center justify-between gap-3 mb-6 sm:mb-8">
           <button
             type="button"
-            onClick={() => onNavigate(checkoutStep === 'success' ? '/tickets' : '/event')}
+            onClick={() => onNavigate(checkoutStep === 'success' ? '/' : '/event')}
             disabled={isProcessingPayment}
             className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-gray-500 hover:text-black transition-colors disabled:opacity-40 disabled:pointer-events-none"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
             </svg>
-            {checkoutStep === 'success' ? 'Tickets' : 'Back'}
+            {checkoutStep === 'success' ? 'Home' : 'Back'}
           </button>
           {checkoutStep !== 'success' && (
             <div className="text-right min-w-0">
@@ -280,8 +279,9 @@ const CheckoutPage = ({ onNavigate }) => {
             </div>
             <h2 className="text-black font-extrabold text-xl sm:text-2xl">You&apos;re Going!</h2>
             <p className="text-gray-500 text-sm mt-2 leading-relaxed">
-              {successMessage || `Confirmation sent to`}{' '}
+              You&apos;re all set! We sent a confirmation to{' '}
               <strong className="text-gray-800">{buyerInfo.email}</strong>.
+              {' '}Check your email for your ticket PDF and login credentials.
             </p>
             <div className="w-full border border-gray-200 bg-gray-50 rounded-2xl p-4 my-5 text-left text-sm">
               <div className="flex justify-between font-bold text-black border-b border-gray-200 pb-2 mb-3">
@@ -290,14 +290,9 @@ const CheckoutPage = ({ onNavigate }) => {
               </div>
               <OrderPricingBreakdown pricing={orderPricing} compact />
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button type="button" onClick={() => onNavigate('/tickets')} className={btnCompact} style={checkoutButtonStyle}>
-                My Tickets
-              </button>
-              <button type="button" onClick={() => onNavigate('/event')} className={btnOutline}>
-                Event
-              </button>
-            </div>
+            <button type="button" onClick={() => onNavigate('/')} className={`w-full ${btnCompact}`} style={checkoutButtonStyle}>
+              Back to home
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8 items-start">
@@ -318,42 +313,22 @@ const CheckoutPage = ({ onNavigate }) => {
                     </div>
                     <div className="flex flex-col gap-1">
                       <label htmlFor="checkout-email" className="text-black font-semibold text-[10px] uppercase tracking-wide">Email</label>
-                      <div className="relative">
-                        <input
-                          type={showEmail ? 'text' : 'password'}
-                          id="checkout-email"
-                          name="email_entry"
-                          value={buyerInfo.email}
-                          onChange={(e) => setBuyerInfo({ ...buyerInfo, email: e.target.value })}
-                          onCopy={(e) => e.preventDefault()}
-                          onCut={(e) => e.preventDefault()}
-                          placeholder="name@example.com"
-                          className={inputWithIconClass}
-                          autoComplete="new-password"
-                          autoCorrect="off"
-                          autoCapitalize="off"
-                          spellCheck={false}
-                          data-lpignore="true"
-                          data-form-type="other"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowEmail((prev) => !prev)}
-                          className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 transition-colors"
-                          aria-label={showEmail ? 'Hide email' : 'Show email'}
-                        >
-                          {showEmail ? (
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858 5.858a3 3 0 104.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                            </svg>
-                          ) : (
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                          )}
-                        </button>
-                      </div>
+                      <input
+                        type="email"
+                        id="checkout-email"
+                        name="email_entry"
+                        value={buyerInfo.email}
+                        onChange={(e) => setBuyerInfo({ ...buyerInfo, email: e.target.value })}
+                        onCopy={preventCopy}
+                        onCut={preventCopy}
+                        onContextMenu={preventCopy}
+                        placeholder="name@example.com"
+                        className={`${inputClass} ${noCopyClass}`}
+                        autoComplete="email"
+                        autoCorrect="off"
+                        autoCapitalize="off"
+                        spellCheck={false}
+                      />
                     </div>
                     <div className="flex flex-col gap-1">
                       <label htmlFor="checkout-confirm-email" className="text-black font-semibold text-[10px] uppercase tracking-wide">Confirm Email</label>
@@ -363,10 +338,13 @@ const CheckoutPage = ({ onNavigate }) => {
                         name="confirm_email_verification"
                         value={buyerInfo.confirmEmail}
                         onChange={(e) => setBuyerInfo({ ...buyerInfo, confirmEmail: e.target.value })}
-                        onPaste={(e) => e.preventDefault()}
-                        onDrop={(e) => e.preventDefault()}
+                        onPaste={preventCopy}
+                        onCopy={preventCopy}
+                        onCut={preventCopy}
+                        onDrop={preventCopy}
+                        onContextMenu={preventCopy}
                         placeholder="Re-enter your email"
-                        className={inputClass}
+                        className={`${inputClass} ${noCopyClass}`}
                         autoComplete="off"
                         autoCorrect="off"
                         autoCapitalize="off"
@@ -483,10 +461,11 @@ const CheckoutPage = ({ onNavigate }) => {
                   <div className="mb-4">
                     <h2 className="text-black font-extrabold text-lg sm:text-xl">Payment</h2>
                     <p className="text-gray-500 text-xs sm:text-sm mt-1">
-                      Choose Apple Pay, Google Pay, or enter your card below.
+                      Enter your card details below.
                     </p>
                   </div>
                   <CheckoutTransactionalNotice onNavigate={onNavigate} />
+                  {/* WalletPayments disabled — re-enable when Apple Pay / Google Pay are ready
                   <WalletPayments
                     amountCents={checkoutAmountCents}
                     buyerName={buyerInfo.name}
@@ -494,6 +473,7 @@ const CheckoutPage = ({ onNavigate }) => {
                     onPay={handleWalletPay}
                     onError={handleWalletError}
                   />
+                  */}
                   {checkoutError && (
                     <div className="p-2.5 rounded-xl bg-red-50 text-red-600 text-xs mt-4">{checkoutError}</div>
                   )}
@@ -505,13 +485,11 @@ const CheckoutPage = ({ onNavigate }) => {
                     <img src={EVENT_CHECKOUT.poster} alt={EVENT_CHECKOUT.title} className="absolute inset-0 w-full h-full object-cover" />
                     <div className="absolute top-3 right-3 bg-black/70 backdrop-blur text-white text-[9px] sm:text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full text-center leading-tight">
                       <span className="block">${currentUnitPrice.toFixed(2)}</span>
-                      <span className="block font-semibold normal-case opacity-90">+ tax &amp; fees</span>
+                      <span className="block font-semibold normal-case opacity-90">+ tax</span>
                     </div>
                   </div>
-                  <div className="px-4 py-3 bg-black/95 text-white flex justify-between items-center text-[7px] sm:text-[8px] uppercase tracking-widest font-semibold">
-                    <div className="flex gap-2"><span>TikTok</span><span>Insta</span></div>
-                    <span>studio3.dallas</span>
-                    <span>Connection</span>
+                  <div className="px-4 py-3 bg-black/95 text-white flex justify-center items-center">
+                    <SocialLinks variant="dark" />
                   </div>
                 </div>
               )}
