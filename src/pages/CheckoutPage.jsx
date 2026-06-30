@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { checkout, fetchCheckoutConfig } from '../lib/api';
+import { getCheckoutSubmitted, markCheckoutSubmitted } from '../lib/checkoutSession';
 import {
   BRAND_ACCENT_SOFT,
   EVENT_CHECKOUT,
@@ -74,7 +75,11 @@ const CheckoutPage = ({ onNavigate }) => {
   const [buyerInfo, setBuyerInfo] = useState({ name: '', email: '', confirmEmail: '', phone: '' });
   const [marketingOptIns, setMarketingOptIns] = useState({ email: false, sms: false });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [paymentComplete, setPaymentComplete] = useState(false);
   const [checkoutError, setCheckoutError] = useState('');
+  const [checkoutInfo, setCheckoutInfo] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [checkoutOutcome, setCheckoutOutcome] = useState('complete');
   const [tierConfig, setTierConfig] = useState(DEFAULT_TIERS);
 
   useEffect(() => {
@@ -104,6 +109,41 @@ const CheckoutPage = ({ onNavigate }) => {
     ticketQuantityRef.current = ticketQuantity;
   }, [ticketQuantity]);
 
+  const applyCheckoutSuccess = useCallback((data, email) => {
+    const isPending = Boolean(data.pending);
+    const isRecovered = Boolean(data.recovered);
+    const isAlreadyReceived = Boolean(data.alreadyReceived);
+
+    setCheckoutError('');
+    setCheckoutInfo('');
+    setSuccessMessage(
+      data.message ||
+        (isPending
+          ? 'Payment received. Your tickets are being processed and will be emailed shortly.'
+          : 'Check your email for your ticket and login details.')
+    );
+    setCheckoutOutcome(
+      isAlreadyReceived ? 'alreadyReceived' : isRecovered ? 'recovered' : isPending ? 'pending' : 'complete'
+    );
+    setPaymentComplete(true);
+    setCheckoutStep('success');
+    markCheckoutSubmitted(email, data.transferId);
+  }, []);
+
+  const handleCheckoutFailure = useCallback((err) => {
+    setCheckoutError(err.message || 'Checkout failed');
+  }, []);
+
+  useEffect(() => {
+    if (checkoutStep !== 3) return;
+    const submitted = getCheckoutSubmitted(buyerInfo.email);
+    if (submitted) {
+      setCheckoutInfo(
+        'A payment was already submitted for this email. Please check your inbox for tickets before paying again.'
+      );
+    }
+  }, [checkoutStep, buyerInfo.email]);
+
   /*
   const handleWalletPay = useCallback(async (walletPayload) => {
     const { name, email, phone } = buyerInfoRef.current;
@@ -115,9 +155,10 @@ const CheckoutPage = ({ onNavigate }) => {
 
     setIsSubmitting(true);
     setCheckoutError('');
+    setCheckoutInfo('');
 
     try {
-      await checkout({
+      const data = await checkout({
         ...walletPayload,
         quantity,
         name: name.trim(),
@@ -125,14 +166,14 @@ const CheckoutPage = ({ onNavigate }) => {
         phone: toE164US(phone),
       });
 
-      setCheckoutStep('success');
+      applyCheckoutSuccess(data, email.trim());
     } catch (err) {
-      setCheckoutError(err.message || 'Checkout failed');
+      handleCheckoutFailure(err);
       throw err;
     } finally {
       setIsSubmitting(false);
     }
-  }, []);
+  }, [applyCheckoutSuccess, handleCheckoutFailure]);
   */
 
   const handleFinixConfigError = useCallback((message) => {
@@ -175,6 +216,7 @@ const CheckoutPage = ({ onNavigate }) => {
 
     setIsSubmitting(true);
     setCheckoutError('');
+    setCheckoutInfo('');
 
     try {
       const token = response?.data?.id;
@@ -182,7 +224,7 @@ const CheckoutPage = ({ onNavigate }) => {
         throw new Error('No payment token received from Finix');
       }
 
-      await checkout({
+      const data = await checkout({
         token,
         fraudSessionId: finixAuth?.getSessionKey?.(),
         quantity,
@@ -191,13 +233,13 @@ const CheckoutPage = ({ onNavigate }) => {
         phone: toE164US(phone),
       });
 
-      setCheckoutStep('success');
+      applyCheckoutSuccess(data, email.trim());
     } catch (err) {
-      setCheckoutError(err.message || 'Checkout failed');
+      handleCheckoutFailure(err);
     } finally {
       setIsSubmitting(false);
     }
-  }, []);
+  }, [applyCheckoutSuccess, handleCheckoutFailure]);
 
   const validateStep1 = () => {
     const { name, email, confirmEmail, phone } = buyerInfo;
@@ -230,6 +272,19 @@ const CheckoutPage = ({ onNavigate }) => {
     'flex-1 py-3 px-5 rounded-full text-black font-bold text-sm border border-gray-300 bg-white hover:bg-gray-50 transition-all disabled:opacity-50 disabled:pointer-events-none';
 
   const isProcessingPayment = isSubmitting && checkoutStep === 3;
+  const paymentsLocked = isSubmitting || paymentComplete;
+
+  const successTitle =
+    checkoutOutcome === 'pending' || checkoutOutcome === 'alreadyReceived'
+      ? 'Payment Received'
+      : checkoutOutcome === 'recovered'
+        ? 'Order Found'
+        : "You're Going!";
+
+  const successIconClass =
+    checkoutOutcome === 'pending' || checkoutOutcome === 'alreadyReceived'
+      ? 'bg-amber-50 border-amber-100 text-amber-600'
+      : 'bg-emerald-50 border-emerald-100 text-emerald-600';
 
   return (
     <div
@@ -272,17 +327,33 @@ const CheckoutPage = ({ onNavigate }) => {
 
         {checkoutStep === 'success' ? (
           <div className={`${glassCardClass} p-6 sm:p-8 max-w-lg mx-auto w-full text-center animate-fadeIn`}>
-            <div className="w-14 h-14 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 mb-4 mx-auto">
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-              </svg>
+            <div className={`w-14 h-14 rounded-full border flex items-center justify-center mb-4 mx-auto ${successIconClass}`}>
+              {checkoutOutcome === 'pending' || checkoutOutcome === 'alreadyReceived' ? (
+                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              ) : (
+                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                </svg>
+              )}
             </div>
-            <h2 className="text-black font-extrabold text-xl sm:text-2xl">You&apos;re Going!</h2>
+            <h2 className="text-black font-extrabold text-xl sm:text-2xl">{successTitle}</h2>
             <p className="text-gray-500 text-sm mt-2 leading-relaxed">
-              You&apos;re all set! We sent a confirmation to{' '}
-              <strong className="text-gray-800">{buyerInfo.email}</strong>.
-              {' '}Check your email for your ticket PDF and login credentials.
+              {successMessage ||
+                (checkoutOutcome === 'complete' || checkoutOutcome === 'recovered' ? (
+                  <>
+                    You&apos;re all set! We sent a confirmation to{' '}
+                    <strong className="text-gray-800">{buyerInfo.email}</strong>. Check your email for
+                    your ticket PDF and login credentials.
+                  </>
+                ) : null)}
             </p>
+            {(checkoutOutcome === 'pending' || checkoutOutcome === 'alreadyReceived') && (
+              <p className="text-amber-800 text-xs mt-3 bg-amber-50 border border-amber-100 rounded-xl px-3 py-2">
+                Please do not pay again. If you do not receive an email within 30 minutes, contact support.
+              </p>
+            )}
             <div className="w-full border border-gray-200 bg-gray-50 rounded-2xl p-4 my-5 text-left text-sm">
               <div className="flex justify-between font-bold text-black border-b border-gray-200 pb-2 mb-3">
                 <span>General Admission</span>
@@ -457,19 +528,22 @@ const CheckoutPage = ({ onNavigate }) => {
             {/* Side column — poster or payment */}
             <div className={`w-full ${checkoutStep === 3 ? 'lg:col-span-6' : 'lg:col-span-5'} lg:sticky lg:top-[120px]`}>
               {checkoutStep === 3 ? (
-                <div className={`${glassCardClass} p-4 sm:p-6 lg:p-8 ${isProcessingPayment ? 'pointer-events-none opacity-60' : ''}`}>
+                <div className={`${glassCardClass} p-4 sm:p-6 lg:p-8 ${paymentsLocked ? 'pointer-events-none opacity-60' : ''}`}>
                   <div className="mb-4">
                     <h2 className="text-black font-extrabold text-lg sm:text-xl">Payment</h2>
                     <p className="text-gray-500 text-xs sm:text-sm mt-1">
                       Enter your card details below.
                     </p>
                   </div>
+                  {checkoutInfo && (
+                    <div className="p-2.5 rounded-xl bg-amber-50 text-amber-800 text-xs mb-4">{checkoutInfo}</div>
+                  )}
                   <CheckoutTransactionalNotice onNavigate={onNavigate} />
                   {/* WalletPayments disabled — re-enable when Apple Pay / Google Pay are ready
                   <WalletPayments
                     amountCents={checkoutAmountCents}
                     buyerName={buyerInfo.name}
-                    disabled={isSubmitting}
+                    disabled={paymentsLocked}
                     onPay={handleWalletPay}
                     onError={handleWalletError}
                   />
