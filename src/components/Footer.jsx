@@ -63,13 +63,6 @@ const Footer = ({ onNavigate }) => (
           <a href={`mailto:${SUPPORT_EMAIL}`} className={footerLinkClass}>
             Support
           </a>
-          <button
-            type="button"
-            onClick={() => onNavigate && onNavigate('/contact')}
-            className={footerLinkClass}
-          >
-            Contact
-          </button>
         </nav>
       </div>
 

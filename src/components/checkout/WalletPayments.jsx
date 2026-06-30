@@ -83,8 +83,7 @@ async function getGooglePayClient(finixEnv) {
 
 function WalletButtonSkeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      <div className="h-11 rounded-full bg-gray-100 animate-pulse" />
+    <div className="grid grid-cols-1 gap-3">
       <div className="h-11 rounded-full bg-gray-100 animate-pulse" />
     </div>
   );
@@ -164,11 +163,13 @@ export default function WalletPayments({
         setConfig(checkoutConfig);
         setConfigError('');
 
+        /* Google Pay disabled
         try {
           googlePayClientRef.current = await getGooglePayClient(checkoutConfig.finixEnv);
         } catch (err) {
           console.warn('[WalletPayments] Google Pay preload failed', err);
         }
+        */
       } catch (err) {
         if (!cancelled) {
           const message = err.message || 'Could not load payment options. Refresh and try again.';
@@ -400,9 +401,11 @@ export default function WalletPayments({
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3">
         <ApplePayButton disabled={disabled || !!configError} onClick={startApplePay} busy={applePayBusy} />
+        {/* Google Pay disabled
         <GooglePayButton disabled={disabled || !!configError} onClick={startGooglePay} busy={googlePayBusy} />
+        */}
       </div>
 
       <div className="flex items-center gap-3 py-1">

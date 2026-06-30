@@ -19,6 +19,13 @@ import { STUDIO_EVENT } from '../constants/event';
 
 import { formatUSPhone, toE164US } from '../lib/phone';
 
+function formatCheckoutPhone(phone) {
+  const digits = (phone || '').replace(/\D/g, '');
+  if (digits.length === 0) return undefined;
+  if (digits.length === 10) return toE164US(phone);
+  return null;
+}
+
 const DEFAULT_TIERS = {
   soldCount: 0,
   earlyBirdLimit: STUDIO_EVENT.earlyBirdLimit,
@@ -72,7 +79,7 @@ function OrderPricingBreakdown({ pricing, compact = false }) {
 const CheckoutPage = ({ onNavigate }) => {
   const [checkoutStep, setCheckoutStep] = useState(1);
   const [ticketQuantity, setTicketQuantity] = useState(1);
-  const [buyerInfo, setBuyerInfo] = useState({ name: '', email: '', confirmEmail: '', phone: '' });
+  const [buyerInfo, setBuyerInfo] = useState({ name: '', email: '', phone: '' });
   const [marketingOptIns, setMarketingOptIns] = useState({ email: false, sms: false });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentComplete, setPaymentComplete] = useState(false);
@@ -148,8 +155,13 @@ const CheckoutPage = ({ onNavigate }) => {
     const { name, email, phone } = buyerInfoRef.current;
     const quantity = ticketQuantityRef.current;
 
-    if (!name?.trim() || !email?.trim() || !phone?.trim()) {
-      throw new Error('Please complete name, email, and phone before paying.');
+    if (!name?.trim() || !email?.trim()) {
+      throw new Error('Please complete name and email before paying.');
+    }
+
+    const phoneValue = formatCheckoutPhone(phone);
+    if (phone?.trim() && !phoneValue) {
+      throw new Error('Please enter a valid 10-digit US phone number.');
     }
 
     setIsSubmitting(true);
@@ -162,7 +174,7 @@ const CheckoutPage = ({ onNavigate }) => {
         quantity,
         name: name.trim(),
         email: email.trim(),
-        phone: toE164US(phone),
+        ...(phoneValue ? { phone: phoneValue } : {}),
       });
 
       applyCheckoutSuccess(data, email.trim());
@@ -205,8 +217,14 @@ const CheckoutPage = ({ onNavigate }) => {
     const { name, email, phone } = buyerInfoRef.current;
     const quantity = ticketQuantityRef.current;
 
-    if (!name?.trim() || !email?.trim() || !phone?.trim()) {
-      setCheckoutError('Please complete name, email, and phone before paying.');
+    if (!name?.trim() || !email?.trim()) {
+      setCheckoutError('Please complete name and email before paying.');
+      return;
+    }
+
+    const phoneValue = formatCheckoutPhone(phone);
+    if (phone?.trim() && !phoneValue) {
+      setCheckoutError('Please enter a valid 10-digit US phone number.');
       return;
     }
 
@@ -226,7 +244,7 @@ const CheckoutPage = ({ onNavigate }) => {
         quantity,
         name: name.trim(),
         email: email.trim(),
-        phone: toE164US(phone),
+        ...(phoneValue ? { phone: phoneValue } : {}),
       });
 
       applyCheckoutSuccess(data, email.trim());
@@ -238,17 +256,13 @@ const CheckoutPage = ({ onNavigate }) => {
   }, [applyCheckoutSuccess, handleCheckoutFailure]);
 
   const validateStep1 = () => {
-    const { name, email, confirmEmail, phone } = buyerInfo;
-    if (!name?.trim() || !email?.trim() || !confirmEmail?.trim() || !phone?.trim()) {
-      setCheckoutError('Please fill in all fields.');
-      return false;
-    }
-    if (email.trim().toLowerCase() !== confirmEmail.trim().toLowerCase()) {
-      setCheckoutError('Email addresses do not match.');
+    const { name, email, phone } = buyerInfo;
+    if (!name?.trim() || !email?.trim()) {
+      setCheckoutError('Please fill in your name and email.');
       return false;
     }
     const phoneDigits = phone.replace(/\D/g, '');
-    if (phoneDigits.length !== 10) {
+    if (phoneDigits.length > 0 && phoneDigits.length !== 10) {
       setCheckoutError('Please enter a valid 10-digit US phone number.');
       return false;
     }
@@ -378,7 +392,7 @@ const CheckoutPage = ({ onNavigate }) => {
                       <label htmlFor="checkout-name" className="text-black font-semibold text-[10px] uppercase tracking-wide">Full Name</label>
                       <input type="text" id="checkout-name" value={buyerInfo.name} onChange={(e) => setBuyerInfo({ ...buyerInfo, name: e.target.value })} placeholder="Your name" className={inputClass} />
                     </div>
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 sm:col-span-2">
                       <label htmlFor="checkout-email" className="text-black font-semibold text-[10px] uppercase tracking-wide">Email</label>
                       <input
                         type="email"
@@ -397,29 +411,10 @@ const CheckoutPage = ({ onNavigate }) => {
                         spellCheck={false}
                       />
                     </div>
-                    <div className="flex flex-col gap-1">
-                      <label htmlFor="checkout-confirm-email" className="text-black font-semibold text-[10px] uppercase tracking-wide">Confirm Email</label>
-                      <input
-                        type="email"
-                        id="checkout-confirm-email"
-                        name="confirm_email_verification"
-                        value={buyerInfo.confirmEmail}
-                        onChange={(e) => setBuyerInfo({ ...buyerInfo, confirmEmail: e.target.value })}
-                        onPaste={preventCopy}
-                        onCopy={preventCopy}
-                        onCut={preventCopy}
-                        onDrop={preventCopy}
-                        onContextMenu={preventCopy}
-                        placeholder="Re-enter your email"
-                        className={`${inputClass} ${noCopyClass}`}
-                        autoComplete="off"
-                        autoCorrect="off"
-                        autoCapitalize="off"
-                        spellCheck={false}
-                      />
-                    </div>
                     <div className="flex flex-col gap-1 sm:col-span-2">
-                      <label htmlFor="checkout-phone" className="text-black font-semibold text-[10px] uppercase tracking-wide">Phone</label>
+                      <label htmlFor="checkout-phone" className="text-black font-semibold text-[10px] uppercase tracking-wide">
+                        Phone <span className="normal-case font-medium text-gray-500">(optional)</span>
+                      </label>
                       <div className="flex">
                         <span className="inline-flex items-center px-3 py-2.5 rounded-l-xl border border-r-0 border-gray-200 bg-gray-50 text-gray-600 text-sm font-semibold shrink-0 select-none">
                           +1
@@ -491,8 +486,12 @@ const CheckoutPage = ({ onNavigate }) => {
                       <span className="text-black font-semibold text-right truncate">{buyerInfo.name}</span>
                       <span className="text-gray-500">Email</span>
                       <span className="text-black font-semibold text-right truncate">{buyerInfo.email}</span>
-                      <span className="text-gray-500">Phone</span>
-                      <span className="text-black font-semibold text-right truncate">+1 {buyerInfo.phone}</span>
+                      {buyerInfo.phone.trim() && (
+                        <>
+                          <span className="text-gray-500">Phone</span>
+                          <span className="text-black font-semibold text-right truncate">+1 {buyerInfo.phone}</span>
+                        </>
+                      )}
                       <span className="text-gray-500">Tickets</span>
                       <span className="text-black font-semibold text-right">{ticketQuantity}x</span>
                     </div>
@@ -528,7 +527,7 @@ const CheckoutPage = ({ onNavigate }) => {
                   <div className="mb-4">
                     <h2 className="text-black font-extrabold text-lg sm:text-xl">Payment</h2>
                     <p className="text-gray-500 text-xs sm:text-sm mt-1">
-                      Pay with Apple Pay, Google Pay, or enter your card details below.
+                      Pay with Apple Pay or enter your card details below.
                     </p>
                   </div>
                   {checkoutInfo && (
