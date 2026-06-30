@@ -10,7 +10,7 @@ import {
   checkoutButtonStyle,
   glassCardClass,
 } from '../components/checkout/shared';
-// import WalletPayments from '../components/checkout/WalletPayments';
+import WalletPayments from '../components/checkout/WalletPayments';
 import SocialLinks from '../components/SocialLinks';
 import { AccountMarketingOptIns, CheckoutTransactionalNotice } from '../components/checkout/CheckoutOptInCopy';
 import PaymentProcessingOverlay from '../components/checkout/PaymentProcessingOverlay';
@@ -144,7 +144,6 @@ const CheckoutPage = ({ onNavigate }) => {
     }
   }, [checkoutStep, buyerInfo.email]);
 
-  /*
   const handleWalletPay = useCallback(async (walletPayload) => {
     const { name, email, phone } = buyerInfoRef.current;
     const quantity = ticketQuantityRef.current;
@@ -174,17 +173,14 @@ const CheckoutPage = ({ onNavigate }) => {
       setIsSubmitting(false);
     }
   }, [applyCheckoutSuccess, handleCheckoutFailure]);
-  */
 
   const handleFinixConfigError = useCallback((message) => {
     setCheckoutError(message);
   }, []);
 
-  /*
   const handleWalletError = useCallback((message) => {
     setCheckoutError(message);
   }, []);
-  */
 
   const orderPricing = useMemo(
     () =>
@@ -532,14 +528,13 @@ const CheckoutPage = ({ onNavigate }) => {
                   <div className="mb-4">
                     <h2 className="text-black font-extrabold text-lg sm:text-xl">Payment</h2>
                     <p className="text-gray-500 text-xs sm:text-sm mt-1">
-                      Enter your card details below.
+                      Pay with Apple Pay, Google Pay, or enter your card details below.
                     </p>
                   </div>
                   {checkoutInfo && (
                     <div className="p-2.5 rounded-xl bg-amber-50 text-amber-800 text-xs mb-4">{checkoutInfo}</div>
                   )}
                   <CheckoutTransactionalNotice onNavigate={onNavigate} />
-                  {/* WalletPayments disabled — re-enable when Apple Pay / Google Pay are ready
                   <WalletPayments
                     amountCents={checkoutAmountCents}
                     buyerName={buyerInfo.name}
@@ -547,7 +542,6 @@ const CheckoutPage = ({ onNavigate }) => {
                     onPay={handleWalletPay}
                     onError={handleWalletError}
                   />
-                  */}
                   {checkoutError && (
                     <div className="p-2.5 rounded-xl bg-red-50 text-red-600 text-xs mt-4">{checkoutError}</div>
                   )}
