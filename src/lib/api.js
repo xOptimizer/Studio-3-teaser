@@ -35,10 +35,22 @@ export async function apiFetch(path, options = {}) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers,
-  });
+  let response;
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      ...options,
+      headers,
+    });
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error(
+        import.meta.env.DEV
+          ? 'Could not reach the ticketing API. Start the Studio-3-event server on port 3001.'
+          : 'Could not reach the ticketing API. Please try again in a moment.'
+      );
+    }
+    throw error;
+  }
 
   const data = await response.json().catch(() => ({}));
 
@@ -131,11 +143,23 @@ export async function checkout(payload) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_URL}/checkout`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(payload),
-  });
+  let response;
+  try {
+    response = await fetch(`${API_URL}/checkout`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(payload),
+    });
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error(
+        import.meta.env.DEV
+          ? 'Could not reach the ticketing API. Start the Studio-3-event server on port 3001.'
+          : 'Could not reach the ticketing API. Please try again in a moment.'
+      );
+    }
+    throw error;
+  }
 
   const data = await response.json().catch(() => ({}));
 

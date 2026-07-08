@@ -527,7 +527,7 @@ const CheckoutPage = ({ onNavigate }) => {
                   <div className="mb-4">
                     <h2 className="text-black font-extrabold text-lg sm:text-xl">Payment</h2>
                     <p className="text-gray-500 text-xs sm:text-sm mt-1">
-                      Pay with Apple Pay or enter your card details below.
+                      Pay with Apple Pay, Google Pay, or enter your card details below.
                     </p>
                   </div>
                   {checkoutInfo && (

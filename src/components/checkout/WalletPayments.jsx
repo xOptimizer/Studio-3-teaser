@@ -3,6 +3,11 @@ import { createApplePaySession, fetchCheckoutConfig } from '../../lib/api';
 
 const GOOGLE_PAY_SCRIPT = 'https://pay.google.com/gp/p/js/pay.js';
 
+const GOOGLE_PAY_BASE_REQUEST = {
+  apiVersion: 2,
+  apiVersionMinor: 0,
+};
+
 function loadScript(src) {
   return new Promise((resolve, reject) => {
     if (document.querySelector(`script[src="${src}"]`)) {
@@ -47,6 +52,52 @@ function buildWalletName(contact, fallbackName) {
   return full || fallbackName;
 }
 
+function getGooglePayPaymentMethods(checkoutConfig) {
+  const baseCardPaymentMethod = {
+    type: 'CARD',
+    parameters: {
+      allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+      allowedCardNetworks: ['AMEX', 'DISCOVER', 'MASTERCARD', 'VISA'],
+    },
+  };
+
+  const cardPaymentMethod = {
+    ...baseCardPaymentMethod,
+    tokenizationSpecification: {
+      type: 'PAYMENT_GATEWAY',
+      parameters: {
+        gateway: 'finix',
+        gatewayMerchantId: checkoutConfig.merchantIdentityId,
+      },
+    },
+  };
+
+  return { baseCardPaymentMethod, cardPaymentMethod };
+}
+
+function buildGooglePayPaymentDataRequest(checkoutConfig, amountCents, cardPaymentMethod) {
+  const paymentDataRequest = {
+    ...GOOGLE_PAY_BASE_REQUEST,
+    allowedPaymentMethods: [cardPaymentMethod],
+    transactionInfo: {
+      countryCode: 'US',
+      currencyCode: checkoutConfig.event?.currency || 'USD',
+      totalPrice: formatAmount(amountCents),
+      totalPriceStatus: 'FINAL',
+    },
+    merchantInfo: {
+      merchantName: checkoutConfig.merchantDisplayName || 'Studio 3',
+    },
+  };
+
+  const googleMerchantId = import.meta.env.VITE_GOOGLE_PAY_MERCHANT_ID;
+  if (checkoutConfig.finixEnv === 'prod' && googleMerchantId) {
+    paymentDataRequest.merchantInfo.merchantId = googleMerchantId;
+  }
+
+  return paymentDataRequest;
+}
+
 function getApplePaySupportMessage() {
   if (typeof window === 'undefined') {
     return 'Apple Pay is not available in this environment.';
@@ -62,7 +113,7 @@ function getApplePaySupportMessage() {
 
   try {
     if (!ApplePaySession.canMakePayments()) {
-      return 'Apple Pay is not set up on this device. Add a card to Wallet, or use Google Pay or card instead.';
+      return 'Apple Pay is not set up on this device. Add a card to Wallet, or pay with card instead.';
     }
   } catch {
     return 'Apple Pay is not available on this device right now.';
@@ -81,10 +132,13 @@ async function getGooglePayClient(finixEnv) {
   return new window.google.payments.api.PaymentsClient({ environment });
 }
 
+const WALLET_PAY_BTN_SLOT = 'wallet-pay-btn-slot';
+
 function WalletButtonSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-3">
-      <div className="h-11 rounded-full bg-gray-100 animate-pulse" />
+      <div className={`${WALLET_PAY_BTN_SLOT} bg-gray-100 animate-pulse`} />
+      <div className={`${WALLET_PAY_BTN_SLOT} bg-gray-100 animate-pulse`} />
     </div>
   );
 }
@@ -106,23 +160,6 @@ function ApplePayButton({ disabled, onClick, busy }) {
   );
 }
 
-function GooglePayButton({ disabled, onClick, busy }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled || busy}
-      className="w-full h-11 rounded-full bg-white text-black font-semibold text-sm border border-gray-300 flex items-center justify-center gap-2 transition-colors hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-      aria-label="Pay with Google Pay"
-    >
-      <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
-        <path fill="#EA4335" d="M12 10.2v3.9h5.4c-.2 1.3-1.5 3.8-5.4 3.8-3.3 0-6-2.7-6-6s2.7-6 6-6c1.7 0 2.9.7 3.6 1.3l2.7-2.6C16.9 3.3 14.6 2.4 12 2.4 6.8 2.4 2.5 6.7 2.5 12s4.3 9.6 9.5 9.6c5.5 0 9.1-3.9 9.1-9.3 0-.6-.1-1.1-.2-1.5H12z" />
-      </svg>
-      {busy ? 'Opening Google Pay…' : 'Google Pay'}
-    </button>
-  );
-}
-
 export default function WalletPayments({
   amountCents,
   buyerName,
@@ -136,9 +173,12 @@ export default function WalletPayments({
   const [walletMessage, setWalletMessage] = useState('');
   const [applePayBusy, setApplePayBusy] = useState(false);
   const [googlePayBusy, setGooglePayBusy] = useState(false);
+  const [googlePayReady, setGooglePayReady] = useState(false);
 
   const configRef = useRef(null);
   const googlePayClientRef = useRef(null);
+  const googlePayContainerRef = useRef(null);
+  const startGooglePayRef = useRef(() => {});
 
   const reportError = useCallback(
     (message) => {
@@ -163,13 +203,11 @@ export default function WalletPayments({
         setConfig(checkoutConfig);
         setConfigError('');
 
-        /* Google Pay disabled
         try {
           googlePayClientRef.current = await getGooglePayClient(checkoutConfig.finixEnv);
         } catch (err) {
           console.warn('[WalletPayments] Google Pay preload failed', err);
         }
-        */
       } catch (err) {
         if (!cancelled) {
           const message = err.message || 'Could not load payment options. Refresh and try again.';
@@ -189,6 +227,132 @@ export default function WalletPayments({
       cancelled = true;
     };
   }, []);
+
+  const startGooglePay = useCallback(() => {
+    setWalletMessage('');
+
+    const checkoutConfig = configRef.current;
+    if (!checkoutConfig) {
+      reportError(configError || 'Payment options are still loading. Wait a moment and try again.');
+      return;
+    }
+
+    if (disabled || googlePayBusy) {
+      if (disabled) {
+        reportError('A payment is already in progress.');
+      }
+      return;
+    }
+
+    const paymentsClient = googlePayClientRef.current;
+    if (!paymentsClient) {
+      reportError('Google Pay is not available right now. Use Apple Pay or card instead.');
+      return;
+    }
+
+    const { cardPaymentMethod } = getGooglePayPaymentMethods(checkoutConfig);
+    const paymentDataRequest = buildGooglePayPaymentDataRequest(
+      checkoutConfig,
+      amountCents,
+      cardPaymentMethod
+    );
+
+    setGooglePayBusy(true);
+
+    paymentsClient
+      .loadPaymentData(paymentDataRequest)
+      .then(async (paymentData) => {
+        const token = paymentData.paymentMethodData.tokenizationData.token;
+        const billing = paymentData.paymentMethodData.info?.billingAddress;
+
+        await onPay({
+          paymentMethod: 'google_pay',
+          thirdPartyToken: token,
+          walletName: billing?.name || buyerName,
+          address: {
+            country: billing?.countryCode || 'US',
+            postal_code: billing?.postalCode || '00000',
+            line1: billing?.address1,
+            line2: billing?.address2,
+            city: billing?.locality,
+            region: billing?.administrativeArea,
+          },
+        });
+      })
+      .catch((err) => {
+        if (err?.statusCode === 'CANCELED') return;
+        console.error('[Google Pay] payment failed', err);
+        reportError(err.message || 'Google Pay payment failed. Use Apple Pay or card instead.');
+      })
+      .finally(() => {
+        setGooglePayBusy(false);
+      });
+  }, [amountCents, buyerName, configError, disabled, googlePayBusy, onPay, reportError]);
+
+  useEffect(() => {
+    startGooglePayRef.current = startGooglePay;
+  }, [startGooglePay]);
+
+  useEffect(() => {
+    if (loading || !config || configError) {
+      setGooglePayReady(false);
+      return undefined;
+    }
+
+    const container = googlePayContainerRef.current;
+    if (!container) return undefined;
+
+    let cancelled = false;
+
+    async function mountGooglePayButton() {
+      container.innerHTML = '';
+      setGooglePayReady(false);
+
+      try {
+        let paymentsClient = googlePayClientRef.current;
+        if (!paymentsClient) {
+          paymentsClient = await getGooglePayClient(config.finixEnv);
+          googlePayClientRef.current = paymentsClient;
+        }
+
+        const { baseCardPaymentMethod, cardPaymentMethod } = getGooglePayPaymentMethods(config);
+        const isReadyToPayRequest = {
+          ...GOOGLE_PAY_BASE_REQUEST,
+          allowedPaymentMethods: [baseCardPaymentMethod],
+        };
+
+        const readyResponse = await paymentsClient.isReadyToPay(isReadyToPayRequest);
+        if (cancelled || !readyResponse.result) {
+          return;
+        }
+
+        const button = paymentsClient.createButton({
+          onClick: () => startGooglePayRef.current(),
+          allowedPaymentMethods: [cardPaymentMethod],
+          buttonType: 'pay',
+          buttonColor: 'default',
+          buttonRadius: 4,
+          buttonSizeMode: 'fill',
+        });
+
+        if (cancelled) return;
+
+        container.appendChild(button);
+        setGooglePayReady(true);
+      } catch (err) {
+        if (!cancelled) {
+          console.warn('[WalletPayments] Google Pay button setup failed', err);
+        }
+      }
+    }
+
+    mountGooglePayButton();
+
+    return () => {
+      cancelled = true;
+      container.innerHTML = '';
+    };
+  }, [config, configError, loading]);
 
   const startApplePay = useCallback(() => {
     setWalletMessage('');
@@ -284,108 +448,11 @@ export default function WalletPayments({
     }
   }, [amountCents, buyerName, configError, disabled, onPay, reportError]);
 
-  const startGooglePay = useCallback(async () => {
-    setWalletMessage('');
-
-    const checkoutConfig = configRef.current;
-    if (!checkoutConfig) {
-      reportError(configError || 'Payment options are still loading. Wait a moment and try again.');
-      return;
-    }
-
-    if (disabled) {
-      reportError('A payment is already in progress.');
-      return;
-    }
-
-    setGooglePayBusy(true);
-
-    let paymentsClient = googlePayClientRef.current;
-
-    try {
-      if (!paymentsClient) {
-        paymentsClient = await getGooglePayClient(checkoutConfig.finixEnv);
-        googlePayClientRef.current = paymentsClient;
-      }
-    } catch (err) {
-      setGooglePayBusy(false);
-      reportError(err.message || 'Google Pay is not available right now. Use Apple Pay or card instead.');
-      return;
-    }
-
-    const allowedCardAuthMethods = ['PAN_ONLY', 'CRYPTOGRAM_3DS'];
-    const allowedCardNetworks = ['AMEX', 'DISCOVER', 'MASTERCARD', 'VISA'];
-    const baseCardPaymentMethod = {
-      type: 'CARD',
-      parameters: {
-        allowedAuthMethods: allowedCardAuthMethods,
-        allowedCardNetworks: allowedCardNetworks,
-      },
-    };
-
-    const tokenizationSpecification = {
-      type: 'PAYMENT_GATEWAY',
-      parameters: {
-        gateway: 'finix',
-        gatewayMerchantId: checkoutConfig.merchantIdentityId,
-      },
-    };
-
-    const cardPaymentMethod = {
-      ...baseCardPaymentMethod,
-      tokenizationSpecification,
-    };
-
-    const paymentDataRequest = {
-      apiVersion: 2,
-      apiVersionMinor: 0,
-      allowedPaymentMethods: [cardPaymentMethod],
-      transactionInfo: {
-        countryCode: 'US',
-        currencyCode: checkoutConfig.event?.currency || 'USD',
-        totalPrice: formatAmount(amountCents),
-        totalPriceStatus: 'FINAL',
-      },
-      merchantInfo: {
-        merchantName: checkoutConfig.merchantDisplayName || 'Studio 3',
-      },
-    };
-
-    const googleMerchantId = import.meta.env.VITE_GOOGLE_PAY_MERCHANT_ID;
-    if (checkoutConfig.finixEnv === 'prod' && googleMerchantId) {
-      paymentDataRequest.merchantInfo.merchantId = googleMerchantId;
-    }
-
-    try {
-      const paymentData = await paymentsClient.loadPaymentData(paymentDataRequest);
-      const token = paymentData.paymentMethodData.tokenizationData.token;
-      const billing = paymentData.paymentMethodData.info?.billingAddress;
-
-      await onPay({
-        paymentMethod: 'google_pay',
-        thirdPartyToken: token,
-        walletName: billing?.name || buyerName,
-        address: {
-          country: billing?.countryCode || 'US',
-          postal_code: billing?.postalCode || '00000',
-          line1: billing?.address1,
-          line2: billing?.address2,
-          city: billing?.locality,
-          region: billing?.administrativeArea,
-        },
-      });
-    } catch (err) {
-      if (err?.statusCode === 'CANCELED') return;
-      console.error('[Google Pay] payment failed', err);
-      reportError(err.message || 'Google Pay payment failed. Use Apple Pay or card instead.');
-    } finally {
-      setGooglePayBusy(false);
-    }
-  }, [amountCents, buyerName, configError, disabled, onPay, reportError]);
-
   if (loading) {
     return <WalletButtonSkeleton />;
   }
+
+  const paymentsLocked = disabled || applePayBusy || googlePayBusy;
 
   return (
     <div className="space-y-3">
@@ -402,11 +469,38 @@ export default function WalletPayments({
       )}
 
       <div className="grid grid-cols-1 gap-3">
-        <ApplePayButton disabled={disabled || !!configError} onClick={startApplePay} busy={applePayBusy} />
-        {/* Google Pay disabled
-        <GooglePayButton disabled={disabled || !!configError} onClick={startGooglePay} busy={googlePayBusy} />
-        */}
+        <div className={paymentsLocked ? 'pointer-events-none opacity-50' : ''}>
+          <ApplePayButton
+            disabled={disabled || !!configError}
+            onClick={startApplePay}
+            busy={applePayBusy}
+          />
+        </div>
+        <div
+          ref={googlePayContainerRef}
+          className={`${WALLET_PAY_BTN_SLOT} ${
+            googlePayReady ? '' : 'hidden'
+          } ${paymentsLocked ? 'pointer-events-none opacity-50' : ''}`}
+          aria-hidden={!googlePayReady}
+        />
       </div>
+
+      <style>{`
+        .wallet-pay-btn-slot {
+          width: 100%;
+          height: 48px;
+          min-height: 48px;
+          max-height: 48px;
+        }
+
+        .wallet-pay-btn-slot > button,
+        .wallet-pay-btn-slot .gpay-card-info-container {
+          width: 100% !important;
+          height: 48px !important;
+          min-height: 48px !important;
+          max-height: 48px !important;
+        }
+      `}</style>
 
       <div className="flex items-center gap-3 py-1">
         <div className="h-px flex-1 bg-gray-200" />
