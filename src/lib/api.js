@@ -155,6 +155,13 @@ export async function fetchCheckoutConfig() {
   return apiFetch('/checkout/config');
 }
 
+export async function validateCoupon({ code, quantity }) {
+  return apiFetch('/checkout/validate-coupon', {
+    method: 'POST',
+    body: JSON.stringify({ code, quantity }),
+  });
+}
+
 export async function createApplePaySession(payload) {
   return apiFetch('/checkout/apple-pay-session', {
     method: 'POST',

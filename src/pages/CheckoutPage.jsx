@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { checkout, fetchCheckoutConfig } from '../lib/api';
+import { checkout, fetchCheckoutConfig, validateCoupon } from '../lib/api';
 import { getCheckoutSubmitted, markCheckoutSubmitted } from '../lib/checkoutSession';
 import {
   BRAND_ACCENT_SOFT,
@@ -35,33 +35,29 @@ const DEFAULT_TIERS = {
 
 function OrderPricingBreakdown({ pricing, compact = false }) {
   const textClass = compact ? 'text-xs' : 'text-sm';
+  const unitPriceCents =
+    pricing.earlyBirdQty > 0
+      ? pricing.earlyBirdPriceCents
+      : pricing.regularPriceCents;
 
   return (
     <div className={`space-y-2 ${textClass}`}>
-      {pricing.earlyBirdQty > 0 && (
-        <div className="flex justify-between text-gray-600">
+      <div className="flex justify-between text-gray-600">
+        <span>
+          Tickets ({pricing.quantity}x @ {formatCents(unitPriceCents || pricing.earlyBirdPriceCents)})
+        </span>
+        <span className="tabular-nums text-gray-900">
+          {formatCents(pricing.ticketSubtotalCents)}
+        </span>
+      </div>
+      {pricing.discountCents > 0 && (
+        <div className="flex justify-between text-gray-900">
           <span>
-            Early bird ({pricing.earlyBirdQty}x @ {formatCents(pricing.earlyBirdPriceCents)})
+            Discount
+            {pricing.discountPercent ? ` (${pricing.discountPercent}%)` : ''}
+            {pricing.couponCode ? ` · ${pricing.couponCode}` : ''}
           </span>
-          <span className="tabular-nums text-gray-900">
-            {formatCents(pricing.earlyBirdQty * pricing.earlyBirdPriceCents)}
-          </span>
-        </div>
-      )}
-      {pricing.regularQty > 0 && (
-        <div className="flex justify-between text-gray-600">
-          <span>
-            Regular ({pricing.regularQty}x @ {formatCents(pricing.regularPriceCents)})
-          </span>
-          <span className="tabular-nums text-gray-900">
-            {formatCents(pricing.regularQty * pricing.regularPriceCents)}
-          </span>
-        </div>
-      )}
-      {pricing.earlyBirdQty === 0 && pricing.regularQty === 0 && (
-        <div className="flex justify-between text-gray-600">
-          <span>Tickets ({pricing.quantity}x)</span>
-          <span className="tabular-nums text-gray-900">{formatCents(pricing.ticketSubtotalCents)}</span>
+          <span className="tabular-nums">−{formatCents(pricing.discountCents)}</span>
         </div>
       )}
       <div className="flex justify-between text-gray-600">
@@ -88,6 +84,10 @@ const CheckoutPage = ({ onNavigate }) => {
   const [successMessage, setSuccessMessage] = useState('');
   const [checkoutOutcome, setCheckoutOutcome] = useState('complete');
   const [tierConfig, setTierConfig] = useState(DEFAULT_TIERS);
+  const [couponInput, setCouponInput] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponError, setCouponError] = useState('');
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
 
   useEffect(() => {
     fetchCheckoutConfig()
@@ -107,6 +107,7 @@ const CheckoutPage = ({ onNavigate }) => {
 
   const buyerInfoRef = useRef(buyerInfo);
   const ticketQuantityRef = useRef(ticketQuantity);
+  const appliedCouponRef = useRef(appliedCoupon);
 
   useEffect(() => {
     buyerInfoRef.current = buyerInfo;
@@ -114,6 +115,74 @@ const CheckoutPage = ({ onNavigate }) => {
 
   useEffect(() => {
     ticketQuantityRef.current = ticketQuantity;
+  }, [ticketQuantity]);
+
+  useEffect(() => {
+    appliedCouponRef.current = appliedCoupon;
+  }, [appliedCoupon]);
+
+  const clearAppliedCoupon = useCallback(() => {
+    setAppliedCoupon(null);
+    setCouponError('');
+  }, []);
+
+  const applyCouponCode = useCallback(async (rawCode, quantity) => {
+    const code = String(rawCode || '').trim().toUpperCase();
+    if (!code) {
+      setCouponError('Enter a coupon code');
+      return null;
+    }
+
+    setIsApplyingCoupon(true);
+    setCouponError('');
+
+    try {
+      const preview = await validateCoupon({ code, quantity });
+      const next = {
+        code: preview.coupon.code,
+        percentOff: preview.coupon.percentOff,
+        pricing: preview.pricing,
+      };
+      setAppliedCoupon(next);
+      setCouponInput(preview.coupon.code);
+      return next;
+    } catch (err) {
+      setAppliedCoupon(null);
+      setCouponError(err.message || 'Invalid coupon code');
+      return null;
+    } finally {
+      setIsApplyingCoupon(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const code = appliedCouponRef.current?.code;
+    if (!code) return undefined;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const preview = await validateCoupon({
+          code,
+          quantity: ticketQuantity,
+        });
+        if (cancelled) return;
+        setAppliedCoupon({
+          code: preview.coupon.code,
+          percentOff: preview.coupon.percentOff,
+          pricing: preview.pricing,
+        });
+        setCouponError('');
+      } catch (err) {
+        if (cancelled) return;
+        setAppliedCoupon(null);
+        setCouponError(err.message || 'Coupon is no longer valid');
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [ticketQuantity]);
 
   const applyCheckoutSuccess = useCallback((data, email) => {
@@ -138,8 +207,13 @@ const CheckoutPage = ({ onNavigate }) => {
   }, []);
 
   const handleCheckoutFailure = useCallback((err) => {
-    setCheckoutError(err.message || 'Checkout failed');
-  }, []);
+    const message = err.message || 'Checkout failed';
+    setCheckoutError(message);
+    if (/coupon/i.test(message)) {
+      clearAppliedCoupon();
+      setCouponError(message);
+    }
+  }, [clearAppliedCoupon]);
 
   useEffect(() => {
     if (checkoutStep !== 3) return;
@@ -154,6 +228,7 @@ const CheckoutPage = ({ onNavigate }) => {
   const handleWalletPay = useCallback(async (walletPayload) => {
     const { name, email, phone } = buyerInfoRef.current;
     const quantity = ticketQuantityRef.current;
+    const coupon = appliedCouponRef.current;
 
     if (!name?.trim() || !email?.trim()) {
       throw new Error('Please complete name and email before paying.');
@@ -175,6 +250,7 @@ const CheckoutPage = ({ onNavigate }) => {
         name: name.trim(),
         email: email.trim(),
         ...(phoneValue ? { phone: phoneValue } : {}),
+        ...(coupon?.code ? { couponCode: coupon.code } : {}),
       });
 
       applyCheckoutSuccess(data, email.trim());
@@ -194,14 +270,31 @@ const CheckoutPage = ({ onNavigate }) => {
     setCheckoutError(message);
   }, []);
 
-  const orderPricing = useMemo(
+  const baseOrderPricing = useMemo(
     () =>
       calculateTieredOrderPricing({
         ...tierConfig,
         quantity: ticketQuantity,
+        percentOff: appliedCoupon?.percentOff ?? 0,
       }),
-    [tierConfig, ticketQuantity]
+    [tierConfig, ticketQuantity, appliedCoupon?.percentOff]
   );
+
+  const orderPricing = useMemo(() => {
+    if (appliedCoupon?.pricing) {
+      return {
+        ...baseOrderPricing,
+        ...appliedCoupon.pricing,
+        couponCode: appliedCoupon.code,
+        rates: appliedCoupon.pricing.rates || baseOrderPricing.rates,
+      };
+    }
+    return {
+      ...baseOrderPricing,
+      couponCode: undefined,
+    };
+  }, [baseOrderPricing, appliedCoupon]);
+
   const checkoutAmountCents = orderPricing.totalCents;
 
   const currentUnitPrice = orderPricing.currentTier === 'regular'
@@ -216,6 +309,7 @@ const CheckoutPage = ({ onNavigate }) => {
 
     const { name, email, phone } = buyerInfoRef.current;
     const quantity = ticketQuantityRef.current;
+    const coupon = appliedCouponRef.current;
 
     if (!name?.trim() || !email?.trim()) {
       setCheckoutError('Please complete name and email before paying.');
@@ -245,6 +339,7 @@ const CheckoutPage = ({ onNavigate }) => {
         name: name.trim(),
         email: email.trim(),
         ...(phoneValue ? { phone: phoneValue } : {}),
+        ...(coupon?.code ? { couponCode: coupon.code } : {}),
       });
 
       applyCheckoutSuccess(data, email.trim());
@@ -450,19 +545,11 @@ const CheckoutPage = ({ onNavigate }) => {
 
                 {checkoutStep === 2 && (
                   <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
-                    {orderPricing.currentTier === 'regular' && (
-                      <p className="text-xs text-gray-700 bg-gray-100 border border-gray-200 rounded-xl px-3 py-2 mb-3">
-                        Early bird sold out. Tickets are {formatCents(orderPricing.regularPriceCents)} each.
-                      </p>
-                    )}
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <span className="text-black font-bold text-sm">General Admission</span>
                         <p className="text-gray-500 text-xs mt-0.5">
                           ${currentUnitPrice.toFixed(2)} each
-                          {orderPricing.regularQty > 0 && orderPricing.earlyBirdQty > 0
-                            ? ' (mixed tiers)'
-                            : ''}
                         </p>
                       </div>
                       <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-xl p-1">
@@ -471,6 +558,58 @@ const CheckoutPage = ({ onNavigate }) => {
                         <button type="button" onClick={() => setTicketQuantity(Math.min(5, ticketQuantity + 1))} className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-600 hover:bg-gray-100 font-bold" aria-label="Increase tickets">+</button>
                       </div>
                     </div>
+
+                    <div className="mt-3 pt-3 border-t border-gray-200 space-y-2">
+                      <label htmlFor="checkout-coupon" className="text-black font-semibold text-[10px] uppercase tracking-wide">
+                        Coupon code
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          id="checkout-coupon"
+                          value={couponInput}
+                          onChange={(e) => {
+                            setCouponInput(e.target.value.toUpperCase());
+                            setCouponError('');
+                          }}
+                          placeholder="Enter code"
+                          disabled={Boolean(appliedCoupon) || isApplyingCoupon}
+                          className={`${inputClass} flex-1 uppercase tracking-wide`}
+                          autoComplete="off"
+                        />
+                        {appliedCoupon ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              clearAppliedCoupon();
+                              setCouponInput('');
+                            }}
+                            className="shrink-0 px-4 py-2 rounded-xl text-xs font-bold text-black border border-gray-300 bg-white hover:bg-gray-50"
+                          >
+                            Clear
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => applyCouponCode(couponInput, ticketQuantity)}
+                            disabled={isApplyingCoupon || !couponInput.trim()}
+                            className="shrink-0 px-4 py-2 rounded-xl text-xs font-bold text-black disabled:opacity-50"
+                            style={checkoutButtonStyle}
+                          >
+                            {isApplyingCoupon ? '…' : 'Apply'}
+                          </button>
+                        )}
+                      </div>
+                      {couponError && (
+                        <p className="text-xs font-medium text-red-600">{couponError}</p>
+                      )}
+                      {appliedCoupon && !couponError && (
+                        <p className="text-xs font-semibold text-black">
+                          {appliedCoupon.percentOff}% off ticket price applied
+                        </p>
+                      )}
+                    </div>
+
                     <div className="mt-3 pt-3 border-t border-gray-200">
                       <OrderPricingBreakdown pricing={orderPricing} />
                     </div>

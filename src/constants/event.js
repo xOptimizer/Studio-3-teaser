@@ -14,7 +14,7 @@ export const STUDIO_EVENT = {
   logoWithText: '/assets/Logo_With_Text.svg',
   headerLogo: '/assets/S3_Horizontal.png',
   ticketPrice: 49.95,
-  regularTicketPrice: 99.95,
+  regularTicketPrice: 49.95,
   earlyBirdLimit: 55,
   /** Marketing copy on the event page only — actual early bird capacity stays at earlyBirdLimit */
   earlyBirdLimitDisplay: 50,

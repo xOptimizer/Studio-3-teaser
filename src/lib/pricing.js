@@ -31,14 +31,21 @@ export function calculateTieredTicketSubtotal(input) {
   };
 }
 
-export function calculateOrderPricingFromSubtotal(ticketSubtotalCents, quantity) {
-  const serviceFeeCents = Math.round(ticketSubtotalCents * SERVICE_FEE_RATE);
-  const salesTaxCents = Math.round(ticketSubtotalCents * SALES_TAX_RATE);
-  const totalCents = ticketSubtotalCents + serviceFeeCents + salesTaxCents;
+export function calculateOrderPricingFromSubtotal(ticketSubtotalCents, quantity, percentOff = 0) {
+  const discountPercent = Math.max(0, Math.min(100, Number(percentOff) || 0));
+  const discountCents =
+    discountPercent > 0 ? Math.round(ticketSubtotalCents * discountPercent / 100) : 0;
+  const discountedTicketSubtotalCents = ticketSubtotalCents - discountCents;
+  const serviceFeeCents = Math.round(discountedTicketSubtotalCents * SERVICE_FEE_RATE);
+  const salesTaxCents = Math.round(discountedTicketSubtotalCents * SALES_TAX_RATE);
+  const totalCents = discountedTicketSubtotalCents + serviceFeeCents + salesTaxCents;
 
   return {
     quantity,
     ticketSubtotalCents,
+    discountPercent,
+    discountCents,
+    discountedTicketSubtotalCents,
     serviceFeeCents,
     salesTaxCents,
     totalCents,
@@ -50,8 +57,13 @@ export function calculateOrderPricingFromSubtotal(ticketSubtotalCents, quantity)
 }
 
 export function calculateTieredOrderPricing(input) {
-  const tier = calculateTieredTicketSubtotal(input);
-  const fees = calculateOrderPricingFromSubtotal(tier.ticketSubtotalCents, tier.quantity);
+  const { percentOff = 0, ...tierInput } = input;
+  const tier = calculateTieredTicketSubtotal(tierInput);
+  const fees = calculateOrderPricingFromSubtotal(
+    tier.ticketSubtotalCents,
+    tier.quantity,
+    percentOff
+  );
 
   return {
     ...tier,
