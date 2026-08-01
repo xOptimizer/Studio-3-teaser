@@ -115,10 +115,13 @@ const App = () => {
     pageContent = <AdminCheckInsPage onNavigate={navigate} />;
   } else if (currentPath.startsWith('/admin/verify')) {
     pageContent = <AdminVerifyPage key={routeKey} onNavigate={navigate} />;
+  /* Disabled temporarily while the event is hidden.
   } else if (currentPath === '/event/checkout') {
     pageContent = <CheckoutPage onNavigate={navigate} />;
   } else if (currentPath === '/event') {
     pageContent = <EventPage onNavigate={navigate} />;
+  }
+  */
   } else if (currentPath === '/privacy') {
     pageContent = <PrivacyPolicyPage onNavigate={navigate} />;
   } else if (currentPath === '/terms') {
@@ -142,7 +145,8 @@ const App = () => {
     <main style={{ background: '#F7F7F7' }}>
       <TopBar onNavigate={navigate} currentPath={currentPath} />
       {pageContent}
-      {isHomePage && <EventHomePromo onNavigate={navigate} />}
+      {/* Event promo popup temporarily disabled. */}
+      {isHomePage && false && <EventHomePromo onNavigate={navigate} />}
       {currentPath !== '/event/checkout' && <Footer onNavigate={navigate} />}
     </main>
   );

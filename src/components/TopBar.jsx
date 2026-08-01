@@ -69,6 +69,8 @@ function NavLink({ path, label, currentPath, onNavigate, onAfterNavigate, classN
   );
 }
 
+// Temporarily disabled launch event nav link.
+/*
 function LaunchEventNavLink({ currentPath, onNavigate, onAfterNavigate, className = '' }) {
   const active = isNavActive(currentPath, '/event');
 
@@ -96,6 +98,7 @@ function LaunchEventNavLink({ currentPath, onNavigate, onAfterNavigate, classNam
     </button>
   );
 }
+*/
 
 const TopBar = ({ onNavigate, currentPath }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -185,7 +188,7 @@ const TopBar = ({ onNavigate, currentPath }) => {
 
         <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 justify-end min-w-0">
           <div className="hidden lg:flex items-center gap-1.5 sm:gap-2 md:gap-3 flex-wrap justify-end min-w-0">
-            <LaunchEventNavLink currentPath={currentPath} onNavigate={onNavigate} />
+            {/* Launch event link temporarily disabled. */}
 
             {user && !needsPasswordChange && (
               <NavLink path="/tickets" label="My Tickets" currentPath={currentPath} onNavigate={onNavigate} />
@@ -339,12 +342,7 @@ const TopBar = ({ onNavigate, currentPath }) => {
           aria-label="Mobile navigation"
         >
           <div className="flex flex-col gap-2">
-            <LaunchEventNavLink
-              currentPath={currentPath}
-              onNavigate={onNavigate}
-              onAfterNavigate={closeMobileMenu}
-              className="w-full justify-center py-2.5"
-            />
+            {/* Launch event link temporarily disabled. */}
 
             {user && !needsPasswordChange && (
               <NavLink
